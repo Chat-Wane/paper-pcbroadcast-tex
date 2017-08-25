@@ -1,0 +1,90 @@
+
+\algblockdefx[initially]{initially}{endInitially}
+[0] {\textbf{INITIALLY:}}
+
+\algsetblockdefx[event]{event}{endEvent}
+{65535}{}
+[0] {\textbf{EVENTS:}}
+
+\algsetblockdefx[dissemination]{dissemination}{endDissemination}
+{65535}{}
+[0] {\textbf{DISSEMINATION:}}
+
+
+\newcommand{\comment}[1]{$\rhd$ #1}
+\newcommand{\LINEIFTHEN}[2]{%
+  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} %
+}
+\newcommand{\LINEFOR}[2]{%
+  \algorithmicfor\ {#1}\ \algorithmicdo\ {#2} %
+}
+
+\begin{algorithmic}[1]
+
+  \initially
+  \State $p$ \hfill \comment{This peer identity}
+  \State $P \leftarrow \varnothing$
+  \hfill \comment{Partial view of the network, ie, a set of FIFO communication channels}
+  \State $B \leftarrow \varnothing$ 
+  \hfill \comment{Buffers of messages: $P\rightarrow M^*$ }
+  \State $O \leftarrow \varnothing$
+  \hfill \comment{Set of channels that just opened but are ``causaly'' unsafe.}
+  \endInitially
+  
+  \event
+  \Function{onChannelOpen} {$i$, $q$} \hfill \comment{$i$: the initiator, $q$: the channel}
+  \State \LINEIFTHEN{$i \neq p$}{$O \leftarrow O \uplus q$}
+  \EndFunction
+
+  \Statex
+
+  \Function{onChannelClose} {$q$} \hfill \comment{$q$: the channel that closed}
+  \State $P \leftarrow P \setminus q$
+  \State $B \leftarrow B \setminus q$
+  \State $O \leftarrow O \setminus q$
+  \EndFunction
+
+  \endEvent
+
+  \dissemination
+
+  \Function{broadcast} {$m$} \hfill \comment{$m$: the message to send}
+  \State $m \leftarrow m \cup \langle p, O\rangle$
+  \hfill \comment{Mark the message with unsafe channels}
+  \State $O \leftarrow \varnothing$
+  \State \LINEFOR{\textbf{each} $b \in B$} {$b \leftarrow b \cup m$}
+  \hfill{Buffer the message to send it later to peers in $B$}
+  \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
+  {$\textsc{sendTo}(q,\, m)$} \hfill{Broadcast the message to neighbors}
+  \EndFunction
+
+  \Statex
+
+  \Function{receive} {$q$, $m$}
+  \hfill \comment{$q$: the peer that sends the message, $m$: the received message}
+  \For {\textbf{each} $\langle o,\, Q \rangle$}
+  \hfill \comment{Notify the origin $o$ that we receive this particular message}
+  \State \LINEIFTHEN {$p \in Q$} {$\textsc{sendTo}(o, \, m)$}
+  \EndFor
+  
+  \If {($q \in B$) $\wedge$ ($m \in B[q]$)}
+  \hfill \comment{Got notified, the channel to $q$ is now safe}
+  \State \LINEFOR {\textbf{each} $n \in B[q]$} {$\textsc{sendTo}(q,\, n)$}
+  \State $B \leftarrow B \setminus q$
+  \EndIf
+  
+  \If {$\neg \textsc{alreadyReceived}(m)$}
+  \hfill \comment{Forward the message to neighbors}
+  \State $\textsc{deliver}(m)$
+  \State $\textsc{broadcast}(m)$
+  \EndIf
+
+  \EndFunction
+
+\end{algorithmic}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:

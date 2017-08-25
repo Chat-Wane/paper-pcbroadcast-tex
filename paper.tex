@@ -1,0 +1,79 @@
+\documentclass{class-for-drafts}
+
+\usepackage{hyperref}
+%% url
+\usepackage{url}
+%% maths
+\usepackage{amsmath}
+%%\usepackage{amsfonts}
+\usepackage{amssymb}
+%% \usepackage{amsthm}
+%% algorithms
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+%% images
+\usepackage{graphicx}
+%% inparaenum
+\usepackage{paralist}
+
+%% tables
+\usepackage{booktabs}
+\usepackage{multirow}
+%% figures
+%\usepackage{caption}
+\usepackage{subfig}
+%\usepackage[font=small, skip=2pt]{caption}
+%\usepackage[font=small]{subfig}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing,plotmarks,shapes,matrix}
+%% transform eps in pdf crossplateform
+\usepackage{epstopdf}
+\usepackage{epsfig}
+%% hyphenation
+\usepackage{hyphenat}
+\hyphenation{brow-sers brow-ser}
+
+\newcommand{\TODO}[1]{\textcolor{red}{#1}}
+\newcommand{\REF}[0]{\textcolor{purple}{REF}}
+
+\usepackage{xspace}
+\newcommand{\SCAMP}[0]{\textsc{Scamp}\xspace}
+\newcommand{\CYCLON}[0]{\textsc{Cyclon}\xspace}
+\newcommand{\SPRAY}[0]{\textsc{Spray}\xspace}
+\newcommand{\LSEQ}[0]{\textsc{LSeq}\xspace}
+\newcommand{\CRATE}[0]{\textsc{Crate}\xspace}
+\newcommand{\PEERSIM}[0]{\textsc{PeerSim}\xspace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\title{A better causal broadcast}
+
+\newcommand{\affLSNN}{L2SN, University of Nantes\\
+  2 rue de la Houssini{\`e}re\\
+  BP 92208, 44322 Nantes Cedex 3, France\\
+  \url{first.last@univ-nantes.fr}}
+
+\author{Brice N{\'e}delec, Pascal Molli, and Achour Most{\'e}faoui \aff \affLSNN}
+
+\proceedings{}
+
+%\copyright{}
+
+\maketitle
+
+\input{input/proposal.tex}
+
+% \input{input/acknowledgment.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{bibliographie}
+  
+\end{document}
+
