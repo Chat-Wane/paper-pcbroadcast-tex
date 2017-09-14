@@ -15,6 +15,10 @@
 \newcommand{\LINEIFTHEN}[2]{%
   \algorithmicif\ {#1}\ \algorithmicthen\ {#2} %
 }
+\newcommand{\LINEIFTHENELSE}[3]{%
+  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} \algorithmicelse\ {#3}%
+}
+
 \newcommand{\LINEFOR}[2]{%
   \algorithmicfor\ {#1}\ \algorithmicdo\ {#2} %
 }
@@ -23,60 +27,76 @@
 
   \initially
   \State $p$ \hfill \comment{This peer identity}
-  \State $P \leftarrow \varnothing$
+  \State $P$
   \hfill \comment{Partial view of the network, ie, a set of FIFO communication channels}
   \State $B \leftarrow \varnothing$ 
-  \hfill \comment{Buffers of messages: $P\rightarrow M^*$ }
-  \State $O \leftarrow \varnothing$
-  \hfill \comment{Set of channels that just opened but are ``causaly'' unsafe.}
+  \hfill \comment{Buffers of messages}
   \endInitially
   
   \event
-  \Function{onChannelOpen} {$i$, $q$} \hfill \comment{$i$: the initiator, $q$: the channel}
-  \State \LINEIFTHEN{$i \neq p$}{$O \leftarrow O \uplus q$}
+  \Function{onChannelOpen} {$i$, $q$}
+  \hfill \comment{$i$: the initiator, $q$: the channel}
+  \If{$(i\neq p) \wedge |P|-|B|>1$}
+  \hfill \comment{The channel is temporarily unsafe, for it may create ``shortcuts''}  
+  \State $B[q] \leftarrow \varnothing$
+  \State $\textsc{broadcast}(\langle p,\, q\rangle,\, ``locked")$
+  \hfill \comment{Broadcast a ``locked'' message waiting $q$'s acknowledgment}
+  \EndIf
   \EndFunction
-
+  
   \Statex
 
   \Function{onChannelClose} {$q$} \hfill \comment{$q$: the channel that closed}
-  \State $P \leftarrow P \setminus q$
   \State $B \leftarrow B \setminus q$
-  \State $O \leftarrow O \setminus q$
   \EndFunction
 
   \endEvent
 
   \dissemination
 
-  \Function{broadcast} {$m$} \hfill \comment{$m$: the message to send}
-  \State $m \leftarrow m \cup \langle p, O\rangle$
-  \hfill \comment{Mark the message with unsafe channels}
-  \State $O \leftarrow \varnothing$
-  \State \LINEFOR{\textbf{each} $b \in B$} {$b \leftarrow b \cup m$}
+  \Function{broadcast} {$payload$, $type$ [$\leftarrow``regular"$]} 
+  \State \LINEFOR{\textbf{each} $q \in B$}
+  {$B[q] \leftarrow B[q] \cup \langle type,\, payload\rangle$}
   \hfill{Buffer the message to send it later to peers in $B$}
   \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
-  {$\textsc{sendTo}(q,\, m)$} \hfill{Broadcast the message to neighbors}
+  {$\textsc{sendTo}(q,\, \langle type,\, payload \rangle)$}
+  \hfill{Broadcast the message to neighbors}
   \EndFunction
 
   \Statex
 
-  \Function{receive} {$q$, $m$}
-  \hfill \comment{$q$: the peer that sends the message, $m$: the received message}
-  \For {\textbf{each} $\langle o,\, Q \rangle$}
-  \hfill \comment{Notify the origin $o$ that we receive this particular message}
-  \State \LINEIFTHEN {$p \in Q$} {$\textsc{sendTo}(o, \, m)$}
-  \EndFor
+  \Function{receive} {$message$}
+
+  \If {$\neg \textsc{alreadyReceived}(message)$}
+  \hfill \comment{Check each message only once}
+
+  \State \textbf{let} $\langle type,\, payload \rangle \leftarrow message$
   
-  \If {($q \in B$) $\wedge$ ($m \in B[q]$)}
-  \hfill \comment{Got notified, the channel to $q$ is now safe}
-  \State \LINEFOR {\textbf{each} $n \in B[q]$} {$\textsc{sendTo}(q,\, n)$}
-  \State $B \leftarrow B \setminus q$
+  \If {$type = ``locked"$}
+  \State \textbf{let} $\langle from,\, to \rangle \leftarrow payload$
+  \State \LINEIFTHEN {$p = to$} 
+  {$\textsc{sendTo}(from,\, \langle ``unlock",\, to \rangle)$}
+  \hfill \comment{Notify the sender that we received the message}
+  \State \LINEIFTHEN {$p \neq to$} {$\textsc{broadcast}(payload,\, type)$}
+  \hfill \comment{Or forward it as a regular broadcast message}
   \EndIf
   
-  \If {$\neg \textsc{alreadyReceived}(m)$}
-  \hfill \comment{Forward the message to neighbors}
-  \State $\textsc{deliver}(m)$
-  \State $\textsc{broadcast}(m)$
+  \If {$type = ``unlock"$}
+  \State \textbf{let} $to \leftarrow payload$
+  \If {$to \in B$}
+  \hfill \comment{Got notified, the channel to $to$ is now safe}
+  \State \LINEFOR {\textbf{each} $b \in B[to]$}
+  {$\textsc{sendTo}(to,\, b)$}
+  \hfill \comment{Send all buffered message through this channel}
+  \State $B \leftarrow B \setminus to$
+  \hfill \comment{And start using it as a regular channel}
+  \EndIf
+  \EndIf
+  
+  \If {$type = ``regular"$} \hfill \comment{Classic forwarding of broadcast messages}
+  \State $\textsc{deliver}(payload)$
+  \State $\textsc{broadcast}(payload)$
+  \EndIf
   \EndIf
 
   \EndFunction

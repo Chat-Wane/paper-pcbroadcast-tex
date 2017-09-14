@@ -2,6 +2,20 @@
 \section{Causal broadcast}
 \label{sec:proposal}
 
+We propose an approach guaranteeing causal delivery of messages to uniform reliable
+broadcasts. 
+
+
+Requirements:
+\begin{itemize}
+\item FIFO communication channels (e.g. TCP);
+\item a scalable peer-sampling protocol that does not create network partitions
+  (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
+  \CYCLON~\cite{voulgaris2005cyclon}).
+\end{itemize}
+
+
+
 \begin{algorithm*}[h]
   \input{./input/algocausalbroadcast.tex}
   \caption{\label{algo:causalbroadcast}Causal broadcast.}
