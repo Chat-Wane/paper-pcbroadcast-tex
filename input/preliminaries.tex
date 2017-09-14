@@ -2,7 +2,8 @@
 \section{Preliminaries}
 \label{sec:preliminaries}
 
-\begin{definition}[Correct process]
+\begin{definition}[Process]
+  is said correct if it does not crash.
 \end{definition}
 
 \begin{definition}[Broadcast]
@@ -25,6 +26,26 @@
 \begin{definition}[Causal delivery]
   
 \end{definition}
+
+\begin{figure}
+  \begin{center}
+  \input{./input/figgeneralproblem.tex}
+  \caption{\label{fig:generalproblem}Broadcast without causal order
+    enforcement.}
+  \end{center}
+\end{figure}
+
+Figure~\ref{fig:generalproblem} depicts an example where causal order is
+violated. Process $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and
+delivers $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$
+before $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
+violating the condition stating that the delivery of $m$ should precede the
+delivery $m'$.
+
+Multiple approaches exist to enforce causal order by either piggybacking control
+information in each message, or constraining the network topology. In this
+paper, we introduce a causal broadcast protocol freed from both these
+requirements.
 
 
 %%% Local Variables:

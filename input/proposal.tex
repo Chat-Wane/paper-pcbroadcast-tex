@@ -2,17 +2,29 @@
 \section{Causal broadcast}
 \label{sec:proposal}
 
-We propose an approach guaranteeing causal delivery of messages to uniform reliable
-broadcasts. 
+We propose an approach guaranteeing causal order to uniform reliable
+broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
+relies on scalable peer-sampling protocols that must not create network partitions
+(e.g. \SPRAY~\cite{nedelec2017adaptive}, or \CYCLON~\cite{voulgaris2005cyclon}).
+
+\paragraph{Static networks.} FIFO channels are sufficient to provide causal
+ordering of messages.
 
 
-Requirements:
-\begin{itemize}
-\item FIFO communication channels (e.g. TCP);
-\item a scalable peer-sampling protocol that does not create network partitions
-  (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
-  \CYCLON~\cite{voulgaris2005cyclon}).
-\end{itemize}
+\paragraph{Dynamic networks.} Removing a channel do not impair causal ordering
+of messages except if it generates network partitions. On the contrary, adding a
+channel may result in causal ordering violation. The intuition is that it may
+creates paths that are shortcuts for new messages. These messages arrives at
+their destination before older messages that causally precedes them, for they
+took longer paths.
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figproblem.tex}
+    \caption{\label{fig:problem}Adding a FIFO channel endangers causal
+      ordering.}
+  \end{center}
+\end{figure}
 
 
 

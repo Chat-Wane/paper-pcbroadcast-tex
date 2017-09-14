@@ -1,0 +1,33 @@
+
+\begin{tikzpicture}[scale=1]
+  \newcommand\X{35pt};
+  \newcommand\Y{30pt};
+  
+  \draw[->](0pt,   0pt)--(6*\X,   0pt);
+  \draw[->](0pt, -1*\Y)--(6*\X, -1*\Y);
+  \draw[->](0pt, -2*\Y)--(6*\X, -2*\Y);
+  
+  \draw[fill=black](0pt, 0pt) node[anchor=east]{$p_1$}circle(2pt);
+  \draw[fill=black](0pt, -1*\Y) node[anchor=east]{$p_2$}circle(2pt);
+  \draw[fill=black](0pt, -2*\Y) node[anchor=east]{$p_3$}circle(2pt);
+
+  \draw[->](0.5 * \X, 0pt)node[anchor=south]{$b(m)$}--(2 * \X,   -1 * \Y);
+  \draw[->](0.5 * \X, 0pt)--( 5 * \X,   -2 * \Y);
+  \draw(1.5*\X, -2pt)--node[anchor=south]{$d(m)$}(1.5*\X, 2pt);
+  \draw(2.25 * \X, -2 -1*\Y )--node[anchor=north]{$d(m)$}(2.25 * \X,    2 -1 * \Y);
+  \draw(5.5 * \X, -2 -2*\Y )--node[anchor=north]{$d(m)$}(5.5 * \X,    2 -2 * \Y);
+
+  \draw[->](3.5 * \X, -1*\Y )--(4 * \X,   -2 * \Y);
+  \draw[->](3.5 * \X, -1*\Y )node[anchor=south east]{$b(m')$}--(4 * \X,    0 * \Y);
+  \draw(4.5 * \X, -2 -0*\Y )--node[anchor=north]{$d(m')$}(4.5 * \X,    2 -0 * \Y);
+  \draw(4.5 * \X, -2 -1*\Y )--node[anchor=north]{$d(m')$}(4.5 * \X,    2 -1 * \Y);
+  \draw(4.5 * \X, -2 -2*\Y )--node[anchor=north]{$d(m')$}(4.5 * \X,    2 -2 * \Y);
+  
+  \draw[decorate,decoration={brace,amplitude=6pt,mirror,raise=4pt}]
+  (4.5*\X, -2.5*\Y) -- node[anchor=north, yshift=-10pt]{\small causal order violation} (5.5*\X, -2.5*\Y);
+\end{tikzpicture}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:
