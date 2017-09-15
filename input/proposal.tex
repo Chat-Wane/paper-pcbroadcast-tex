@@ -7,16 +7,32 @@ broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
 relies on scalable peer-sampling protocols that must not create network partitions
 (e.g. \SPRAY~\cite{nedelec2017adaptive}, or \CYCLON~\cite{voulgaris2005cyclon}).
 
-\paragraph{Static networks.} FIFO channels are sufficient to provide causal
-ordering of messages.
+\paragraph{Static networks.} A network is a set of processes linked by a set of
+channels. In a static network, processes cannot fail nor leave, and links cannot
+be created nor removed. In this context, FIFO channels are sufficient to provide
+causal ordering of messages.
 
+\begin{figure}
+  \begin{center}
+    \input{./input/figstatic.tex}
+    \caption{\label{fig:static}FIFO channels are sufficient to provide causal
+      order in static networks.}
+  \end{center}
+\end{figure}
 
-\paragraph{Dynamic networks.} Removing a channel do not impair causal ordering
-of messages except if it generates network partitions. On the contrary, adding a
-channel may result in causal ordering violation. The intuition is that it may
-creates paths that are shortcuts for new messages. These messages arrives at
-their destination before older messages that causally precedes them, for they
-took longer paths.
+Figure~\ref{fig:static} shows a static network comprising 3 processes $p_1$,
+$p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
+$p_3$ for the sake of clarity. In this example, we solve the causal order
+violation from Figure~\ref{fig:generalproblem} by using FIFO channels. The
+processes receive $m$ and $m'$ multiple times but there exist no link in the
+paths from $p_2$ to $p_3$ that carries $m'$ without having carried $m$
+beforehand. Hence, the delivery of $m$ always precedes the delivery of $m'$ at
+any process.
+
+\paragraph{Dynamic networks.} Removing a channel does not impair causal ordering
+of messages except if it generates network partitions.  Adding a channel may
+result in causal ordering violation.
+
 
 \begin{figure}
   \begin{center}
@@ -26,12 +42,40 @@ took longer paths.
   \end{center}
 \end{figure}
 
+Figure~\ref{fig:problem} illustrates the issue with the establishment of new
+FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
+links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
+but we do not show them for the sake of simplicity. Process $p_1$ broadcasts $m$
+and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
+meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
+and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
+compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
+and delivers $m'$ before $m$. It violates causal order, for $m$ precedes $m'$.
 
+
+Solving this issue requires three steps. When a process $p$ wants to use a link to
+a process $q$ for causal broadcast,
+\begin{enumerate}[(i)]
+\item it must use the FIFO channels already in use to transmit a message to $q$
+  awaiting for its acknowledgment.
+\item While awaiting for this acknowledgement, $p$ buffers each message it
+  sends.
+\item When $p$ receives the acknowledgment from $q$, it uses the FIFO channel
+  from $p$ to $q$ to send its buffered messages. Afterwards, the channel is
+  ready to be used for causal broadcast.
+\end{enumerate}
 
 \begin{algorithm*}[h]
   \input{./input/algocausalbroadcast.tex}
   \caption{\label{algo:causalbroadcast}Causal broadcast.}
 \end{algorithm*}
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figsolved.tex}
+    \caption{\label{fig:solved}Causal broadcast in dynamic networks.}
+  \end{center}
+\end{figure}
 
 
 %%% Local Variables:
