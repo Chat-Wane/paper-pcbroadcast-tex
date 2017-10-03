@@ -77,6 +77,14 @@ a process $q$ for causal broadcast,
   \end{center}
 \end{figure}
 
+Figure~\ref{fig:solved} shows how our algorithm solves causal order
+violations. Similarly to Figure~\ref{fig:problem}, a FIFO channel links $p_1$ to
+$p_2$; another link $p_2$ to $p_3$; none links $p_1$ to $p_3$. Process $p_1$
+broadcasts $m$. Then $p_1$ wishes to create a link to $p_3$. It sends a message
+to $p_3$ using its FIFO channels. Thus, this message will follow $m$ at
+$p_3$. When $p_3$ acknowledges this message to $p_1$, the later knows that it
+receives at least $m$.
+
 
 %%% Local Variables:
 %%% mode: latex
