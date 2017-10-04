@@ -29,14 +29,14 @@ paths from $p_2$ to $p_3$ that carries $m'$ without having carried $m$
 beforehand. Hence, the delivery of $m$ always precedes the delivery of $m'$ at
 any process.
 
-\begin{theorem}[FIFO-based causal broadcast in static networks]
+\begin{theorem}[\label{theo:static}FIFO-based causal broadcast in static networks]
   \TODO{blablabla.}
 \end{theorem}
 
 \begin{proof} To prove causal ordering, we must show that such broadcast
 provides both FIFO ordering and Local ordering of messages.
 \begin{asparadesc}
-\item [FIFO] Suppose a process $p$ broadcasts $m$ before $m'$. Consider that a
+\item [FIFO:] Suppose a process $p$ broadcasts $m$ before $m'$. Consider that a
   correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$. Process $p$ broadcast message $m$ before broadcasting $m'$ to all its
   neighborhood using FIFO channels. Each neighbor eventually receives and
@@ -45,7 +45,7 @@ provides both FIFO ordering and Local ordering of messages.
   we assume a network without clusters, messages reach all processes. Process
   $q$ eventually receives and delivers $m$ first, then it eventually receives
   and delivers $m'$.
-\item [Local] Suppose a process $p$ delivers $m$ before broadcasting
+\item [Local:] Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
   delivers $m$ before $m'$. Since $p$ delivers $m$ before broadcasting $m'$, it
   forwards $m$ to all its neighbors before broadcasting $m'$ to the same
@@ -53,7 +53,7 @@ provides both FIFO ordering and Local ordering of messages.
   forwardings, and the absence of network clusters, Process $q$ eventually
   receives or already received $m$ when it receives $m'$. Thus, it delivers $m$
   before delivering $m'$.
-\item [Causal] From Theorem~\ref{theo:causal}, since FIFO-based broadcast ensure
+\item [Causal:] From Theorem~\ref{theo:causal}, since FIFO-based broadcast ensure
   both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{asparadesc}
 \end{proof}
@@ -62,9 +62,25 @@ provides both FIFO ordering and Local ordering of messages.
 
 
 \paragraph{Dynamic networks.} Removing a channel does not impair causal ordering
-of messages except if it generates network partitions. \TODO{Theorem.} Adding a
-channel may result in causal ordering violation. \TODO{Theorem.}
+of messages except if it generates network partitions. \TODO{Theorem.}
 
+\begin{theorem}[FIFO-based causal broadcast in network subject to link removals]
+  \TODO{blablabla}
+\end{theorem}
+
+\begin{proof}
+  As long as the removal of links do not partition the network, messages reach
+  all processes. The proof is therefore identical to that of
+  Theorem~\ref{theo:static}.
+\end{proof}
+
+\begin{theorem}[FIFO-based causal broadcast in network subject to link additions]
+\TODO{Adding a channel may result in causal ordering violation.}
+\end{theorem}
+
+\begin{proof}
+  \TODO{example of Figure~\ref{fig:problem}}
+\end{proof}
 
 \begin{figure}
   \begin{center}
@@ -117,6 +133,13 @@ to $p_3$ using its FIFO channels. Thus, this message will follow $m$ at
 $p_3$. When $p_3$ acknowledges this message to $p_1$, the later knows that it
 receives at least $m$.
 
+
+\begin{theorem}[Meow-based]
+  \TODO{meow}
+\end{theorem}
+
+\begin{proof}
+\end{proof}
 
 %%% Local Variables:
 %%% mode: latex
