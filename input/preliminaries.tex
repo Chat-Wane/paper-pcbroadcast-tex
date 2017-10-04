@@ -2,30 +2,58 @@
 \section{Preliminaries}
 \label{sec:preliminaries}
 
-\begin{definition}[Process]
-  is said correct if it does not crash.
+Definitions and theorems come from~\cite{hadzilacos1994modular}.
+
+\begin{definition}[Network]
+  A network $N$ comprises a set of processes $P$ and a set of edges
+  $E: P \times P$. Processes are faulty if they crash, otherwise they are
+  correct. The set of correct processes is $C$.
 \end{definition}
 
-\begin{definition}[Broadcast]
-  
+\begin{definition}[Happens before]
 \end{definition}
 
 \begin{definition}[Uniform reliable broadcast]
+  A process $p$ broadcasts a message $m$ to all processes of the network:
+  $b_p(m)$. URB guarantees 3 properties:
 
-\begin{asparadesc}
-\item [Validity:] If a correct process broadcasts $m$, then it eventually delivers $m$.
-\item [Uniform Agreement:] If a process -- correct or not -- delivers $m$, then
-  all correct processes eventually deliver $m$.
-\item [Uniform Integrity:] $m$ is delivered by a process at most once, and only
-  if it was previously broadcast.
+  \begin{asparadesc}
+  \item [Validity:] If a correct process broadcasts a message, then it eventually
+    delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$.
+  \item [Uniform Agreement:] If a process -- correct or not -- delivers a message,
+    then all correct processes eventually deliver it:\\
+    $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$.
+  \item [Uniform Integrity:] A process delivers a message at most once, and
+    only if it was previously broadcast:\\
+    $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m)
+    \implies \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
 \end{asparadesc}
 
 \end{definition}
 
 
-\begin{definition}[Causal delivery]
-  
+\begin{definition}[FIFO order]
+  If a process broadcasts two messages, processes deliver the first before the
+  second:\\
+  $\forall p,\,q \in P,\,$\\$b_p(m) \rightarrow b_p(m') \implies d_q(m) \rightarrow
+  d_q(m')$.
 \end{definition}
+
+\begin{definition}[Local order]
+  If a process broadcasts a message after having delivered another message
+  broadcast by another process, processes deliver the later before the former:\\
+  $\forall p,\,q,\,r,\, \in P,\,p\neq q,\,$\\$b_p(m) \wedge d_q(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+\end{definition}
+
+\begin{definition}[Causal order]
+  The delivery order of messages follows the happen before relationships of the
+  corresponding broadcasts:\\ $\forall
+  p,\,q,\,r \in P,\,$\\$b_p(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+\end{definition}
+
+\begin{theorem}[Causal order equivalence]
+  The intersection of FIFO order and Local order is equivalent to causal order.
+\end{theorem}
 
 \begin{figure}
   \begin{center}
