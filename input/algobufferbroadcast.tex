@@ -24,7 +24,7 @@
 }
 
 \begin{algorithmic}[1]
-
+\small
   \initially
   \State $p$ \hfill \comment{This process identity}
   \State $P$
@@ -37,7 +37,7 @@
   \Function{open} {$q$}
   \If{$q \in B \wedge  |P|-|B|>1$}
   \State $B[q] \leftarrow \varnothing$
-  \State $\textsc{sendTo}(p,\, q)$
+  \State $\textsc{sendLocked}(p,\, q)$
   \EndIf
   \EndFunction
   
@@ -55,7 +55,7 @@
   \hfill \comment{$b_p(m)$}
   \State \LINEFOR{\textbf{each} $q \in B$}
   {$B[q] \leftarrow B[q] \cup m$}
-  \hfill{Buffering}%% for members of $B$}
+  \hfill \comment{Buffering}%% for members of $B$}
   \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
   {$\textsc{sendTo}(q,\, m)$}
   \EndFunction
@@ -72,38 +72,28 @@
   \Statex
 
   \Function{receive} {$m$}
-
   \If {$\neg \textsc{alreadyReceived}(m)$}
-
-  \State \textbf{let} $\langle type,\, payload \rangle \leftarrow m$
-  
-  \If {$type = ``locked"$}
-  \State \textbf{let} $\langle from,\, to \rangle \leftarrow payload$
-  \State \LINEIFTHEN {$p = to$} 
-  {$\textsc{sendTo}(from,\, \langle ``unlock",\, to \rangle)$}
-  \hfill \comment{Notify the sender that we received the message}
-  \State \LINEIFTHEN {$p \neq to$} {$\textsc{broadcast}(payload,\, type)$}
-  \hfill \comment{Or forward it as a regular broadcast message}
+  \State $\textsc{forward}(m)$
+  \State $\textsc{deliver}(m)$ \hfill \comment{$d_p(m)$}
   \EndIf
+  \EndFunction
+
+  \Statex
+
+  \Function{receiveLocked}{$from, \, to$} \hfill \comment{$to=p$}  
+  \State $\textsc{sendAck}(from,\, to)$
+  \EndFunction
   
-  \If {$type = ``unlock"$}
-  \State \textbf{let} $to \leftarrow payload$
-  \If {$to \in B$}
-  \hfill \comment{Got notified, the channel to $to$ is now safe}
+  \Statex
+
+  \Function{receiveAck}{$from,\, to$} \hfill \comment{$from=p$}
+  \If {$to \in B$} \hfill \comment{Channel becomes safe}
   \State \LINEFOR {\textbf{each} $b \in B[to]$}
   {$\textsc{sendTo}(to,\, b)$}
-  \hfill \comment{Send all buffered message through this channel}
+%%  \hfill \comment{Send all buffered message through this channel}
   \State $B \leftarrow B \setminus to$
-  \hfill \comment{And start using it as a regular channel}
+%%  \hfill \comment{And start using it as a regular channel}
   \EndIf
-  \EndIf
-  
-  \If {$type = ``regular"$} \hfill \comment{Classic forwarding of broadcast messages}
-  \State $\textsc{forward}(payload)$
-  \State $\textsc{deliver}(payload)$ \hfill \comment{$d_p(m)$}
-  \EndIf
-  \EndIf
-
   \EndFunction
 
 \end{algorithmic}
