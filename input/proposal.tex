@@ -7,6 +7,40 @@ broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
 relies on scalable peer-sampling protocols that must not create network partitions
 (e.g. \SPRAY~\cite{nedelec2017adaptive}, or \CYCLON~\cite{voulgaris2005cyclon}).
 
+Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
+is sufficient to provide causal delivery of messages. This result holds if the
+network is static or links are removed only. It does not hold if links are added
+to the network. Section~\ref{subsec:bufferbroadcast} provides a simple algorithm
+that solves this issue. It allows processes to use a causal broadcast which
+alleviates applications of the burden of tracking causal relationships.
+
+\subsection{FIFO-based causal broadcast}
+\label{subsec:fifobroadcast}
+
+\begin{definition}[FIFO communication channel]
+  
+\end{definition}
+
+\TODO{Describe.}
+
+\begin{algorithm}[h]
+  \input{./input/algofifobroadcast.tex}
+  \caption{\label{algo:fifobroadcast}FIFO-based causal broadcast.}
+\end{algorithm}
+
+Algorithm~\ref{algo:fifobroadcast} shows the instructions of the causal
+broadcast mechanism built using FIFO channels. Functions $/textsc{broadcast}$
+and $\textsc{forward}$ are distinct although holding the same instructions to
+highlight that only 1 process broadcasts while all other processes
+forward. Function $\textsc{receive}$ makes sure that each process forwards each
+message exactly once. \TODO{Function alreadyReceived}.
+
+
+\begin{definition}[Static network]
+  A network comprising an unmutable set of edges and an unmutable set of
+  processes.
+\end{definition}
+
 \paragraph{Static networks.} A network is a set of processes linked by a set of
 channels. In a static network, processes cannot fail nor leave, and links cannot
 be created nor removed. In this context, FIFO channels are sufficient to provide
@@ -100,6 +134,8 @@ and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
 compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
 and delivers $m'$ before $m$. It violates causal order, for $m$ precedes $m'$.
 
+\subsection{FIFO-based causal broadcast+}
+\label{subsec:bufferbroadcast}
 
 Solving this issue requires three steps. When a process $p$ wants to use a link to
 a process $q$ for causal broadcast,
@@ -114,8 +150,8 @@ a process $q$ for causal broadcast,
 \end{enumerate}
 
 \begin{algorithm*}[h]
-  \input{./input/algocausalbroadcast.tex}
-  \caption{\label{algo:causalbroadcast}Causal broadcast.}
+  \input{./input/algobufferbroadcast.tex}
+  \caption{\label{algo:bufferbroadcast}Causal broadcast.}
 \end{algorithm*}
 
 \begin{figure}
