@@ -70,6 +70,10 @@ before $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
 violating the condition stating that the delivery of $m$ should precede the
 delivery $m'$.
 
+\begin{definition}[Causal broadcast]
+  Causal broadcast is a uniform reliable broadcast ensuring causal order.
+\end{definition}
+
 Multiple approaches exist to enforce causal order by either piggybacking control
 information in each message, or constraining the network topology. In this
 paper, we introduce a causal broadcast protocol freed from both these
