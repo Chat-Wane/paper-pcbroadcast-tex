@@ -26,27 +26,24 @@
 \begin{algorithmic}[1]
 
   \initially
-  \State $p$ \hfill \comment{This peer identity}
+  \State $p$ \hfill \comment{This process identity}
   \State $P$
-  \hfill \comment{Partial view of the network, ie, a set of FIFO communication channels}
+  \hfill \comment{$p$'s neighborhood, FIFO channels}
   \State $B \leftarrow \varnothing$ 
   \hfill \comment{Buffers of messages}
   \endInitially
   
   \event
-  \Function{onChannelOpen} {$i$, $q$}
-  \hfill \comment{$i$: the initiator, $q$: the channel}
-  \If{$(i\neq p) \wedge |P|-|B|>1$}
-  \hfill \comment{The channel is temporarily unsafe, for it may create ``shortcuts''}  
+  \Function{open} {$q$}
+  \If{$q \in B \wedge  |P|-|B|>1$}
   \State $B[q] \leftarrow \varnothing$
-  \State $\textsc{broadcast}(\langle p,\, q\rangle,\, ``locked")$
-  \hfill \comment{Broadcast a ``locked'' message waiting $q$'s acknowledgment}
+  \State $\textsc{sendTo}(p,\, q)$
   \EndIf
   \EndFunction
   
   \Statex
 
-  \Function{onChannelClose} {$q$} \hfill \comment{$q$: the channel that closed}
+  \Function{close} {$q$}
   \State $B \leftarrow B \setminus q$
   \EndFunction
 
@@ -54,23 +51,31 @@
 
   \dissemination
 
-  \Function{broadcast} {$payload$, $type$ [$\leftarrow``regular"$]} 
+  \Function{broadcast} {$m$}
+  \hfill \comment{$b_p(m)$}
   \State \LINEFOR{\textbf{each} $q \in B$}
-  {$B[q] \leftarrow B[q] \cup \langle type,\, payload\rangle$}
-  \hfill{Buffer the message to send it later to peers in $B$}
+  {$B[q] \leftarrow B[q] \cup m$}
+  \hfill{Buffering}%% for members of $B$}
   \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
-  {$\textsc{sendTo}(q,\, \langle type,\, payload \rangle)$}
-  \hfill{Broadcast the message to neighbors}
+  {$\textsc{sendTo}(q,\, m)$}
+  \EndFunction
+
+  \Statex
+  
+  \Function{forward} {$m$}
+  \State \LINEFOR{\textbf{each} $q \in B$}
+  {$B[q] \leftarrow B[q] \cup m$}
+  \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
+  {$\textsc{sendTo}(q,\, m)$}
   \EndFunction
 
   \Statex
 
-  \Function{receive} {$message$}
+  \Function{receive} {$m$}
 
-  \If {$\neg \textsc{alreadyReceived}(message)$}
-  \hfill \comment{Check each message only once}
+  \If {$\neg \textsc{alreadyReceived}(m)$}
 
-  \State \textbf{let} $\langle type,\, payload \rangle \leftarrow message$
+  \State \textbf{let} $\langle type,\, payload \rangle \leftarrow m$
   
   \If {$type = ``locked"$}
   \State \textbf{let} $\langle from,\, to \rangle \leftarrow payload$
@@ -94,8 +99,8 @@
   \EndIf
   
   \If {$type = ``regular"$} \hfill \comment{Classic forwarding of broadcast messages}
-  \State $\textsc{deliver}(payload)$
-  \State $\textsc{broadcast}(payload)$
+  \State $\textsc{forward}(payload)$
+  \State $\textsc{deliver}(payload)$ \hfill \comment{$d_p(m)$}
   \EndIf
   \EndIf
 

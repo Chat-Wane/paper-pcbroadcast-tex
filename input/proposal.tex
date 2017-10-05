@@ -4,8 +4,9 @@
 
 We propose an approach guaranteeing causal order to uniform reliable
 broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
-relies on scalable peer-sampling protocols that must not create network partitions
-(e.g. \SPRAY~\cite{nedelec2017adaptive}, or \CYCLON~\cite{voulgaris2005cyclon}).
+relies on scalable peer-sampling protocols that must not create network
+partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
+\CYCLON~\cite{voulgaris2005cyclon}).
 
 Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
 is sufficient to provide causal delivery of messages. This result holds if the
@@ -75,7 +76,7 @@ that this feature is achievable without overhead in terms of message size.
   forwardings, and the absence of network clusters, Process $q$ already received
   or eventually receives $m$ when it receives $m'$. Thus, it delivers $m$ before
   delivering $m'$. \\
-  \textbf{Causal:} From Theorem~\ref{theo:causal}, since FIFO-based broadcast ensure
+  \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
   both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{proof}
 
@@ -131,9 +132,10 @@ precedes the delivery of $m'$ at any process.
   % Theorem~\ref{theo:static}.
 \end{proof}
 
-\begin{theorem}[FBC-broadcast in dynamic network subject to link additions is
+\begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to link additions is
   not causal]
-  Using FBC-broadcast, adding links to the network may violate causal order.
+  Using FBC-broadcast, adding links to the network may lead to causal order
+  violations.
 \end{theorem}
 
 \begin{figure}
@@ -177,10 +179,26 @@ process $q$ for causal broadcast,
   ready to be used for causal broadcast.
 \end{enumerate}
 
-\begin{algorithm*}[h]
+\begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
   \caption{\label{algo:bufferbroadcast}Causal broadcast.}
-\end{algorithm*}
+\end{algorithm}
+
+
+\begin{theorem}[FBC-broadcast$^+$ is causal]
+  In both static and dynamic networks, FBC-broadcast$^+$ is causal.
+\end{theorem}
+
+\begin{proof}
+  For static and dynamic networks with link removals, the proof is identical to
+  that of Theorems~\ref{theo:static} and~\ref{theo:removals}. For dynamic
+  networks with link additions, we must show that FBC-broadcast$^+$ ensures both
+  FIFO order and Local order. \\
+  \textbf{FIFO:} \TODO{meow} \\
+  \textbf{Local:} \TODO{miaw} \\
+  \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
+  ensures both FIFO ordering and Local ordering, it ensures Causal ordering.
+\end{proof}
 
 \begin{figure}
   \begin{center}
@@ -189,21 +207,13 @@ process $q$ for causal broadcast,
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:solved} shows how our algorithm solves causal order
-violations. Similarly to Figure~\ref{fig:problem}, a FIFO channel links $p_1$ to
-$p_2$; another link $p_2$ to $p_3$; none links $p_1$ to $p_3$. Process $p_1$
-broadcasts $m$. Then $p_1$ wishes to create a link to $p_3$. It sends a message
-to $p_3$ using its FIFO channels. Thus, this message will follow $m$ at
-$p_3$. When $p_3$ acknowledges this message to $p_1$, the later knows that it
-receives at least $m$.
-
-
-\begin{theorem}[Meow-based]
-  \TODO{meow}
-\end{theorem}
-
-\begin{proof}
-\end{proof}
+\paragraph{Example.} Figure~\ref{fig:solved} shows how our algorithm solves
+causal order violations. Similarly to Figure~\ref{fig:problem}, a FIFO channel
+links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links $p_1$ to
+$p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link to
+$p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, this message
+will follow $m$ at $p_3$. When $p_3$ acknowledges this message to $p_1$, the
+later knows that it receives at least $m$. \TODO{Not done.}
 
 %%% Local Variables:
 %%% mode: latex
