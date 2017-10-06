@@ -35,7 +35,7 @@
   
   \event
   \Function{open} {$q$}
-  \If{$q \in B \wedge  |P|-|B|>1$}
+  \If{$q \not\in B \wedge  |P|-|B|>1$}
   \State $B[q] \leftarrow \varnothing$
   \State $\textsc{sendLocked}(p,\, q)$
   \EndIf

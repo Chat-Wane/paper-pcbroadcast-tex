@@ -181,9 +181,26 @@ process $q$ for causal broadcast,
 
 \begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
-  \caption{\label{algo:bufferbroadcast}Causal broadcast.}
+  \caption{\label{algo:bufferbroadcast}FBC-broadcast$^+$.}
 \end{algorithm}
 
+
+Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
+FIFO-based causal broadcast. Similarly to Algorithm~\ref{algo:fifobroadcast},
+each process has a set of neighbors to communicate with via FIFO
+channels. Messages transitively reach all processes using forwarding. Processes
+deliver and forward each message exactly once.  
+
+Compared to Algorithm~\ref{algo:fifobroadcast}, it adds a structure associating
+each opening channel with a buffer of messages. When Process $p$ gets notified
+that another FIFO channel to Process $q$ is available, it associates this
+channel with an empty buffer of messages. It also sends a \emph{locked} message
+to $q$. We leave aside the implementation of this send function (e.g. broadcast
+or routing), but it must use the FIFO channels already in use.  Process $p$ does
+not use the new links until Process $q$ confirmed the receipt of the locked
+message. Acknowledgements do not have to travel through FIFO channels.  Once it
+receives the acknowledgment, $p$ empties the buffer of messages to $q$ and start
+using the channel normally.
 
 \begin{theorem}[FBC-broadcast$^+$ is causal]
   In both static and dynamic networks, FBC-broadcast$^+$ is causal.
@@ -191,8 +208,9 @@ process $q$ for causal broadcast,
 
 \begin{proof}
   For static and dynamic networks with link removals, the proof is identical to
-  that of Theorems~\ref{theo:static} and~\ref{theo:removals}. For dynamic
-  networks with link additions, we must show that FBC-broadcast$^+$ ensures both
+  that of Theorems~\ref{theo:static} and~\ref{theo:removals}, for the buffers do
+  not activate in such instances. For dynamic networks with link additions, we
+  must show that FBC-broadcast$^+$ ensures both
   FIFO order and Local order. \\
   \textbf{FIFO:} \TODO{meow} \\
   \textbf{Local:} \TODO{miaw} \\
@@ -203,11 +221,12 @@ process $q$ for causal broadcast,
 \begin{figure}
   \begin{center}
     \input{./input/figsolved.tex}
-    \caption{\label{fig:solved}Causal broadcast in dynamic networks.}
+    \caption{\label{fig:solved}Causal broadcast in dynamic networks. \TODO{not
+        done yet.}}
   \end{center}
 \end{figure}
 
-\paragraph{Example.} Figure~\ref{fig:solved} shows how our algorithm solves
+\paragraph{\emph{Example.}} Figure~\ref{fig:solved} shows how our algorithm solves
 causal order violations. Similarly to Figure~\ref{fig:problem}, a FIFO channel
 links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links $p_1$ to
 $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link to
