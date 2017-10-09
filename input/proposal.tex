@@ -167,11 +167,18 @@ only uses local knowledge.
 \subsection{FIFO-based causal broadcast+}
 \label{subsec:bufferbroadcast}
 
-Analysing the issue with link additions, we see that new links can act as a
-shortcut for messages. This creates gaps in the causal delivery, i.e., messages
+Analyzing the issue with link additions, we see that new links can act as
+shortcut for messages. This may create gaps in causal delivery, i.e., messages
 that should be delivered are still missing.  FIFO-based causal broadcast$^+$
-aims to ensure that these gaps are filled consistently. The idea is to use
-already established broadcasting network.
+aims to ensure that additionnal links never create gaps. The idea is to employ
+already working FIFO channels to know which messages arrived, at marginal
+cost. For instance, assuming that at Process p $d_p(m) \rightarrow d_p(m')$ and
+$d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
+and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
+subsequent message is now safe to travel through the newly added link.
+
+Knowing that at least Message $m$ arrived allows the process to send
+depending messages $m'$, $m''$ 
 
 
 Solving the issue requires 3 steps. When a process $p$ wants to use a link to a
@@ -205,7 +212,7 @@ channel with an empty buffer of messages. It also sends a \emph{locked} message
 to $q$. We leave aside the implementation of this send function (e.g. broadcast
 or routing), but it must use the FIFO channels already in use.  Process $p$ does
 not use the new links until Process $q$ confirmed the receipt of the locked
-message. Acknowledgements do not have to travel through FIFO channels.  Once it
+message. Acknowledgments do not have to travel through FIFO channels.  Once it
 receives the acknowledgment, $p$ empties the buffer of messages to $q$ and start
 using the channel normally.
 
