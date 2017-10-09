@@ -27,7 +27,7 @@
 \small
   \initially
   \State $p$ \hfill \comment{This process identity}
-  \State $P$
+  \State $Q$
   \hfill \comment{$p$'s neighborhood, FIFO channels}
   \State $B \leftarrow \varnothing$ 
   \hfill \comment{Buffers of messages}
@@ -35,7 +35,7 @@
   
   \event
   \Function{open} {$q$}
-  \If{$q \not\in B \wedge  |P|-|B|>1$}
+  \If{$q \not\in B \wedge  |Q|-|B|>1$}
   \State $B[q] \leftarrow \varnothing$
   \State $\textsc{sendLocked}(p,\, q)$
   \EndIf
@@ -56,7 +56,7 @@
   \State \LINEFOR{\textbf{each} $q \in B$}
   {$B[q] \leftarrow B[q] \cup m$}
   \hfill \comment{Buffering}%% for members of $B$}
-  \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
+  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
   {$\textsc{sendTo}(q,\, m)$}
   \EndFunction
 
@@ -65,7 +65,7 @@
   \Function{forward} {$m$}
   \State \LINEFOR{\textbf{each} $q \in B$}
   {$B[q] \leftarrow B[q] \cup m$}
-  \State \LINEFOR{\textbf{each} $q \in P \setminus B$} 
+  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
   {$\textsc{sendTo}(q,\, m)$}
   \EndFunction
 
