@@ -167,6 +167,13 @@ only uses local knowledge.
 \subsection{FIFO-based causal broadcast+}
 \label{subsec:bufferbroadcast}
 
+Analysing the issue with link additions, we see that new links can act as a
+shortcut for messages. This creates gaps in the causal delivery, i.e., messages
+that should be delivered are still missing.  FIFO-based causal broadcast$^+$
+aims to ensure that these gaps are filled consistently. The idea is to use
+already established broadcasting network.
+
+
 Solving the issue requires 3 steps. When a process $p$ wants to use a link to a
 process $q$ for causal broadcast,
 \begin{enumerate}[(i)]
