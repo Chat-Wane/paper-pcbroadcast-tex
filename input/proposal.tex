@@ -167,21 +167,21 @@ only uses local knowledge.
 \subsection{FIFO-based causal broadcast+}
 \label{subsec:bufferbroadcast}
 
-Analyzing the issue with link additions, we see that new links can act as
-shortcut for messages. This may create gaps in causal delivery, i.e., messages
-that should be delivered are still missing.  FIFO-based causal broadcast$^+$
-aims to ensure that additionnal links never create gaps. The idea is to employ
-already working FIFO channels to know which messages arrived, at marginal
-cost. For instance, assuming that at Process p $d_p(m) \rightarrow d_p(m')$ and
-$d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
-and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
-subsequent message is now safe to travel through the newly added link.
+The issue is that new links can act as shortcut for messages. This may create
+gaps in causal delivery, i.e., messages that should be delivered are still
+missing.  FIFO-based causal broadcast$^+$ aims to ensure that additionnal links
+never create gaps. The idea is to employ already working FIFO channels to know
+which messages arrived, at marginal cost. For instance, assuming that we have
+$d_p(m) \rightarrow d_p(m')$ and $d_p(m') \rightarrow d_p(m'')$, if Process $p$
+knows that Process $q$ received and delivered at least $m$, it can send $m'$
+then $m''$ to Process $q$. Any subsequent message from $p$ becomes safe to
+travel through the newly added link.
 
-Knowing that at least Message $m$ arrived allows the process to send
-depending messages $m'$, $m''$ 
+%%Knowing that at least Message $m$ arrived allows the process to send
+%%depending messages $m'$, $m''$ 
 
 
-Solving the issue requires 3 steps. When a process $p$ wants to use a link to a
+Solving this issue requires 3 steps. When a process $p$ wants to use a link to a
 process $q$ for causal broadcast,
 \begin{enumerate}[(i)]
 \item it must use the FIFO channels already in use to transmit a message to $q$
