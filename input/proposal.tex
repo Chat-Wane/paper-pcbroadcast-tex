@@ -217,7 +217,8 @@ receives the acknowledgment, $p$ empties the buffer of messages to $q$ and start
 using the channel normally.
 
 \begin{theorem}[FBC-broadcast$^+$ is causal]
-  In both static and dynamic networks, FBC-broadcast$^+$ is causal.
+  As long as the network is not partitioned, FBC-broadcast$^+$ is causal in both
+  static and dynamic networks.
 \end{theorem}
 
 \begin{proof}
@@ -253,7 +254,7 @@ later knows that it receives at least $m$. \TODO{Not done.}
   \begin{center}
     \input{./input/figbuffer.tex}
     \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
-      link addition. $m''$ cannot precede $m'$.}
+      link addition. $m''$ cannot precede $m'$. \TODO{Not done.}}
   \end{center}
 \end{figure}
 

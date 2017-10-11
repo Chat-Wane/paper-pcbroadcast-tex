@@ -15,8 +15,11 @@
   \draw[->](0.5*\X, 0pt)node[anchor=south]{$b(m)$}--(2*\X, -1*\Y);
   \draw(1.15*\X, 2pt)--node[anchor=south]{$d(m)$}(1.15*\X, -2pt);
   \draw[->, dashed](1.75*\X, 0*\Y) -- (3*\X, -1*\Y);
+  \draw(2.25*\X, 2 -1*\Y)--node[anchor=south]{$d(m)$}(2.25*\X, -2 - 1*\Y);
 
   \draw[->](2*\X, -1*\Y)--(2.5*\X, -2*\Y); %% p2 -> m -> p3
+  \draw(2.75*\X, 2 -2*\Y)--node[anchor=south]{$d(m)$}(2.75*\X, -2 - 2*\Y);
+
   \draw[->, dashed](3*\X, -1*\Y)--(3.5*\X, -2*\Y); %% p2 -> l -> p3
 
   \draw[fill=white](4*\X, 0pt) circle(2pt);
@@ -38,8 +41,12 @@
 
 
   \draw[->](4.25*\X, 0pt)node[anchor=south]{$b(m')$} -- (4.5*\X, -2*\Y);
+  \draw(5.25*\X, 2pt)--node[anchor=south]{$d(m')$}(5.25*\X, -2pt);
+  \draw(5*\X, 2 - 2*\Y)--node[anchor=south]{$d(m')$}(5*\X, -2 - 2 *\Y);
   \draw[->](4.25*\X, 0pt) -- (5.75*\X, -1*\Y); %% p1 -> m' -> p2
-  \draw[->](5.75*\X, -1*\Y) -- (6.25*\X, -2*\Y); %% p2 -> m' -> p3
+  \draw(6.25*\X, 2 - 1*\Y)--node[anchor=south]{$d(m')$}(6.25*\X, -2 - 1 *\Y);
+  \draw[->](5.75*\X, -1*\Y) -- (6.25*\X, -2*\Y); %% p2 -> m' -> p
+
 
   % \draw[->](2.5*\X, 0pt)node[anchor=south]{$b(m')$} -- (2.75*\X, -2*\Y);
   % \draw(3.5*\X, -2pt )--node[anchor=south]{$d(m')$}(3.5*\X, 2pt);
