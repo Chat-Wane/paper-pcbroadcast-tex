@@ -169,7 +169,7 @@ only uses local knowledge.
 
 The issue is that new links can act as shortcut for messages. This may create
 gaps in causal delivery, i.e., messages that should be delivered are still
-missing.  FIFO-based causal broadcast$^+$ aims to ensure that additionnal links
+missing.  FIFO-based causal broadcast$^+$ aims to ensure that additional links
 never create gaps. The idea is to employ already working FIFO channels to know
 which messages arrived, at marginal cost. For instance, assuming that we have
 $d_p(m) \rightarrow d_p(m')$ and $d_p(m') \rightarrow d_p(m'')$, if Process $p$
@@ -235,8 +235,8 @@ using the channel normally.
 \begin{figure}
   \begin{center}
     \input{./input/figsolved.tex}
-    \caption{\label{fig:solved}Causal broadcast in dynamic networks. \TODO{not
-        done yet.}}
+    \caption{\label{fig:solved}FBC-broadcast$^+$ in dynamic networks. $m'$
+      cannot precede $m$.}
   \end{center}
 \end{figure}
 
@@ -247,6 +247,17 @@ $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link to
 $p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, this message
 will follow $m$ at $p_3$. When $p_3$ acknowledges this message to $p_1$, the
 later knows that it receives at least $m$. \TODO{Not done.}
+
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figbuffer.tex}
+    \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
+      link addition. $m''$ cannot precede $m'$.}
+  \end{center}
+\end{figure}
+
+\paragraph{Complexity.} \TODO{Talk about the buffer size.}
 
 %%% Local Variables:
 %%% mode: latex
