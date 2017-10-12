@@ -2,37 +2,37 @@
 \begin{tikzpicture}[scale=1]
   \newcommand\X{210/7pt};
   \newcommand\Y{30pt};
-
+  
   \draw[->](0pt,   0pt)--(7*\X,   0pt);
   \draw[->](0pt, -1*\Y)--(7*\X, -1*\Y);
   \draw[->](0pt, -2*\Y)--(7*\X, -2*\Y);
- 
+  
   \draw[fill=black](0pt, 0pt) node[anchor=east]{$p_1$}circle(2pt);
   \draw[fill=black](0pt, -1*\Y) node[anchor=east]{$p_2$}circle(2pt);
   \draw[fill=black](0pt, -2*\Y) node[anchor=east]{$p_3$}circle(2pt);
-
+  
   
   \draw[->](0.5*\X, 0pt)node[anchor=south]{$b(m)$}--(2*\X, -1*\Y);
   \draw(1.15*\X, 2pt)--node[anchor=south]{$d(m)$}(1.15*\X, -2pt);
   \draw[->, dashed](1.75*\X, 0*\Y) -- (3*\X, -1*\Y);
   \draw(2.25*\X, 2 -1*\Y)--node[anchor=south]{$d(m)$}(2.25*\X, -2 - 1*\Y);
-
+  
   \draw[->](2*\X, -1*\Y)--(2.5*\X, -2*\Y); %% p2 -> m -> p3
   \draw(2.75*\X, 2 -2*\Y)--node[anchor=south]{$d(m)$}(2.75*\X, -2 - 2*\Y);
-
+  
   \draw[->, dashed](3*\X, -1*\Y)--(3.5*\X, -2*\Y); %% p2 -> l -> p3
-
+  
   \draw[fill=white](4*\X, 0pt) circle(2pt);
   \draw[fill=white](4*\X, -2*\Y) circle(2pt);
   \draw[->, dashed](4*\X, 0pt) -- (4*\X, -2.5*\Y)
   node[anchor=north]{$p_1$ to $p_3$ safe};
-
+  
   \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -2*\Y)--(4*\X, 0); %% p3 -> a -> p1
   
-%%  \draw(3.25*\X, -2-1*\Y )--node[anchor=south]{$d(m)$}(3.25*\X, 2-1*\Y);
-
-%%  \draw[->](3*\X, -1*\Y)--(5*\X, -2*\Y);
-%%  \draw(5.25*\X, -2-2*\Y )--node[anchor=north]{$d(m)$}(5.25*\X, 2-2*\Y);
+  %% \draw(3.25*\X, -2-1*\Y )--node[anchor=south]{$d(m)$}(3.25*\X, 2-1*\Y);
+  
+  %% \draw[->](3*\X, -1*\Y)--(5*\X, -2*\Y);
+  %% \draw(5.25*\X, -2-2*\Y )--node[anchor=north]{$d(m)$}(5.25*\X, 2-2*\Y);
 
   \draw[fill=white](1.5*\X, 0pt) circle(2pt);
   \draw[fill=white](1.5*\X, -2*\Y) circle(2pt);
