@@ -8,12 +8,24 @@ relies on scalable peer-sampling protocols that must not create network
 partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
 \CYCLON~\cite{voulgaris2005cyclon}).
 
+\TODO{If ok with model section, change this paragraph a bit.}
 Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
 is sufficient to provide causal delivery of messages. This result holds if the
 network is static or links are removed only. It does not hold if links are added
 to the network. Section~\ref{subsec:bufferbroadcast} provides a simple algorithm
 that solves this issue. It allows processes to use a causal broadcast which
 alleviates applications of the burden of tracking causal relationships.
+
+\subsection{2-processes equivalent model}
+
+\begin{figure}
+  \begin{center}
+    \input{./input/fig2eqmodel.tex}
+    \caption{\label{fig:2eqmodel}2-processes equivalent of a broadcast from any
+      process to any other.}
+    \end{center}
+\end{figure}
+
 
 \subsection{FIFO-based causal broadcast}
 \label{subsec:fifobroadcast}

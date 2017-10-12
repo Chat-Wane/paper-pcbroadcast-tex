@@ -1,0 +1,12 @@
+
+\begin{tikzpicture}[scale=1]
+
+  \newcommand\X{100pt}
+  \newcommand\Y{35pt}
+  
+  \draw[fill=white] (0*\X, 0*\Y) node{$p_1$} +(-10pt,-10pt) rectangle +(10pt,10pt);
+  \draw[fill=white] (1*\X, 0*\Y) node{$p_2$} +(-10pt,-10pt) rectangle +(10pt,10pt);
+  
+  \draw[->](10pt, 10pt) to[out=25, in=180-25] ( -10+ 1*\X, 10pt);
+
+\end{tikzpicture}
