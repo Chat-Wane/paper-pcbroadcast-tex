@@ -1,0 +1,42 @@
+
+\begin{tikzpicture}[scale=1]
+  \newcommand\X{210/6pt};
+  \newcommand\Y{30pt};
+
+  \draw[->](0pt,   0pt)--(6*\X,   0pt);
+  \draw[->](0pt, -1*\Y)--(6*\X, -1*\Y);
+%%  \draw[->](0pt, -2*\Y)--(6*\X, -2*\Y);
+ 
+  \draw[fill=black](0pt, 0pt) node[anchor=east]{$p_1$}circle(2pt);
+  \draw[fill=black](0pt, -1*\Y) node[anchor=east]{$p_2$}circle(2pt);
+%  \draw[fill=black](0pt, -2*\Y) node[anchor=east]{$p_3$}circle(2pt);
+
+
+  \draw[->, densely dotted](0.5*\X, 0pt)node[anchor=south]{$b(m)$}--(5*\X, -1*\Y);
+  \draw(1.25*\X, 2pt)--node[anchor=south]{$d(m)$}(1.25*\X, -2pt);
+  \draw(3.25*\X, -2-1*\Y )--node[anchor=north]{$d(m')$}(3.25*\X, 2-1*\Y);
+
+%  \draw[->](3*\X, -1*\Y)--(5*\X, -2*\Y);
+%%  \draw(5.25*\X, -2-2*\Y )--node[anchor=north]{$d(m)$}(5.25*\X, 2-2*\Y);
+
+  \draw[fill=white](1.75*\X, 0pt) circle(2pt);
+  \draw[fill=white](1.75*\X, -1*\Y) circle(2pt);
+
+  \draw[->, dashed](1.75*\X, 0pt) -- (1.75*\X, -1.5*\Y)
+  node[anchor=north]{adding channel from $p_1$ to $p_2$};
+
+  \draw[->](2.5*\X, 0pt)node[anchor=south]{$b(m')$} -- (2.75*\X, -1*\Y);
+  \draw(3.5*\X, -2pt )--node[anchor=south]{$d(m')$}(3.5*\X, 2pt);
+  \draw[densely dotted](2.5*\X, 0pt) -- (6*\X, -0.75*\Y);
+%%  \draw(3.25*\X, -2-2*\Y )--node[anchor=north]{$d(m')$}(3.25*\X, 2-2*\Y);
+  \draw(5.25*\X, -2-1*\Y )--node[anchor=north]{$d(m)$}(5.25*\X, 2-1*\Y);
+
+
+  \draw[decorate,decoration={brace,amplitude=6pt,mirror,raise=4pt}] (3.25*\X,
+  -1.5*\Y) -- node[anchor=north, yshift=-10pt]{\small causal order violation}
+  (5.25*\X, -1.5*\Y);
+
+%%  \draw(5*\X, -1*\Y)--(6*\X, -1.5*\Y);
+
+  
+\end{tikzpicture}
