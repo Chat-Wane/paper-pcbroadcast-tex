@@ -5,13 +5,26 @@
 \TODO{Table comparing the improvement. Local overhead. Number of
   messages. Message overhead.}
 
-\paragraph{Piggybacking messages.} A trivial way to ensure causal ordering of
-messages is to piggyback all causally related messages along with the newly
-broadcast message.
+\paragraph{Piggybacking messages~\cite{birman1987reliable,hadzilacos1993fault}.}
+A trivial way to ensure causal ordering of messages is to piggyback all causally
+related messages since the last broadcast message along with the newly broadcast
+message. Similarly to our approach, these broadcast protocols can deliver
+messages as soon as they arrive.  However, even by piggybacking the identifiers
+of messages instead of messages themselves, the broadcast message size may
+increase quickly depending on the application. In our approach, a similar
+behavior arises during buffering. However, we assume that the time between the
+establishment of a link and its actual usage remains short. For instance, using
+a random peer-sampling protocol in WebRTC such as Spray or Cyclon allows us to
+create a 3-hops protocol for these acknowledgements. In addition, as discussed
+in Section \TODO{meow}, the size of buffers can be trivially
+bounded. \TODO{Maybe discuss all of this in proposal (3-hops protocol).}
 
+\paragraph{Vector clock-based
+  approaches~\cite{fidge1988timestamps,mattern1989virtual}.} A vector clock is a
+vector of monotonically increasing counters.
+$VC(m) < VC(m') \implies m \rightarrow m'$ +compaction.
 
-\paragraph{Vector clock-based approaches.} +compaction.
-\paragraph{Topological constraint-based approaches.}
+\paragraph{Topological constraint-based approaches.} Ring-based. 
 
 \paragraph{Inter-group
   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group
@@ -40,6 +53,12 @@ that the number of duplicates is equal to the number of incoming links. However,
 it does not hold in dynamic networks where additional links are
 established. Finding a sublinear bound for detecting duplicated receipts remains
 an open problem.
+
+
+\paragraph{Push-pull.} Pull is optimally fast. Push phase of push-pull improves
+the startup phase of message dissemination. We only present push but it easily
+can be push-pull.
+
 
 %%% Local Variables:
 %%% mode: latex
