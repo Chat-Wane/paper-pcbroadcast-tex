@@ -92,16 +92,16 @@ that this feature is achievable without overhead in terms of message size.
   $m'$. Process $p$ broadcast message $m$ before broadcasting $m'$ to all its
   neighborhood using FIFO channels. Each neighbor eventually receives and
   delivers $m$ then $m'$. Each neighbor forwards each message exactly once in
-  the order they delivered them to all its neighbors using FIFO channels. Since
-  we assume a network without clusters, messages reach all processes. Process
-  $q$ eventually receives and delivers $m$ first, then it eventually receives
+  the order they delivered (\TODO{received?}) them to all its neighbors using
+  FIFO channels. Since we assume a network without clusters, messages eventually
+  reach all processes. Process $q$ eventually receives and delivers $m$ first,
+  then it eventually receives
   and delivers $m'$. \\
   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
   delivers $m$ before $m'$. Either Process $q$ received $m$ before Process $p$
   or not. In the later case, since broadcast and forward have identical
-  instructions, the proof is identical to FIFO's one. In the former
-  case,
+  instructions, the proof is identical to FIFO's one. In the former case,
   \begin{inparaenum}[(i)]
   \item since processes deliver messages in the order they receive them, and
   \item since Process $q$ already received or broadcast $m$ when Process $p$
@@ -129,7 +129,7 @@ that this feature is achievable without overhead in terms of message size.
   \end{center}
 \end{figure}
 
-\paragraph{\emph{Example.}}Figure~\ref{fig:static} shows FBC-broadcast solves
+\paragraph{\emph{Example.}} Figure~\ref{fig:static} shows FBC-broadcast solves
 the causal order violation from Figure~\ref{fig:generalproblem} by using FIFO
 channels.  The figure shows a static network comprising 3 processes $p_1$,
 $p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
@@ -172,8 +172,8 @@ precedes the delivery of $m'$ at any process.
   % Theorem~\ref{theo:static}.
 \end{proof}
 
-\begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to link additions is
-  not causal]
+\begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to
+  link additions is not causal]
   Using FBC-broadcast, adding links to the network may lead to causal order
   violations.
 \end{theorem}
@@ -233,7 +233,7 @@ Solving this issue requires 3 steps. When a process $p$ wants to use a link to a
 process $q$ for causal broadcast,
 \begin{enumerate}[(i)]
 \item it must use the FIFO channels already in use to transmit a message to $q$
-  awaiting for its acknowledgment.
+  and wait for its acknowledgment.
 \item While awaiting for this acknowledgment, $p$ buffers each message it
   sends.
 \item When $p$ receives the acknowledgment from $q$, it uses the FIFO channel
@@ -271,21 +271,51 @@ using the channel normally.
 
 \begin{proof}
   For static and dynamic networks with link removals, the proof is identical to
-  that of Theorems~\ref{theo:static} and~\ref{theo:removals}, for the buffers do
-  not activate in such instances. For dynamic networks with link additions, we
-  must show that FBC-broadcast$^+$ ensures both
+  those of Theorems~\ref{theo:static} and~\ref{theo:removals}, for the buffers
+  do not activate in such instances. For dynamic networks with link additions,
+  we must show that FBC-broadcast$^+$ ensures both
   FIFO order and Local order. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
-  $m'$. If Process $p$ broadcasts $m$ before the link addition, Process $p$
-  either broadcast $m'$ during buffer phase or after acknowledgment. In the
-  former case, since the receipt of $m$ precedes the creation of the
-  acknowledgement, when $p$ 
+  $m'$.  Since adding a FIFO link from a Process $r$ to any other Process $s$ is
+  like adding potential FIFO paths from $p$ to $q$, we summarize this as a link
+  from $p$ to $q$ with arbitrary settings but still FIFO.  \TODO{Should this be
+    a proof?  Maybe a proof of equivalent model if kept}.
 
-  \TODO{meow} \\
+  If Process $p$ broadcasts $m$ before the link addition, Process $p$ either
+  broadcasts $m'$ during buffering phase or after acknowledgment: 
+  \begin{itemize}
+  \item In the former case, since the receipt of $m$ precedes the creation of the
+    acknowledgement, when $p$ receives the acknowledgement, it empties the buffer
+    containing $m'$ to $q$. Hence, from any path, Process $q$ receives and
+    delivers $m$ before $m'$.
+  \item In the later case, the acknowledgement confirms that $q$ received
+    $m$. Afterwards, when $p$ broadcasts $m'$ it travels, among others, the newly
+    created link, and eventually arrives to $q$.
+  \end{itemize}
+
+  If Process $p$ broadcasts $m$ during buffering phase, Process $p$ either
+  broadcasts $m'$ during buffering phase or after acknowledgement.
+  \begin{itemize}
+  \item In the former case, $p$ puts $m$ in the buffer before $m'$. When $q$
+    receives $m'$, either it already received $m$ from another FIFO channel or
+    it already received $m$ from the emptied buffer that contained $m$ before
+    $m'$.
+  \item In the later case, When $q$ receives $m'$, either it received $m$ from
+    FIFO channel or the buffer that empties after acknowledgment.
+  \end{itemize}
+
+  If Process $p$ broadcasts $m$ after acknowledgement, Process $p$ broadcasts
+  $m'$ after acknowledgement. It corresponds to the static network (see proof of
+  Theorem~\ref{theo:static}).
+  In any case, process $q$ delivers $m$ before $m'$. \\
   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-  delivers $m$ before $m'$. \TODO{miaw} \TODO{The only difference between FIFO and  Local is that Process q may have received m before p broadcast m'} \\
+  delivers $m$ before $m'$. Just as the proof for Theorem~\ref{theo:static}, the
+  difference in our Algorithm compared to FIFO order demonstration is that
+  Process $q$ may have already received -- or is the origin of the broadcast of
+  -- $m$. \TODO{Not over}
+  
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
   ensures both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{proof}
@@ -320,7 +350,8 @@ arrives before $m$.
   \begin{center}
     \input{./input/figbuffer.tex}
     \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
-      link addition. $m''$ cannot precede $m'$. \TODO{Not done.}}
+      link addition. $m''$ cannot precede $m'$. \TODO{Not done, deliveries are
+        missing.}}
   \end{center}
 \end{figure}
 
