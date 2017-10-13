@@ -1,12 +1,20 @@
 
 \begin{tikzpicture}[scale=1]
 
-  \newcommand\X{100pt}
+  \newcommand\X{110pt}
   \newcommand\Y{35pt}
   
-  \draw[fill=white] (0*\X, 0*\Y) node{$p_1$} +(-10pt,-10pt) rectangle +(10pt,10pt);
-  \draw[fill=white] (1*\X, 0*\Y) node{$p_2$} +(-10pt,-10pt) rectangle +(10pt,10pt);
+  \small
+  \draw[fill=white] (0*\X, 0*\Y) node{$p_{from}$} +(-12pt,-12pt) rectangle +(12pt,12pt);
+  \draw[fill=white] (1*\X, 0*\Y) node{$p_{to}$} +(-12pt,-12pt) rectangle +(12pt,12pt);
   
-  \draw[->](10pt, 10pt) to[out=25, in=180-25] ( -10+ 1*\X, 10pt);
+  \draw[->](12pt, 12pt) to[out=65, in=180-65] ( -12+ 1*\X, 12pt);
+  \draw[->, densely dotted](12pt, 0pt) -- ( -12+ 1*\X, 0pt);
+  \draw[->, dashdotted](12pt, -12pt) to[out=-65, in=-180+65] ( -12+ 1*\X, -12pt);
+
+%  \draw[->](12pt, -12pt) to[out=-25, in=-180+25] ( -12+ 1*\X, -12pt);
+%  \draw[->, densely dashed](12pt, -12pt) to[out=-35, in=-180+35] ( -12+ 1*\X, -12pt);
+%  \draw[->, densely dashdotted](12pt, -12pt) to[out=-65, in=-180+65] ( -12+ 1*\X, -12pt);
+
 
 \end{tikzpicture}

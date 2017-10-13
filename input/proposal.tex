@@ -26,6 +26,22 @@ alleviates applications of the burden of tracking causal relationships.
     \end{center}
 \end{figure}
 
+\TODO{Maybe not here or maybe remove.}
+
+When a process broadcasts a message, processes receiving it forward it exactly
+once. Messages may be received multiple times by a process depending on the
+peer-sampling protocol. They receive as many duplicated messages as they have
+incoming links.  Considering only the process that sent the message that led to
+a forwarding as parent, we can build a graph using the paths taken by messages
+from the origin of the broadcast to any process.
+
+Figure~\ref{fig:2eqmodel} shows the equivalent model with 2 processes. Channels
+of arbitrary speed convey messages from Process $p_{from}$ to Process
+$p_{to}$. When Process $p_{to}$ sends a message, it sends it through all
+links. Even though they have different speeds that may change at arbitrary time,
+if channels are FIFO, Process $p_{to}$ will receive messages in the same order as
+Process $p_{from}$ sent them.
+
 
 \subsection{FIFO-based causal broadcast}
 \label{subsec:fifobroadcast}
@@ -82,12 +98,24 @@ that this feature is achievable without overhead in terms of message size.
   and delivers $m'$. \\
   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-  delivers $m$ before $m'$. Since $p$ delivers $m$ before broadcasting $m'$, it
-  forwards $m$ to all its neighbors before broadcasting $m'$ to the same
-  neighbors. Similarly to FIFO ordering, due to the use of FIFO channels, the
-  forwardings, and the absence of network clusters, Process $q$ already received
-  or eventually receives $m$ when it receives $m'$. Thus, it delivers $m$ before
-  delivering $m'$. \\
+  delivers $m$ before $m'$. Either Process $q$ received $m$ before Process $p$
+  or not. In the later case, since broadcast and forward have identical
+  instructions, the proof is identical to FIFO's one. In the former
+  case,
+  \begin{inparaenum}[(i)]
+  \item since processes deliver messages in the order they receive them, and
+  \item since Process $q$ already received or broadcast $m$ when Process $p$
+    broadcasts $m'$, and
+  \item since we assume a network without partitions, Process $q$ eventually
+    receives, hence delivers, $m'$ afterwards.
+  \end{inparaenum}
+  In any case, Process $q$ delivers $m$ before $m'$. \\
+  % Since $p$ delivers $m$ before broadcasting $m'$, it forwards $m$ to all its
+  % neighbors before broadcasting $m'$ to the same neighbors. Similarly to FIFO
+  % ordering, due to the use of FIFO channels, the forwardings, and the absence of
+  % network clusters, Process $q$ already received or eventually receives $m$ when
+  % it receives $m'$. Thus, it delivers $m$ before
+  % delivering $m'$. \\
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
   both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{proof}
@@ -247,8 +275,17 @@ using the channel normally.
   not activate in such instances. For dynamic networks with link additions, we
   must show that FBC-broadcast$^+$ ensures both
   FIFO order and Local order. \\
-  \textbf{FIFO:} \TODO{meow} \\
-  \textbf{Local:} \TODO{miaw} \\
+  \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
+  a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
+  $m'$. If Process $p$ broadcasts $m$ before the link addition, Process $p$
+  either broadcast $m'$ during buffer phase or after acknowledgment. In the
+  former case, since the receipt of $m$ precedes the creation of the
+  acknowledgement, when $p$ 
+
+  \TODO{meow} \\
+  \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
+  $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
+  delivers $m$ before $m'$. \TODO{miaw} \TODO{The only difference between FIFO and  Local is that Process q may have received m before p broadcast m'} \\
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
   ensures both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{proof}
@@ -299,10 +336,7 @@ arrives before $m$.
 usage. The buffer becomes useful when a process broadcast a message between the
 opening of a channel and the receipt of the corresponding
 acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
-buffer to ensure causal delivery of messages. 
-
-
-\TODO{not done.}
+buffer to ensure causal delivery of messages.  \TODO{not done.}
 
 
 \paragraph{Complexity.} For each process, the \emph{local space complexity} is

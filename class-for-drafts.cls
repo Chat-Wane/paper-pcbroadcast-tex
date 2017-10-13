@@ -8,7 +8,7 @@
 \columnsep 2pc
 
 \RequirePackage{crimson}
-\RequirePackage[a4paper,total={6.7in, 9in}]{geometry}
+\RequirePackage[a4paper,total={6.7in, 9in},margin=2cm]{geometry}
 \RequirePackage[numbers]{natbib}
 \bibliographystyle{plain}
 \RequirePackage{xcolor}
