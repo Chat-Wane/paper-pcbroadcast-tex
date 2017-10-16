@@ -54,7 +54,19 @@ need to piggyback any control information.
 %% Without considering crashes, it allows to reduce the complexity of vectors
 %% to.
 
-\paragraph{Topological constraint-based approaches.} Ring-based. 
+\paragraph{Topological constraint-based approaches.} A trivial way to ensure
+causal delivery of messages without message overhead consists in building an
+overlay network shaped as a ring: each broadcast message loops once in FIFO
+order (\REF). Unfortunately, maintaining a specific topology can prove costly in
+dynamic networks subject to churn. Our approach relies on a peer-sampling
+protocol but we make no assumption on the topology. One can choose the most
+suitable topology depending on network settings. For instance, random
+peer-sampling protocols (\REF) have a low upkeep and guarantee a connected
+network even in dynamic settings.
+
+
+% Ring-based. trivial way to ensure causal order. We do not constrain any
+% topology, just a way to establish connections.
 
 \paragraph{Inter-group
   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group
