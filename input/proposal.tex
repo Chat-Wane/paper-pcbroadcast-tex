@@ -32,8 +32,8 @@ When a process broadcasts a message, processes receiving it forward it exactly
 once. Messages may be received multiple times by a process depending on the
 peer-sampling protocol. They receive as many duplicated messages as they have
 incoming links.  Considering only the process that sent the message that led to
-a forwarding as parent, we can build a graph using the paths taken by messages
-from the origin of the broadcast to any process.
+a forwarding as parent, we can build a directed acyclic graph using the paths
+taken by messages from the origin of the broadcast to any process.
 
 Figure~\ref{fig:2eqmodel} shows the equivalent model with 2 processes. Channels
 of arbitrary speed convey messages from Process $p_{from}$ to Process
@@ -89,27 +89,49 @@ that this feature is achievable without overhead in terms of message size.
   ordering and Local ordering of messages. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
-  $m'$. Process $p$ broadcast message $m$ before broadcasting $m'$ to all its
-  neighborhood using FIFO channels. Each neighbor eventually receives and
-  delivers $m$ then $m'$. Each neighbor forwards each message exactly once in
-  the order they delivered (\TODO{received?}) them to all its neighbors using
-  FIFO channels. Since we assume a network without clusters, messages eventually
-  reach all processes. Process $q$ eventually receives and delivers $m$ first,
-  then it eventually receives
-  and delivers $m'$. \\
+  $m'$. \\
+  Since the peer-sampling protocol ensures that the network is not partitionned,
+  since each process receiving a message forwards it exactly once to all its
+  neighborhood, each message eventually reaches all processes and each link
+  conveys all messages exactly once. \\
+  Since each process forwards each message in a FIFO manner, since messages
+  travel using FIFO channels, and since each channel conveys all messages
+  exactly once, they convey the messages in the order they were broadcast. \\
+  Since Process $p$ broadcasts $m$ before $m'$, and since Process $q$ delivers
+  $m'$, Process $q$ received $m$ before $m'$. \\
+  Since processes deliver messages in the order they received them, Process $q$
+  delivered $m$ before $m'$. \\
+  % Process $p$ broadcast message $m$ before broadcasting $m'$ to all its
+  % neighborhood using FIFO channels. Each neighbor eventually receives and
+  % delivers $m$ then $m'$. Each neighbor forwards each message exactly once in
+  % the order they delivered (\TODO{received?}) them to all its neighbors using
+  % FIFO channels. Since we assume a network without clusters, messages eventually
+  % reach all processes. Process $q$ eventually receives and delivers $m$ first,
+  % then it eventually receives
+  % and delivers $m'$. \\
   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-  delivers $m$ before $m'$. Either Process $q$ received $m$ before Process $p$
-  or not. In the later case, since broadcast and forward have identical
-  instructions, the proof is identical to FIFO's one. In the former case,
-  \begin{inparaenum}[(i)]
-  \item since processes deliver messages in the order they receive them, and
-  \item since Process $q$ already received or broadcast $m$ when Process $p$
-    broadcasts $m'$, and
-  \item since we assume a network without partitions, Process $q$ eventually
-    receives, hence delivers, $m'$ afterwards.
-  \end{inparaenum}
-  In any case, Process $q$ delivers $m$ before $m'$. \\
+  delivers $m$ before $m'$. \\
+  Since broadcast and forward have identical instructions, we add to ``processes
+  receive the messages in the order they were broadcast'' the statement ``if a
+  process forwards a message before broadcasting one, processes will receive the
+  forwarded message before the broadcast one'' and converse. \\
+  Since Process $q$ delivers $m'$, channels from which it receives $m'$ already
+  conveyed $m$. Since processes deliver messages in the order they received
+  them, Process $q$ delivers $m$ before $m'$. \\
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Either Process $q$ received $m$ before Process $p$ or not.
+  % In the later case, since broadcast and forward have identical instructions,
+  % the proof is identical to FIFO's one. In the former case,
+  % \begin{inparaenum}[(i)]
+  % \item since processes deliver messages in the order they receive them, and
+  % \item since Process $q$ already received or broadcast $m$ when Process $p$
+  %   broadcasts $m'$, and
+  % \item since we assume a network without partitions, Process $q$ eventually
+  %   receives, hence delivers, $m'$ afterwards.
+  % \end{inparaenum}
+  %% In any case, Process $q$ delivers $m$ before $m'$. \\
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Since $p$ delivers $m$ before broadcasting $m'$, it forwards $m$ to all its
   % neighbors before broadcasting $m'$ to the same neighbors. Similarly to FIFO
   % ordering, due to the use of FIFO channels, the forwardings, and the absence of
@@ -280,42 +302,76 @@ using the channel normally.
   $m'$.  Since adding a FIFO link from a Process $r$ to any other Process $s$ is
   like adding potential FIFO paths from $p$ to $q$, we summarize this as a link
   from $p$ to $q$ with arbitrary settings but still FIFO.  \TODO{Should this be
-    a proof?  Maybe a proof of equivalent model if kept}.
+    a proof?  Maybe a proof of equivalent model if kept}. \\   
+  Since Process $q$ delivers $m'$ it either received $m'$ from already well
+  established channels, or from the new one. In the former case, the proof is
+  identical to that of Theorem~\ref{theo:static}. In the latter case, Process
+  $q$ delivers $m'$ means that process $p$ broadcasts $m$ then $m'$ either
+  \begin{inparaenum}[(i)]
+  \item \label{case:one} $m'$ during buffering and $m$ before buffering;
+  \item \label{case:two} $m'$ during buffering and $m$ during buffering;
+  \item \label{case:three} $m'$ after acknowledgment and $m$ before buffering;
+  \item \label{case:four} $m'$ after acknowledgment and $m$ during buffering;
+  \item \label{case:five} $m'$ after acknowledgment and $m$ after acknowledgement.
+  \end{inparaenum}
+  We must show that either 
+  \begin{inparaenum}[(1)]
+  \item \label{show:one} Process $q$ already received $m$ from another channel
+    before receiving $m'$ from the new channel,
+  \item \label{show:two} or that this new channel conveyed $m$ before $m'$.
+  \end{inparaenum}
 
-  If Process $p$ broadcasts $m$ before the link addition, Process $p$ either
-  broadcasts $m'$ during buffering phase or after acknowledgment: 
   \begin{itemize}
-  \item In the former case, since the receipt of $m$ precedes the creation of the
-    acknowledgement, when $p$ receives the acknowledgement, it empties the buffer
-    containing $m'$ to $q$. Hence, from any path, Process $q$ receives and
-    delivers $m$ before $m'$.
-  \item In the later case, the acknowledgement confirms that $q$ received
-    $m$. Afterwards, when $p$ broadcasts $m'$ it travels, among others, the newly
-    created link, and eventually arrives to $q$.
+  \item [(\ref{case:one})] Process $p$ put $m'$ in the buffer. Process $p$
+    empties the buffer containing $m'$ after $p$ received an acknowledgement
+    meaning that at least $m$ has been received at $q$. This
+    shows~(\ref{show:one}).
+  \item [(\ref{case:two})] Process $p$ put $m$ then $m'$ in the buffer. When the
+    acknowledgement is received, it sends $m$ then $m'$ to Process $q$. This
+    shows~(\ref{show:two}).
+  \item [(\ref{case:three})] Identical to case~(\ref{case:one}) without the need
+    of buffering.
+  \item [(\ref{case:four})] Since Process $p$ empties the buffer containing $m$
+    when it receives the acknowledgement, and since Process $p$ broadcasts $m'$
+    afterwards using the new channel, it shows~(\ref{show:two}).
+  \item [(\ref{case:five})] It directly shows~(\ref{show:two}).
   \end{itemize}
-
-  If Process $p$ broadcasts $m$ during buffering phase, Process $p$ either
-  broadcasts $m'$ during buffering phase or after acknowledgement.
-  \begin{itemize}
-  \item In the former case, $p$ puts $m$ in the buffer before $m'$. When $q$
-    receives $m'$, either it already received $m$ from another FIFO channel or
-    it already received $m$ from the emptied buffer that contained $m$ before
-    $m'$.
-  \item In the later case, When $q$ receives $m'$, either it received $m$ from
-    FIFO channel or the buffer that empties after acknowledgment.
-  \end{itemize}
-
-  If Process $p$ broadcasts $m$ after acknowledgement, Process $p$ broadcasts
-  $m'$ after acknowledgement. It corresponds to the static network (see proof of
-  Theorem~\ref{theo:static}).
-  In any case, process $q$ delivers $m$ before $m'$. \\
-  \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
-  $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-  delivers $m$ before $m'$. Just as the proof for Theorem~\ref{theo:static}, the
-  difference in our Algorithm compared to FIFO order demonstration is that
-  Process $q$ may have already received -- or is the origin of the broadcast of
-  -- $m$. \TODO{Not over}
-  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % If Process $p$ broadcasts $m$ before the link addition, Process $p$ either
+  % broadcasts $m'$ during buffering phase or after acknowledgment: 
+  % \begin{itemize}
+  % \item In the former case, since the receipt of $m$ precedes the creation of the
+  %   acknowledgement, when $p$ receives the acknowledgement, it empties the buffer
+  %   containing $m'$ to $q$. Hence, from any path, Process $q$ receives and
+  %   delivers $m$ before $m'$.
+  % \item In the later case, the acknowledgement confirms that $q$ received
+  %   $m$. Afterwards, when $p$ broadcasts $m'$ it travels, among others, the newly
+  %   created link, and eventually arrives to $q$.
+  % \end{itemize}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % If Process $p$ broadcasts $m$ during buffering phase, Process $p$ either
+  % broadcasts $m'$ during buffering phase or after acknowledgement.
+  % \begin{itemize}
+  % \item In the former case, $p$ puts $m$ in the buffer before $m'$. When $q$
+  %   receives $m'$, either it already received $m$ from another FIFO channel or
+  %   it already received $m$ from the emptied buffer that contained $m$ before
+  %   $m'$.
+  % \item In the later case, When $q$ receives $m'$, either it received $m$ from
+  %   FIFO channel or the buffer that empties after acknowledgment.
+  % \end{itemize}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % If Process $p$ broadcasts $m$ after acknowledgement, Process $p$ broadcasts
+  % $m'$ after acknowledgement. It corresponds to the static network (see proof of
+  % Theorem~\ref{theo:static}).
+  % In any case, process $q$ delivers $m$ before $m'$. \\
+  \textbf{Local:} Since broadcast and forward have identical instructions, the
+  proof is identical to that of FIFO order. \\
+  % Suppose a process $p$ delivers $m$ before broadcasting $m'$. Consider a
+  % correct process $q$ that delivers $m'$. We must show that $q$ delivers $m$
+  % before $m'$. Just as the proof for Theorem~\ref{theo:static}, the difference
+  % in our Algorithm compared to FIFO order demonstration is that Process $q$ may
+  % have already received -- or is the origin of the broadcast of --
+  % $m$. \TODO{Not over}  
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
   ensures both FIFO ordering and Local ordering, it ensures Causal ordering.
 \end{proof}
