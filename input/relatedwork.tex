@@ -15,14 +15,44 @@ increase quickly depending on the application. In our approach, a similar
 behavior arises during buffering. However, we assume that the time between the
 establishment of a link and its actual usage remains short. For instance, using
 a random peer-sampling protocol in WebRTC such as Spray or Cyclon allows us to
-create a 3-hops protocol for these acknowledgements. In addition, as discussed
+create a 3-hops protocol for these acknowledgments. In addition, as discussed
 in Section \TODO{meow}, the size of buffers can be trivially
 bounded. \TODO{Maybe discuss all of this in proposal (3-hops protocol).}
 
 \paragraph{Vector clock-based
   approaches~\cite{fidge1988timestamps,mattern1989virtual}.} A vector clock is a
-vector of monotonically increasing counters.
-$VC(m) < VC(m') \implies m \rightarrow m'$ +compaction.
+vector of monotonically increasing counters.  It encodes the partial order of
+messages using this vector: $VC(m) < VC(m') \implies m \rightarrow m'$.  Before
+delivering a message, processes using vector-based broadcast check if the vector
+of the message is ready regarding their local vector. If it detects any missing
+preceding message, the process delays the delivery. These approaches are
+blocking while our approach remains non-blocking.  In addition, to implement
+this vector-based broadcast
+\begin{inparaenum}[(i)]
+\item each process must maintain a vector locally;
+\item each message must piggyback such vector;
+\item there is 1 counter for each process of the network.
+\end{inparaenum}
+To accurately track causality, processes cannot share their entry. To safely
+track causality, processes cannot reclaim entries. Hence, even with compaction
+approaches~\cite{singhal1992efficient}, the vectors grow linearly in terms of
+number of processes that ever broadcast a
+message. Paper~\cite{almeida2008interval} reduces this complexity to depend of
+the actual number of processes in the network. Still,
+these approaches do not scale, particularly in dynamic networks subject to churn
+and failures. Our approach does not track causal order of messages: this feature
+is provided by default by our propagation scheme. It frees up messages from the
+need to piggyback any control information.
+
+
+% \textbf{Compaction approaches~\cite{singhal1992efficient}} exist to reduce the
+% size of these vectors. However, they remain linearly growing in terms of number
+% of processes. Tree-based approaches~\cite{almeida2008interval} allow to reclaim
+% the entry of processes that explicitely leave the network. The complexity is
+% linear in terms of number of processes that are currently in the network.
+
+%% Without considering crashes, it allows to reduce the complexity of vectors
+%% to.
 
 \paragraph{Topological constraint-based approaches.} Ring-based. 
 
@@ -34,7 +64,7 @@ inter-group causal broadcast is ensured when groups that internally ensure
 causal broadcast are linked together by communication channels that ensure FIFO
 ordering of messages. Our approach is an extreme case where each process is a
 group connected to other groups via FIFO channels. The union of paths taken by
-broadcast messages builds a diffusion tree, i.e., an acyclic graph, that may
+broadcast messages builds a diffusion tree, i.e., a directed acyclic graph, that may
 change at each broadcast.
 
 \paragraph{Already received.} Causal ordering and detecting duplicated receipts
@@ -43,21 +73,20 @@ the later. The simplest approach consists in saving all received messages
 (\REF). However, the size of this set linearly and monotonically increases as
 the number of broadcast messages increases. One would prefer an approach based
 on vectors where one entry corresponds to the number of messages received by a
-particular process (\REF). Such approach do not require to piggyback additional
-data in the message. However, it requires to store locally a vector the size of
-which increases linearly compared to the number of processes that ever broadcast
-a message. Interval tree clocks (\REF) allow processes to reduce this
-complexity. It becomes linear in terms of number of processes that are currently
-involved in broadcasting. Possible improvements could take advantage of the fact
-that the number of duplicates is equal to the number of incoming links. However,
-it does not hold in dynamic networks where additional links are
-established. Finding a sublinear bound for detecting duplicated receipts remains
-an open problem.
+particular process~\cite{fidge1988timestamps}. Such approach do not require to
+piggyback additional data in the message. However, it requires to store locally
+a vector the size of which increases linearly compared to the number of
+processes that ever broadcast a message. Interval tree
+clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
+becomes linear in terms of number of processes that are currently involved in
+broadcasting. Possible improvements could take advantage of the fact that the
+number of duplicates is equal to the number of incoming links. However, it does
+not hold in dynamic networks where additional links are established. Finding a
+sublinear bound for detecting duplicated receipts remains an open problem.
 
-
-\paragraph{Push-pull.} Pull is optimally fast. Push phase of push-pull improves
-the startup phase of message dissemination. We only present push but it easily
-can be push-pull.
+\paragraph{Push-pull~\cite{mercier2017optimal}.} Pull is optimally fast. Push
+phase of push-pull improves the startup phase of message dissemination. We only
+present push but it easily can be push-pull.
 
 
 %%% Local Variables:
