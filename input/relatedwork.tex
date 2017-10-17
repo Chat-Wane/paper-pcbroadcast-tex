@@ -2,8 +2,8 @@
 \section{Related work}
 \label{sec:relatedwork}
 
-\TODO{Table comparing the improvement. Local overhead. Number of
-  messages. Message overhead.}
+This section reviews the related work going from piggybacking approaches to
+vector approaches and their following compaction approaches.
 
 \paragraph{Piggybacking
   approaches~\cite{birman1987reliable,hadzilacos1993fault}.}
@@ -49,15 +49,15 @@ our broadcast cannot compare any pair of messages. Nevertheless, accurate causal
 delivery is a feature provided by default by the propagation scheme. It frees up
 messages from the need to piggyback any control information.
 
-\paragraph{Topological constraint-based approaches.} A trivial way to ensure
-causal delivery of messages without message overhead consists in building an
-overlay network shaped as a ring: each broadcast message loops once in FIFO
-order (\REF). Unfortunately, maintaining a specific topology can prove costly in
+\paragraph{Topological approaches.} A trivial way to ensure causal delivery of
+messages without message overhead consists in building an overlay network shaped
+as a ring: each broadcast message loops once in FIFO order
+(\REF). Unfortunately, maintaining a specific topology can prove costly in
 dynamic networks subject to churn. Our approach relies on a peer-sampling
-protocol but we make no assumption on the topology. One can choose the most
-suitable topology depending on network settings. For instance, random
-peer-sampling protocols (\REF) have a low upkeep and guarantee a connected
-network even in dynamic settings.
+protocol but we make no assumption on the built topology. One can choose the
+most suitable topology depending on network settings. For instance, random
+peer-sampling protocols~\cite{jelasity2007gossip} have a low upkeep and
+guarantee a connected network even in dynamic settings.
 
 \paragraph{Inter-group
   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group
@@ -65,32 +65,18 @@ broadcast allows processes to broadcast messages to members of several
 inter-connected networks. Paper~\cite{johnson1999intergroup} states that
 inter-group causal broadcast is ensured when groups that internally ensure
 causal broadcast are linked together by communication channels that ensure FIFO
-ordering of messages. Our approach is an extreme case where each process is a
-group connected to other groups via FIFO channels. The union of paths taken by
-broadcast messages builds a diffusion tree, i.e., a directed acyclic graph, that
-may change at each broadcast.
+ordering of messages. One can employ these approaches to cluster the network in
+subsystems. Control information in messages depends of the size of each small
+subsystem. Our approach is an extreme case where each process is a
+subsystem.
 
-\paragraph{Already received.} Causal ordering and detecting duplicated receipts
-are orthogonal problems. In this paper, we do not provide an implementation for
-the later. The simplest approach consists in saving all received messages
-(\REF). However, the size of this set linearly and monotonically increases as
-the number of broadcast messages increases. One would prefer an approach based
-on vectors where one entry corresponds to the number of messages received by a
-particular process~\cite{fidge1988timestamps}. Such approach do not require to
-piggyback additional data in the message. However, it requires to store locally
-a vector the size of which increases linearly compared to the number of
-processes that ever broadcast a message. Interval tree
-clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
-becomes linear in terms of number of processes that are currently involved in
-broadcasting. Possible improvements could take advantage of the fact that the
-number of duplicates is equal to the number of incoming links. However, it does
-not hold in dynamic networks where additional links are established. Finding a
-sublinear bound for detecting duplicated receipts remains an open problem.
+%% The union of paths taken by broadcast messages builds a diffusion tree, i.e.,
+%% a directed acyclic graph, that may change at each broadcast.
 
-\paragraph{Push-pull~\cite{mercier2017optimal}.} In random graphs, pull is
-optimally fast. Push phase of push-pull improves the startup phase of message
-dissemination. We only present push but it easily can be push-pull. \TODO{Maybe
-  too link to random graphs.}
+% \paragraph{Push-pull~\cite{mercier2017optimal}.} In random graphs, pull is
+% optimally fast. Push phase of push-pull improves the startup phase of message
+% dissemination. We only present push but it easily can be push-pull. \TODO{Maybe
+%   too linked to random graphs.}
 
 
 %%% Local Variables:

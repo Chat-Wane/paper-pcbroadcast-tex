@@ -446,6 +446,25 @@ The \emph{number of hops} for a message to reach all peers depends of the
 peer-sampling protocol. Using a random peer-sampling protocol, we can reach a
 logarithmic bound.
 
+\paragraph{Already received.} Causal ordering and detecting duplicated receipts
+are orthogonal problems. In this paper, we do not provide an implementation for
+the later. The simplest approach consists in saving all received messages
+(\REF). However, the size of this set linearly and monotonically increases as
+the number of broadcast messages increases. One would prefer an approach based
+on vectors where one entry corresponds to the number of messages received by a
+particular process~\cite{fidge1988timestamps}. Such approach do not require to
+piggyback additional data in the message. However, it requires to store locally
+a vector the size of which increases linearly compared to the number of
+processes that ever broadcast a message. Interval tree
+clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
+becomes linear in terms of number of processes that are currently involved in
+broadcasting. Possible improvements could take advantage of the fact that the
+number of duplicates is equal to the number of incoming links. However, it does
+not hold in dynamic networks where additional links are established. Finding a
+sublinear bound for detecting duplicated receipts remains an open problem.
+
+
+
 
 %%% Local Variables:
 %%% mode: latex

@@ -2,7 +2,29 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-It is awesome.
+In this paper, we described a uniform reliable causal broadcast that removes the
+need for messages to carry any control information. To handle dynamic networks,
+our approach only requires the help of buffers the size of which can be bounded
+easily. \TODO{Meow meow meow.}
+
+% This makes our causal broadcast suitable for large scale networks subject to
+% churn.
+
+% Applications and protocols such as distributed data stores, distributed
+% collaborative editors that need to track causal relationships between operations
+% can now rely on our causal broadcast.
+
+As future work, we plan to investigate on the problem of duplicated message
+detection. Although it only impacts local space complexity, this is the last and
+only remaining linear complexity.
+
+% A possible way of improvement lies in the fact that, in static network, each
+% process knows how many duplicates of each message it will receive. We could use
+% this information to prune the structure of already received
+% messages. Unfortunately, it does not hold in dynamic networks.
+
+
+%% It is awesome.
 
 
 
