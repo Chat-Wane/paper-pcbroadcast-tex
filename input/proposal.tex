@@ -427,6 +427,7 @@ buffer to ensure causal delivery of messages.  \TODO{not done.}
 
 
 \subsection{Complexity}
+\label{subsec:complexity}
 
 We review and discuss about the complexity of FBC-broadcast$^+$. We distinguish
 the complexity brought by causal ordering, the complexity brought by duplicated
@@ -475,7 +476,7 @@ neighbor-to-neighbor interactions, i.e., they establish links only two hops
 apart. Thus, it becomes easy to design a 4-hops $sendLocked$-$sendAck$
 function. Under such settings, we can assume that buffers that grow between the
 departure of a locked message and the arrival of the corresponding
-acknowledgement remain small in size, even without threshold policies.
+acknowledgment remain small in size, even without threshold policies.
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
