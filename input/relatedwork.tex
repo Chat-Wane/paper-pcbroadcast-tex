@@ -5,7 +5,8 @@
 \TODO{Table comparing the improvement. Local overhead. Number of
   messages. Message overhead.}
 
-\paragraph{Piggybacking messages~\cite{birman1987reliable,hadzilacos1993fault}.}
+\paragraph{Piggybacking
+  approaches~\cite{birman1987reliable,hadzilacos1993fault}.}
 A trivial way to ensure causal ordering of messages is to piggyback all causally
 related messages since the last broadcast message along with the newly broadcast
 message. Similarly to our approach, these broadcast protocols can deliver
@@ -19,7 +20,7 @@ create a 3-hops protocol for these acknowledgments. In addition, as discussed
 in Section \TODO{meow}, the size of buffers can be trivially
 bounded. \TODO{Maybe discuss all of this in proposal (3-hops protocol).}
 
-\paragraph{Vector clock-based
+\paragraph{Vector clock
   approaches~\cite{fidge1988timestamps,mattern1989virtual}.} A vector clock is a
 vector of monotonically increasing counters.  It encodes the partial order of
 messages using this vector: $VC(m) < VC(m') \implies m \rightarrow m'$.  Before
@@ -34,28 +35,19 @@ this vector-based broadcast
 \item there is 1 counter for each process of the network.
 \end{inparaenum}
 To accurately track causality, processes cannot share their entry. To safely
-track causality, processes cannot reclaim entries. Hence, even with compaction
-approaches~\cite{singhal1992efficient}, the vectors grow linearly in terms of
-number of processes that ever broadcast a
-message. Paper~\cite{almeida2008interval} reduces this complexity to depend of
-the actual number of processes in the network. Still,
-these approaches do not scale, particularly in dynamic networks subject to churn
-and failures. Our approach does not track causal order of messages: this feature
-is provided by default by our propagation scheme. It frees up messages from the
-need to piggyback any control information.
-
-% \textbf{Compaction approaches~\cite{singhal1992efficient}} exist to reduce the
-% size of these vectors. However, they remain linearly growing in terms of number
-% of processes. Tree-based approaches~\cite{almeida2008interval} allow to reclaim
-% the entry of processes that explicitely leave the network. The complexity is
-% linear in terms of number of processes that are currently in the network.
-
-%% Without considering crashes, it allows to reduce the complexity of vectors
-%% to.
-
-\paragraph{Probabilistic approaches~\cite{mostefaoui2017probabilistic}.} Use a
-vector, processes share entries, mistakes in delivery may happen! \TODO{TODO.}
-
+track causality, processes cannot reclaim entries. Hence, even with
+\textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
+linearly in terms of number of processes that ever broadcast a message.
+Paper~\cite{almeida2008interval} reduces this complexity to depend of the actual
+number of processes in the network. Still, these approaches do not scale,
+particularly in dynamic networks subject to churn and
+failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
+sacrifices on causality tracking accuracy: messages may be delivered out of
+order under a computable boundary. The size of control information in messages
+depends of the desired boundary. In comparison to these vector-based approaches,
+our broadcast cannot compare any pair of messages. Nevertheless, accurate causal
+delivery is a feature provided by default by the propagation scheme. It frees up
+messages from the need to piggyback any control information.
 
 \paragraph{Topological constraint-based approaches.} A trivial way to ensure
 causal delivery of messages without message overhead consists in building an
@@ -66,10 +58,6 @@ protocol but we make no assumption on the topology. One can choose the most
 suitable topology depending on network settings. For instance, random
 peer-sampling protocols (\REF) have a low upkeep and guarantee a connected
 network even in dynamic settings.
-
-
-% Ring-based. trivial way to ensure causal order. We do not constrain any
-% topology, just a way to establish connections.
 
 \paragraph{Inter-group
   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group

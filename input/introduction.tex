@@ -34,15 +34,17 @@ for they overload each message with linearly growing data structures that depend
 of the number of processes or the number of messages.
 
 In this paper, we solve the scalability issue of causal broadcast. We propose a
-uniform reliable broadcast that ensures causal order on message delivery upon
-negligible assumptions: it makes use of FIFO channels (e.g. TCP) and relies on a
+uniform reliable broadcast that ensures causal order on message delivery without
+any message overhead.  It makes use of FIFO channels (e.g. TCP) and relies on a
 peer-sampling protocol~\cite{jelasity2007gossip} ensuring a network without
-partitions. \TODO{Moar.}
+partitions.  Complexity trade-offs such as the number of messages sent by each
+process, or the number of hops before a broadcast message reach all processes,
+are independant of our protocol and only depends of the peer-sampling protocol.
 
 The rest of this paper is organized as follows: Section~\ref{sec:preliminaries}
 introduces definitions and theorems about causal
 broadcast. Section~\ref{sec:proposal} describes our causal broadcast mechanism
-and provides the necessary proofs. Section~\ref{sec:relatedwork} reviews the
+and provides the corresponding proofs. Section~\ref{sec:relatedwork} reviews the
 related work. We conclude in Section~\ref{sec:conclusion}.
 
 
