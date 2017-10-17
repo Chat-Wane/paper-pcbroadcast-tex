@@ -44,7 +44,6 @@ and failures. Our approach does not track causal order of messages: this feature
 is provided by default by our propagation scheme. It frees up messages from the
 need to piggyback any control information.
 
-
 % \textbf{Compaction approaches~\cite{singhal1992efficient}} exist to reduce the
 % size of these vectors. However, they remain linearly growing in terms of number
 % of processes. Tree-based approaches~\cite{almeida2008interval} allow to reclaim
@@ -53,6 +52,10 @@ need to piggyback any control information.
 
 %% Without considering crashes, it allows to reduce the complexity of vectors
 %% to.
+
+\paragraph{Probabilistic approaches~\cite{mostefaoui2017probabilistic}.} Use a
+vector, processes share entries, mistakes in delivery may happen! \TODO{TODO.}
+
 
 \paragraph{Topological constraint-based approaches.} A trivial way to ensure
 causal delivery of messages without message overhead consists in building an
