@@ -71,7 +71,7 @@ out of this paper, for it constitutes an orthogonal problem. It is worth noting
 that this feature is achievable without overhead in terms of message size.
 
 \begin{definition}[Static network]
-  A network is static if it comprises an unmutable set of edges and an unmutable
+  A network is static if it comprises an immutable set of edges and an immutable
   set of processes.
 \end{definition}
 
@@ -84,9 +84,17 @@ that this feature is achievable without overhead in terms of message size.
   Assuming a static network without partitions, FBC-broadcast is causal.
 \end{theorem}
 
-\begin{proof} \TODO{Prove validity, uniform agreement, uniform integrity?} To
-  prove causal ordering, we must show that such broadcast provides both FIFO
-  ordering and Local ordering of messages. \\
+\begin{proof}
+  To prove that FBC-broadcast is causal, we must show that it ensures validity,
+  uniform agreement, uniform integrity, and causal order. \\
+  \textbf{\TODO{Validity:}} A delivery instruction always follows a broadcast
+  instruction.\\
+  \textbf{\TODO{Uniform agreement:}} All processes broadcast or forward messages
+  before delivery. \TODO{Add eventual receipt. There exist a path from any --
+    correct or not -- process to any other correct process.} \\
+  \textbf{\TODO{Uniform integrity:}} $alreadyReceived$ makes sure that at most
+  one message is delivered, even if duplicated. Before entering in receipt
+  instructions, the message must be broadcast. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$. \\
@@ -391,16 +399,16 @@ using the channel normally.
   \end{center}
 \end{figure}
 
-\paragraph{\emph{Example.}} Figure~\ref{fig:solved} shows how our algorithm
-solves causal order violations. Similarly to Figure~\ref{fig:problem}, a FIFO
-channel links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links $p_1$ to
-$p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link to
-$p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, $m$ precedes
-this message at $p_3$. When $p_3$ acknowledges this message to $p_1$ using any
-communication way, the later knows that it $p_3$ received and delivered at least
-$m$. Hence, all subsequent broadcast from $p_1$ can use the new communication
-channel safely. When $p_1$ broadcasts $m'$, there exist no path where $m'$
-arrives before $m$.
+\paragraph{\emph{Example without buffer.}} Figure~\ref{fig:solved} shows how our
+algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
+a FIFO channel links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links
+$p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
+to $p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, $m$
+precedes this message at $p_3$. When $p_3$ acknowledges this message to $p_1$
+using any communication way, the later knows that it $p_3$ received and
+delivered at least $m$. Hence, all subsequent broadcast from $p_1$ can use the
+new communication channel safely. When $p_1$ broadcasts $m'$, there exist no
+path where $m'$ arrives before $m$.
 
 \begin{figure}
   \begin{center}
@@ -419,9 +427,9 @@ arrives before $m$.
   \end{center}
 \end{figure}
 
-\paragraph{\emph{Example.}} The previous example does not depict the buffer
-usage. The buffer becomes useful when a process broadcast a message between the
-opening of a channel and the receipt of the corresponding
+\paragraph{\emph{Example with buffer.}} The previous example does not depict the
+buffer usage. The buffer becomes useful when a process broadcasts or forwards a
+message between the opening of a channel and the receipt of the corresponding
 acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
 buffer to ensure causal delivery of messages.  \TODO{not done.}
 
