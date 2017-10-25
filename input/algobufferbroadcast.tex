@@ -6,6 +6,10 @@
 \SetKwProg{Safety}{SAFETY:}{}{}
 
 \small
+
+\DontPrintSemicolon
+\LinesNumbered
+
 \Initially {} {
   $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
   $B \leftarrow \varnothing$ \tcp*{Buffers of messages}
@@ -14,7 +18,7 @@
 \BlankLine
 
 \Safety {} {
-  \Upon{open($q$)} {
+  \Upon{\textsc{open}($q$)} {
     \If{$|Q|>1$} {
       $Q \leftarrow Q \setminus q$ \;
       $B[q] \leftarrow \varnothing$ \;
@@ -24,13 +28,13 @@
   
   \BlankLine
   
-  \Upon{receiveLocked($from, \, to$) \tcp*[f]{$to=p$}} {
+  \Upon{\textsc{receiveLocked}($from, \, to$) \tcp*[f]{$to=p$}} {
     $\textsc{sendAck}(from,\, to)$ \;
   }
   
   \BlankLine
 
-  \Upon{receiveAck($from,\, to$) \tcp*[f]{$from=p$}} {
+  \Upon{\textsc{receiveAck}($from,\, to$) \tcp*[f]{$from=p$}} {
     \If {$to \in B$} {
       \lForEach {$m \in B[to]$} {$\textsc{sendTo}(to,\, m)$}
       $B \leftarrow B \setminus to$ \;
@@ -40,7 +44,7 @@
 
   \BlankLine
 
-  \Upon{close($q$)} {
+  \Upon{\textsc{close}($q$)} {
     $B \leftarrow B \setminus q$ \;
   }
 
@@ -50,14 +54,14 @@
 
 \Dissemination {} {
 
-  \Function{FBC-broadcast$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
+  \Function{\textsc{FBC-broadcast}$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$ \tcp*[f]{Buffers}}
     $\textsc{R-broadcast}(m)$ \;
   }
   
   \BlankLine
   
-  \Upon{R-deliver($m$)} {
+  \Upon{\textsc{R-deliver}($m$)} {
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$ \tcp*[f]{Buffers}}
     $\textsc{FBC-deliver}(m)$ \tcp*{$d_p(m)$}
   }

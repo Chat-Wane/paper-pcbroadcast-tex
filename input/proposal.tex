@@ -262,31 +262,46 @@ only uses local knowledge.
 \subsection{FIFO-based causal broadcast+}
 \label{subsec:bufferbroadcast}
 
-The issue is that new links can act as shortcut for messages. This may create
-gaps in causal delivery, i.e., messages that should be delivered are still
-missing.  FIFO-based causal broadcast$^+$ aims to ensure that additional links
-never create gaps. The idea is to employ already working FIFO channels to know
-which messages arrived, at marginal cost. For instance, assuming that we have
-$d_p(m) \rightarrow d_p(m')$ and $d_p(m') \rightarrow d_p(m'')$, if Process $p$
-knows that Process $q$ received and delivered at least $m$, it can send $m'$
-then $m''$ to Process $q$. Any subsequent message from $p$ becomes safe to
-travel through the newly added link.
+The issue is that new links may act as shortcut for messages. First messages
+that travel through new links may arrive before preceding messages that took
+longer paths. New links create additionnal diffusion paths that potentially
+disorder messages. To solve this issue, we make sure that even new link convey
+all messages in the right order. The idea is to use already established FIFO
+links to acknowledge the receipt of messages at a marginal cost. The process
+knows the potentially missing messages. It sends them in the right order using
+the new FIFO link, then it starts using it normally. Consequently, new links
+do not create diffusion paths breaking causal order.
+
+% This may create gaps in causal delivery, i.e., messages that should be delivered
+% are still missing.  FIFO-based causal broadcast$^+$ aims to ensure that
+% additional links never create gaps. The idea is to employ already working FIFO
+% channels to know which messages arrived, at marginal cost. For instance,
+% assuming that we have $d_p(m) \rightarrow d_p(m')$ and
+% $d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
+% and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
+% subsequent message from $p$ becomes safe to travel through the newly added link.
 
 %%Knowing that at least Message $m$ arrived allows the process to send
 %%depending messages $m'$, $m''$ 
 
 
-Solving this issue requires 3 steps. When a process $p$ wants to use a link to a
-process $q$ for causal broadcast,
-\begin{enumerate}[(i)]
+Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
+causal broadcast. It solves the dynamic network issues in 3 steps.  Compared to
+Algorithm~\ref{algo:reliablebroadcast}, it adds a structure associating each
+opening channel with a buffer of messages.  When a process $p$ wants to use a
+link to a process $q$ for causal broadcast,
+\begin{itemize}[(i)]
 \item it must use the FIFO channels already in use to transmit a message to $q$
-  and wait for its acknowledgment.
-\item While awaiting for this acknowledgment, $p$ buffers each message it
-  sends.
+  and wait for its acknowledgment. We leave aside the implementation of this
+  send function (e.g. broadcast or routing). However, using already established
+  FIFO links constitutes a cheap way to achieve it.
+\item While awaiting for this acknowledgment, $p$ must buffer each message it
+  broadcasts or forwards. When $q$ receives $p$'s message, it acknowledges
+  it. The message it sends can travel through any communication mean.
 \item When $p$ receives the acknowledgment from $q$, it uses the FIFO channel
-  from $p$ to $q$ to send its buffered messages. Afterwards, the channel is
-  ready to be used for causal broadcast.
-\end{enumerate}
+  from $p$ to $q$ to send its buffered messages. Afterwards, $p$ uses the new
+  channel normally.
+\end{itemize}
 
 \begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
@@ -294,22 +309,22 @@ process $q$ for causal broadcast,
 \end{algorithm}
 
 
-Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
-FIFO-based causal broadcast. Similarly to Algorithm~\ref{algo:fifobroadcast},
-each process has a set of neighbors to communicate with via FIFO
-channels. Messages transitively reach all processes using forwarding. Processes
-deliver and forward each message exactly once.  
+% Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
+% FIFO-based causal broadcast. Similarly to Algorithm~\ref{algo:fifobroadcast},
+% each process has a set of neighbors to communicate with via FIFO
+% channels. Messages transitively reach all processes using forwarding. Processes
+% deliver and forward each message exactly once.  
 
-Compared to Algorithm~\ref{algo:reliablebroadcast}, it adds a structure associating
-each opening channel with a buffer of messages. When Process $p$ gets notified
-that another FIFO channel to Process $q$ is available, it associates this
-channel with an empty buffer of messages. It also sends a \emph{locked} message
-to $q$. We leave aside the implementation of this send function (e.g. broadcast
-or routing), but it must use the FIFO channels already in use.  Process $p$ does
-not use the new links until Process $q$ confirmed the receipt of the locked
-message. Acknowledgments do not have to travel through FIFO channels.  Once it
-receives the acknowledgment, $p$ empties the buffer of messages to $q$ and start
-using the channel normally.
+
+%When Process $p$ gets notified that another FIFO channel to Process $q$ is
+%available, it associates this channel with an empty buffer of messages.
+% It also
+%sends a \emph{locked} message to $q$. 
+
+% Process $p$ does not use the new links until Process $q$ confirmed the receipt
+% of the locked message. Acknowledgments do not have to travel through FIFO
+% channels.  Once it receives the acknowledgment, $p$ empties the buffer of
+% messages to $q$ and start using the channel normally.
 
 \begin{theorem}[FBC-broadcast$^+$ is causal]
   As long as the network is not partitioned, FBC-broadcast$^+$ is causal in both
@@ -466,7 +481,7 @@ management which means that they can grow unbounded, we can easily bound
 them. For instance, above a threshold we clear the buffer and send another
 locked message, or we remove the link altogether.
 
-\paragraph{Duplicated message detection.} Represented in
+\paragraph{Duplicated message detection.} \TODO{Rework.} Represented in
 Algorithms~\ref{algo:fifobroadcast} and~\ref{algo:bufferbroadcast} by Function
 $alreadyReceived$. Causal ordering and detecting duplicated receipts are
 orthogonal problems. In this paper, we do not provide an implementation for the
