@@ -4,12 +4,15 @@
 
 In this section, we show that reliable broadcast becomes causal as soon as links
 ensure FIFO order (e.g. TCP). Consequently, it ensures causal delivery of
-messages \TODO{HERERERERE.}
-
-
-We show that this property does not hold when links are added to the network. It
-does not support dynamic networks. We propose a causal broadcast that works in
-such settings.
+messages at marginal cost. It checks for duplicate messages the cost of which
+remains confined to a local scope. Contrarily to state-of-the-art (\REF), it
+does not overload messages with control information.  However, we show that
+causal order may be violated in dynamic networks. We propose a causal broadcast
+that works in such settings. The intuition is that causally related messages are
+never missing, for all paths --- including new --- from the broadcaster to every
+peers convey all messages in the appropriate order.  It still does not overload
+messages and the local space requirements remain small. Using this broadcast,
+large and dynamic systems can finally afford causal broadcast.
 
 % We propose an approach guaranteeing causal order to uniform reliable
 % broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
@@ -17,13 +20,13 @@ such settings.
 % partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
 % \CYCLON~\cite{voulgaris2005cyclon}).
 
-\TODO{If ok with model section, change this paragraph a bit.}
-Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
-is sufficient to provide causal delivery of messages. This result holds if the
-network is static or links are removed only. It does not hold if links are added
-to the network. Section~\ref{subsec:bufferbroadcast} provides a simple algorithm
-that solves this issue. It allows processes to use a causal broadcast which
-alleviates applications of the burden of tracking causal relationships.
+% \TODO{If ok with model section, change this paragraph a bit.}
+% Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
+% is sufficient to provide causal delivery of messages. This result holds if the
+% network is static or links are removed only. It does not hold if links are added
+% to the network. Section~\ref{subsec:bufferbroadcast} provides a simple algorithm
+% that solves this issue. It allows processes to use a causal broadcast which
+% alleviates applications of the burden of tracking causal relationships.
 
 \subsection{2-processes equivalent model}
 
@@ -55,26 +58,31 @@ Process $p_{from}$ sent them.
 \subsection{FIFO-based causal broadcast}
 \label{subsec:fifobroadcast}
 
-The FIFO-based causal broadcast relies on a peer-sampling protocol. It provides
-a set of neighbors to communicate with via FIFO channels. The peer-sampling
-protocol must ensure that the network is not partitioned.
+Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
+reliable broadcast. It relies on a peer-sampling protocol that provides links to
+communicate with other processes. When these links are FIFO, the broadcast
+becomes causal under certain conditions.
+
+% The FIFO-based causal broadcast relies on a peer-sampling protocol. It provides
+% a set of neighbors to communicate with via FIFO channels. The peer-sampling
+% protocol must ensure that the network is not partitioned.
 
 \begin{definition}[FIFO communication channel]
   If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO
   channel, $q$ receives $m$ before $m'$.
 \end{definition}
 
-\TODO{Rework this part, rework next algo as well.}
+% \TODO{Rework this part, rework next algo as well.}
 
-Algorithm~\ref{algo:fifobroadcast} shows the instructions of the causal
-broadcast mechanism built using FIFO channels. Functions $\textsc{broadcast}$
-and $\textsc{forward}$ are distinct although holding the same instructions to
-highlight that only 1 process broadcasts while all other processes
-forward. Function $\textsc{receive}$ makes sure that each process forwards each
-message exactly once. Function $\textsc{alreadyReceived}$ checks if a message
-has already been received by the process. We voluntarily keep the implementation
-out of this paper, for it constitutes an orthogonal problem. It is worth noting
-that this feature is achievable without overhead in terms of message size.
+% Algorithm~\ref{algo:fifobroadcast} shows the instructions of the causal
+% broadcast mechanism built using FIFO channels. Functions $\textsc{broadcast}$
+% and $\textsc{forward}$ are distinct although holding the same instructions to
+% highlight that only 1 process broadcasts while all other processes
+% forward. Function $\textsc{receive}$ makes sure that each process forwards each
+% message exactly once. Function $\textsc{alreadyReceived}$ checks if a message
+% has already been received by the process. We voluntarily keep the implementation
+% out of this paper, for it constitutes an orthogonal problem. It is worth noting
+% that this feature is achievable without overhead in terms of message size.
 
 \begin{definition}[Static network]
   A network is static if it comprises an immutable set of edges and an immutable
@@ -92,15 +100,18 @@ that this feature is achievable without overhead in terms of message size.
 
 \begin{proof}
   To prove that FBC-broadcast is causal, we must show that it ensures validity,
-  uniform agreement, uniform integrity, and causal order. \\
-  \textbf{\TODO{Validity:}} A delivery instruction always follows a broadcast
-  instruction.\\
-  \textbf{\TODO{Uniform agreement:}} All processes broadcast or forward messages
-  before delivery. \TODO{Add eventual receipt. There exist a path from any --
-    correct or not -- process to any other correct process.} \\
-  \textbf{\TODO{Uniform integrity:}} $alreadyReceived$ makes sure that at most
-  one message is delivered, even if duplicated. Before entering in receipt
-  instructions, the message must be broadcast. \\
+  uniform agreement, uniform integrity, and causal order -- that is FIFO order
+  and Local order. \\
+  \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
+  R-broadcast. \\
+  % \textbf{\TODO{Validity:}} A delivery instruction always follows a broadcast
+  % instruction.\\
+  % \textbf{\TODO{Uniform agreement:}} All processes broadcast or forward messages
+  % before delivery. \TODO{Add eventual receipt. There exist a path from any --
+  %   correct or not -- process to any other correct process.} \\
+  % \textbf{\TODO{Uniform integrity:}} $alreadyReceived$ makes sure that at most
+  % one message is delivered, even if duplicated. Before entering in receipt
+  % instructions, the message must be broadcast. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$. \\
@@ -170,7 +181,7 @@ the causal order violation from Figure~\ref{fig:generalproblem} by using FIFO
 channels.  The figure shows a static network comprising 3 processes $p_1$,
 $p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
 $p_3$ for the sake of clarity.  The processes receive $m$ and $m'$ multiple
-times but there exist no link in the paths from $p_2$ to $p_3$ that carries $m'$
+times but there exists no link in the paths from $p_2$ to $p_3$ that carries $m'$
 without having carried $m$ beforehand. Hence, the delivery of $m$ always
 precedes the delivery of $m'$ at any process.
 
@@ -183,7 +194,7 @@ precedes the delivery of $m'$ at any process.
   of processes.
 \end{definition}
 
-\begin{theorem}[FBC-broadcast in dynamic networks subject to link removal is
+\begin{theorem}[FBC-broadcast in dynamic networks subject to link removals is
   causal]
   As long as the network is not partitioned, FBC-broadcast remains causal when
   the number of links in the network is monotonically decreasing.
@@ -289,7 +300,7 @@ each process has a set of neighbors to communicate with via FIFO
 channels. Messages transitively reach all processes using forwarding. Processes
 deliver and forward each message exactly once.  
 
-Compared to Algorithm~\ref{algo:fifobroadcast}, it adds a structure associating
+Compared to Algorithm~\ref{algo:reliablebroadcast}, it adds a structure associating
 each opening channel with a buffer of messages. When Process $p$ gets notified
 that another FIFO channel to Process $q$ is available, it associates this
 channel with an empty buffer of messages. It also sends a \emph{locked} message
