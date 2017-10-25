@@ -1,70 +1,39 @@
+\SetKwProg{Function}{function}{}{}
+\SetKwProg{Upon}{upon}{}{}
+\SetKwProg{Initially}{INITIALLY:}{}{}
+\SetKwProg{Dissemination}{DISSEMINATION:}{}{}
 
-\algdef{SE}[INITIALLY]{Initially}{EndInitially}[0]{\textbf{INITIALLY:}}{\algorithmicend\ \textbf{INITIALLY}}%
-\algtext*{EndInitially}
+\small
 
-\algdef{SE}[EVENT]{Event}{EndEvent}[0]{\textbf{EVENTS:}}{\algorithmicend\ \textbf{event}}%
-\algtext*{EndEvent}
+\DontPrintSemicolon
+\LinesNumbered
 
-\algsetblockdefx[dissemination]{dissemination}{endDissemination}
-{65535}{}
-[0] {\textbf{DISSEMINATION:}}
-
-\algdef{SE}[UPON]{Upon}{EndUpon}[1]{\textbf{upon}\ #1\ \algorithmicdo}{\algorithmicend\ \textbf{upon}}%
-\algtext*{EndUpon}
-
-\newcommand{\comment}[1]{$\rhd$ #1}
-\newcommand{\LINEIFTHEN}[2]{%
-  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} %
-}
-\newcommand{\LINEIFTHENELSE}[3]{%
-  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} \algorithmicelse\ {#3}%
+\Initially {} {
+  $Q$ \tcp*{$p$'s neighborhood}
+  $received \leftarrow \varnothing$ \tcp*{To detect double receipts}
 }
 
-\newcommand{\LINEFOR}[2]{%
-  \algorithmicfor\ {#1}\ \algorithmicdo\ {#2} %
+\BlankLine
+
+\Dissemination{}{
+  
+  \Function{\textsc{R-broadcast}($m$) \tcp*[f]{$b_p(m)$}} { 
+    $received \leftarrow received \cup m$ \;
+    \lForEach {$q \in Q$} {\textsc{sendTo}($q,\, m$)}
+    \textsc{R-deliver}($m$) \tcp*{$d_p(m)$}
+  }
+
+  \BlankLine
+  
+  \Upon{\textsc{receive}($m$)}{
+    \If {$m \not \in received$} {
+      $received \leftarrow received \cup m$ \;
+      \lForEach {$q \in Q$} {\textsc{sendTo}($q,\, m$) \tcp*[f]{forward}}
+      \textsc{R-deliver}($m$) \tcp*{$d_p(m)$}
+    }
+  }
+  
 }
-
-\begin{algorithmic}[1]
-  \small
-
-  \Initially
-  \State $p$ \hfill \comment{This process identity}
-  \State $Q$ \hfill \comment{$p$'s neighborhood}
-  \State $received \leftarrow \varnothing$ \hfill
-  \comment{To detect double receipts} 
-  \EndInitially
-  
-  \Statex
-
-  \dissemination
-
-  \Function{R-broadcast} {$m$} \hfill \comment{$b_p(m)$}
-  \State $received \leftarrow received \cup m$
-  \State \LINEFOR{\textbf{each} $q \in Q$} 
-  {$\textsc{sendTo}(q,\, m)$}
-  \State $\textsc{R-deliver}(m)$ 
-  \EndFunction
-  
-  \Statex
-
-  % \Function{forward} {$m$}
-  % \State \LINEFOR{\textbf{each} $q \in Q$} 
-  % {$\textsc{sendTo}(q,\, m)$}
-  % \EndFunction
-
-  % \Statex
-  
-  \Upon{receive($m$)}  
-  \If {$m \not \in received$}
-  \State $received \leftarrow received \cup m$
-  \State \LINEFOR{\textbf{each} $q \in Q$} {$\textsc{sendTo}(q,\, m)$}
-  \hfill \comment{$forward$}
-  \State $\textsc{R-deliver}(m)$ \hfill \comment{$d_p(m)$}
-  \EndIf
-
-  \EndUpon
-
-\end{algorithmic}
 
 
 %%% Local Variables:

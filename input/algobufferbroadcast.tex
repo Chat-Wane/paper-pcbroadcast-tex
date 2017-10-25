@@ -1,112 +1,68 @@
 
-\algdef{SE}[INITIALLY]{Initially}{EndInitially}[0]{\textbf{INITIALLY:}}{\algorithmicend\ \textbf{INITIALLY}}%
-\algtext*{EndInitially}
+\SetKwProg{Function}{function}{}{}
+\SetKwProg{Upon}{upon}{}{}
+\SetKwProg{Initially}{INITIALLY:}{}{}
+\SetKwProg{Dissemination}{DISSEMINATION:}{}{}
+\SetKwProg{Safety}{SAFETY:}{}{}
 
-\algdef{SE}[SAFETY]{Safety}{EndSafety}[0]{\textbf{SAFETY:}}{\algorithmicend\ \textbf{event}}%
-\algtext*{EndSafety}
-
-\algsetblockdefx[dissemination]{dissemination}{endDissemination}
-{65535}{}
-[0] {\textbf{DISSEMINATION:}}
-
-\algdef{SE}[UPON]{Upon}{EndUpon}[1]{\textbf{upon}\ #1\ \algorithmicdo}{\algorithmicend\ \textbf{upon}}%
-\algtext*{EndUpon}
-
-\newcommand{\comment}[1]{$\rhd$ #1}
-\newcommand{\LINEIFTHEN}[2]{%
-  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} %
-}
-\newcommand{\LINEIFTHENELSE}[3]{%
-  \algorithmicif\ {#1}\ \algorithmicthen\ {#2} \algorithmicelse\ {#3}%
-}
-
-\newcommand{\LINEFOR}[2]{%
-  \algorithmicfor\ {#1}\ \algorithmicdo\ {#2} %
-}
-
-\begin{algorithmic}[1]
 \small
-  \Initially
-  \State $p$ \hfill \comment{This process identity}
-  \State $Q$
-  \hfill \comment{$p$'s neighborhood, FIFO channels}
-  \State $B \leftarrow \varnothing$ 
-  \hfill \comment{Buffers of messages}
-  \EndInitially
+\Initially {} {
+  $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
+  $B \leftarrow \varnothing$ \tcp*{Buffers of messages}
+}
 
-  \Statex
+\BlankLine
+
+\Safety {} {
+  \Upon{open($q$)} {
+    \If{$|Q|>1$} {
+      $Q \leftarrow Q \setminus q$ \;
+      $B[q] \leftarrow \varnothing$ \;
+      $\textsc{sendLocked}(p,\, q)$ \;
+    }
+  }
   
-  \Safety
-  \Upon{open($q$)}
-  \If{$|Q|>1$}
-  \State $Q \leftarrow Q \setminus q$
-  \State $B[q] \leftarrow \varnothing$
-  \State $\textsc{sendLocked}(p,\, q)$
-  \EndIf
-  \EndUpon
+  \BlankLine
   
-  \Statex
-
-  \Upon{close($q$)}
-  \State $B \leftarrow B \setminus q$
-  \EndUpon
-
-
-  \Statex
-
-  \Upon{receiveLocked($from, \, to$)} \hfill \comment{$to=p$}  
-  \State $\textsc{sendAck}(from,\, to)$
-  \EndUpon
+  \Upon{receiveLocked($from, \, to$) \tcp*[f]{$to=p$}} {
+    $\textsc{sendAck}(from,\, to)$ \;
+  }
   
-  \Statex
+  \BlankLine
 
-  \Upon{receiveAck($from,\, to$)} \hfill \comment{$from=p$}
-  \If {$to \in B$} \hfill \comment{Channel becomes safe}
-  \State \LINEFOR {\textbf{each} $b \in B[to]$}
-  {$\textsc{sendTo}(to,\, b)$}
-%%  \hfill \comment{Send all buffered message through this channel}
-  \State $B \leftarrow B \setminus to$
-%%  \hfill \comment{And start using it as a regular channel}
-  \State $Q \leftarrow Q \cup to$
-  \EndIf
-  \EndUpon
+  \Upon{receiveAck($from,\, to$) \tcp*[f]{$from=p$}} {
+    \If {$to \in B$} {
+      \lForEach {$m \in B[to]$} {$\textsc{sendTo}(to,\, m)$}
+      $B \leftarrow B \setminus to$ \;
+      $Q \leftarrow Q \cup to$ \;
+    }
+  }
 
-  \EndSafety
+  \BlankLine
 
-  \Statex
+  \Upon{close($q$)} {
+    $B \leftarrow B \setminus q$ \;
+  }
 
+}
 
-  \dissemination
+\BlankLine
 
-  \Function{FBC-broadcast$^+$} {$m$}
-  \hfill \comment{$b_p(m)$}
-  \State \LINEFOR{\textbf{each} $q \in B$}
-  {$B[q] \leftarrow B[q] \cup m$}
-  \hfill \comment{Buffering}%% for members of $B$}
-  \State $\textsc{R-broadcast}(m)$
-%  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
-%  {$\textsc{sendTo}(q,\, m)$}
-  \EndFunction
+\Dissemination {} {
 
-  \Statex
+  \Function{FBC-broadcast$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
+    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$ \tcp*[f]{Buffers}}
+    $\textsc{R-broadcast}(m)$ \;
+  }
   
-  % \Function{forward} {$m$}
-  % \State \LINEFOR{\textbf{each} $q \in B$}
-  % {$B[q] \leftarrow B[q] \cup m$}
-  % \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
-  % {$\textsc{sendTo}(q,\, m)$}
-  % \EndFunction
+  \BlankLine
+  
+  \Upon{R-deliver($m$)} {
+    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$ \tcp*[f]{Buffers}}
+    $\textsc{FBC-deliver}(m)$ \tcp*{$d_p(m)$}
+  }
 
-  % \Statex
-
-  \Upon{R-deliver($m$)} %{$m$}
-  \State \LINEFOR{\textbf{each} $q \in B$}
-  {$B[q] \leftarrow B[q] \cup m$}
-  \hfill \comment{Buffering}
-  \State $\textsc{FBC-deliver}(m)$ \hfill \comment{$d_p(m)$}
-  \EndUpon
-
-\end{algorithmic}
+}
 
 
 %%% Local Variables:
