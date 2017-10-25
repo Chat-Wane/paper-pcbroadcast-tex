@@ -1,15 +1,16 @@
 
-\algblockdefx[initially]{initially}{endInitially}
-[0] {\textbf{INITIALLY:}}
+\algdef{SE}[INITIALLY]{Initially}{EndInitially}[0]{\textbf{INITIALLY:}}{\algorithmicend\ \textbf{INITIALLY}}%
+\algtext*{EndInitially}
 
-\algsetblockdefx[event]{event}{endEvent}
-{65535}{}
-[0] {\textbf{EVENTS:}}
+\algdef{SE}[EVENT]{Event}{EndEvent}[0]{\textbf{EVENTS:}}{\algorithmicend\ \textbf{event}}%
+\algtext*{EndEvent}
 
 \algsetblockdefx[dissemination]{dissemination}{endDissemination}
 {65535}{}
 [0] {\textbf{DISSEMINATION:}}
 
+\algdef{SE}[UPON]{Upon}{EndUpon}[1]{\textbf{upon}\ #1\ \algorithmicdo}{\algorithmicend\ \textbf{upon}}%
+\algtext*{EndUpon}
 
 \newcommand{\comment}[1]{$\rhd$ #1}
 \newcommand{\LINEIFTHEN}[2]{%
@@ -26,13 +27,15 @@
 \begin{algorithmic}[1]
   \small
 
-  \initially
+  \Initially
   \State $p$ \hfill \comment{This process identity}
   \State $Q$ \hfill \comment{$p$'s neighborhood}
   \State $received \leftarrow \varnothing$ \hfill
   \comment{To detect double receipts} 
-  \endInitially
+  \EndInitially
   
+  \Statex
+
   \dissemination
 
   \Function{R-broadcast} {$m$} \hfill \comment{$b_p(m)$}
@@ -51,7 +54,7 @@
 
   % \Statex
   
-  \Function{receive} {$m$}  
+  \Upon{receive($m$)}  
   \If {$m \not \in received$}
   \State $received \leftarrow received \cup m$
   \State \LINEFOR{\textbf{each} $q \in Q$} {$\textsc{sendTo}(q,\, m)$}
@@ -59,7 +62,7 @@
   \State $\textsc{R-deliver}(m)$ \hfill \comment{$d_p(m)$}
   \EndIf
 
-  \EndFunction
+  \EndUpon
 
 \end{algorithmic}
 

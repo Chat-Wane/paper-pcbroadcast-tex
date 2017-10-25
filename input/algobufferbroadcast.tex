@@ -1,15 +1,16 @@
 
-\algblockdefx[initially]{initially}{endInitially}
-[0] {\textbf{INITIALLY:}}
+\algdef{SE}[INITIALLY]{Initially}{EndInitially}[0]{\textbf{INITIALLY:}}{\algorithmicend\ \textbf{INITIALLY}}%
+\algtext*{EndInitially}
 
-\algsetblockdefx[event]{event}{endEvent}
-{65535}{}
-[0] {\textbf{EVENTS:}}
+\algdef{SE}[SAFETY]{Safety}{EndSafety}[0]{\textbf{SAFETY:}}{\algorithmicend\ \textbf{event}}%
+\algtext*{EndSafety}
 
 \algsetblockdefx[dissemination]{dissemination}{endDissemination}
 {65535}{}
 [0] {\textbf{DISSEMINATION:}}
 
+\algdef{SE}[UPON]{Upon}{EndUpon}[1]{\textbf{upon}\ #1\ \algorithmicdo}{\algorithmicend\ \textbf{upon}}%
+\algtext*{EndUpon}
 
 \newcommand{\comment}[1]{$\rhd$ #1}
 \newcommand{\LINEIFTHEN}[2]{%
@@ -25,76 +26,85 @@
 
 \begin{algorithmic}[1]
 \small
-  \initially
+  \Initially
   \State $p$ \hfill \comment{This process identity}
   \State $Q$
   \hfill \comment{$p$'s neighborhood, FIFO channels}
   \State $B \leftarrow \varnothing$ 
   \hfill \comment{Buffers of messages}
-  \endInitially
+  \EndInitially
+
+  \Statex
   
-  \event
-  \Function{open} {$q$}
-  \If{$q \not\in B \wedge  |Q|-|B|>1$}
+  \Safety
+  \Upon{open($q$)}
+  \If{$|Q|>1$}
+  \State $Q \leftarrow Q \setminus q$
   \State $B[q] \leftarrow \varnothing$
   \State $\textsc{sendLocked}(p,\, q)$
   \EndIf
-  \EndFunction
+  \EndUpon
   
   \Statex
 
-  \Function{close} {$q$}
+  \Upon{close($q$)}
   \State $B \leftarrow B \setminus q$
-  \EndFunction
+  \EndUpon
 
-  \endEvent
-
-  \dissemination
-
-  \Function{broadcast} {$m$}
-  \hfill \comment{$b_p(m)$}
-  \State \LINEFOR{\textbf{each} $q \in B$}
-  {$B[q] \leftarrow B[q] \cup m$}
-  \hfill \comment{Buffering}%% for members of $B$}
-  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
-  {$\textsc{sendTo}(q,\, m)$}
-  \EndFunction
-
-  \Statex
-  
-  \Function{forward} {$m$}
-  \State \LINEFOR{\textbf{each} $q \in B$}
-  {$B[q] \leftarrow B[q] \cup m$}
-  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
-  {$\textsc{sendTo}(q,\, m)$}
-  \EndFunction
 
   \Statex
 
-  \Function{receive} {$m$}
-  \If {$\neg \textsc{alreadyReceived}(m)$}
-  \State $\textsc{forward}(m)$
-  \State $\textsc{deliver}(m)$ \hfill \comment{$d_p(m)$}
-  \EndIf
-  \EndFunction
-
-  \Statex
-
-  \Function{receiveLocked}{$from, \, to$} \hfill \comment{$to=p$}  
+  \Upon{receiveLocked($from, \, to$)} \hfill \comment{$to=p$}  
   \State $\textsc{sendAck}(from,\, to)$
-  \EndFunction
+  \EndUpon
   
   \Statex
 
-  \Function{receiveAck}{$from,\, to$} \hfill \comment{$from=p$}
+  \Upon{receiveAck($from,\, to$)} \hfill \comment{$from=p$}
   \If {$to \in B$} \hfill \comment{Channel becomes safe}
   \State \LINEFOR {\textbf{each} $b \in B[to]$}
   {$\textsc{sendTo}(to,\, b)$}
 %%  \hfill \comment{Send all buffered message through this channel}
   \State $B \leftarrow B \setminus to$
 %%  \hfill \comment{And start using it as a regular channel}
+  \State $Q \leftarrow Q \cup to$
   \EndIf
+  \EndUpon
+
+  \EndSafety
+
+  \Statex
+
+
+  \dissemination
+
+  \Function{FBC-broadcast$^+$} {$m$}
+  \hfill \comment{$b_p(m)$}
+  \State \LINEFOR{\textbf{each} $q \in B$}
+  {$B[q] \leftarrow B[q] \cup m$}
+  \hfill \comment{Buffering}%% for members of $B$}
+  \State $\textsc{R-broadcast}(m)$
+%  \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
+%  {$\textsc{sendTo}(q,\, m)$}
   \EndFunction
+
+  \Statex
+  
+  % \Function{forward} {$m$}
+  % \State \LINEFOR{\textbf{each} $q \in B$}
+  % {$B[q] \leftarrow B[q] \cup m$}
+  % \State \LINEFOR{\textbf{each} $q \in Q \setminus B$} 
+  % {$\textsc{sendTo}(q,\, m)$}
+  % \EndFunction
+
+  % \Statex
+
+  \Upon{R-deliver($m$)} %{$m$}
+  \State \LINEFOR{\textbf{each} $q \in B$}
+  {$B[q] \leftarrow B[q] \cup m$}
+  \hfill \comment{Buffering}
+  \State $\textsc{FBC-deliver}(m)$ \hfill \comment{$d_p(m)$}
+  \EndUpon
 
 \end{algorithmic}
 
