@@ -26,21 +26,36 @@ Definitions and theorems come from~\cite{hadzilacos1994modular}.
 \begin{definition}[Uniform reliable broadcast]
   A process $p$ broadcasts a message $m$ to all processes of the network: \\
   $\forall p \in P,\, (b_p(m) \Leftrightarrow \forall q \in P,\, r_q(m))$. \\
-  Uniform reliable broadcast guarantees 3 properties:
-
-  \begin{asparadesc}
-  \item [Validity:] If a correct process broadcasts a message, then it eventually
-    delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$.
-  \item [Uniform Agreement:] If a process -- correct or not -- delivers a message,
+  Uniform reliable broadcast guarantees 3 properties: \\
+  \textbf{Validity:} If a correct process broadcasts a message, then it eventually
+  delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$. \\
+  \textbf{Uniform Agreement:} If a process -- correct or not -- delivers a message,
     then all correct processes eventually deliver it:\\
-    $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$.
-  \item [Uniform Integrity:] A process delivers a message at most once, and
+    $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$. \\
+  \textbf{Uniform Integrity:} A process delivers a message at most once, and
     only if it was previously broadcast:\\
     $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m)
     \implies \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
-\end{asparadesc}
-
 \end{definition}
+
+\begin{algorithm}[h]
+  \input{./input/algoreliablebroadcast.tex}
+  \caption{\label{algo:reliablebroadcast}Uniform reliable broadcast R-broadcast.}
+\end{algorithm}
+
+Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
+reliable broadcast. It uses a structure that keeps track of received messages in
+order to deliver them at most once. It uses a peer-sampling protocol that
+provides neighbors to communicate with, i.e., a set of links. Assuming this
+peer-sampling protocol ensures a network without partitions meaning that there
+exists at least one path from any process to any correct process, then all
+correct processes eventually receive all messages at least once: they either
+receive the message directly from the broadcaster or by transitivity. Thus, all
+correct processes eventually deliver all messages exactly once. This algorithm
+ensures validity, uniform agreement, and uniform integrity.
+
+In addition to reliably conveying messages to all correct processes, broadcast
+protocols can ensure that messages are delivered in a specific order.
 
 
 \begin{definition}[FIFO order]

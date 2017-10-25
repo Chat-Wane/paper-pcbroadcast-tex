@@ -2,11 +2,20 @@
 \section{Causal broadcast}
 \label{sec:proposal}
 
-We propose an approach guaranteeing causal order to uniform reliable
-broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
-relies on scalable peer-sampling protocols that must not create network
-partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
-\CYCLON~\cite{voulgaris2005cyclon}).
+In this section, we show that reliable broadcast becomes causal as soon as links
+ensure FIFO order (e.g. TCP). Consequently, it ensures causal delivery of
+messages \TODO{HERERERERE.}
+
+
+We show that this property does not hold when links are added to the network. It
+does not support dynamic networks. We propose a causal broadcast that works in
+such settings.
+
+% We propose an approach guaranteeing causal order to uniform reliable
+% broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
+% relies on scalable peer-sampling protocols that must not create network
+% partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
+% \CYCLON~\cite{voulgaris2005cyclon}).
 
 \TODO{If ok with model section, change this paragraph a bit.}
 Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
@@ -55,10 +64,7 @@ protocol must ensure that the network is not partitioned.
   channel, $q$ receives $m$ before $m'$.
 \end{definition}
 
-\begin{algorithm}[h]
-  \input{./input/algofifobroadcast.tex}
-  \caption{\label{algo:fifobroadcast}FBC-broadcast.}
-\end{algorithm}
+\TODO{Rework this part, rework next algo as well.}
 
 Algorithm~\ref{algo:fifobroadcast} shows the instructions of the causal
 broadcast mechanism built using FIFO channels. Functions $\textsc{broadcast}$

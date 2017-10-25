@@ -28,29 +28,35 @@
 
   \initially
   \State $p$ \hfill \comment{This process identity}
-  \State $Q$ \hfill \comment{$p$'s neighborhood, FIFO channels}
+  \State $Q$ \hfill \comment{$p$'s neighborhood}
+  \State $received \leftarrow \varnothing$ \hfill
+  \comment{To detects double receipts} 
   \endInitially
   
   \dissemination
 
-  \Function{broadcast} {$m$} \hfill \comment{$b_p(m)$}
+  \Function{R-broadcast} {$m$} \hfill \comment{$b_p(m)$}
+  \State $received \leftarrow received \cup m$
   \State \LINEFOR{\textbf{each} $q \in Q$} 
   {$\textsc{sendTo}(q,\, m)$}
+  \State $\textsc{R-deliver}(m)$ 
   \EndFunction
   
   \Statex
 
-  \Function{forward} {$m$}
-  \State \LINEFOR{\textbf{each} $q \in Q$} 
-  {$\textsc{sendTo}(q,\, m)$}
-  \EndFunction
+  % \Function{forward} {$m$}
+  % \State \LINEFOR{\textbf{each} $q \in Q$} 
+  % {$\textsc{sendTo}(q,\, m)$}
+  % \EndFunction
 
-  \Statex
+  % \Statex
   
   \Function{receive} {$m$}  
-  \If {$\neg \textsc{alreadyReceived}(m)$}
-  \State $\textsc{forward}(m)$
-  \State $\textsc{deliver}(m)$ \hfill \comment{$d_p(m)$}
+  \If {$m \not \in received$}
+  \State $received \leftarrow received \cup m$
+  \State \LINEFOR{\textbf{each} $q \in Q$} {$\textsc{sendTo}(q,\, m)$}
+  \hfill \comment{$forward$}
+  \State $\textsc{R-deliver}(m)$ \hfill \comment{$d_p(m)$}
   \EndIf
 
   \EndFunction
