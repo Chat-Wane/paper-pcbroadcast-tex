@@ -265,7 +265,7 @@ only uses local knowledge.
 The issue is that new links may act as shortcut for messages. First messages
 that travel through new links may arrive before preceding messages that took
 longer paths. New links create additionnal diffusion paths that potentially
-disorder messages. To solve this issue, we make sure that even new link convey
+disorder messages. To solve this issue, we make sure that even new links convey
 all messages in the right order. The idea is to use already established FIFO
 links to acknowledge the receipt of messages at a marginal cost. The process
 knows the potentially missing messages. It sends them in the right order using
