@@ -264,7 +264,7 @@ only uses local knowledge.
 
 The issue is that new links may act as shortcut for messages. First messages
 that travel through new links may arrive before preceding messages that took
-longer paths. New links create additionnal diffusion paths that potentially
+longer paths. New links create additional diffusion paths that potentially
 disorder messages. To solve this issue, we make sure that even new links convey
 all messages in the right order. The idea is to use already established FIFO
 links to acknowledge the receipt of messages at a marginal cost. The process
@@ -470,8 +470,8 @@ buffer to ensure causal delivery of messages.  \TODO{not done.}
 \label{subsec:complexity}
 
 We review and discuss about the complexity of FBC-broadcast$^+$. We distinguish
-the complexity brought by causal ordering, the complexity brought by duplicated
-message detection, and the complexity brought by the peer-sampling protocol.
+the complexity led by causal ordering, the complexity led by reliable
+broadcast, and the complexity led by the peer-sampling protocol.
 
 \paragraph{Causal ordering.} Regarding traffic, the broadcast and forwarded
 messages do not need to convey any control information. Regarding local space
@@ -481,24 +481,37 @@ management which means that they can grow unbounded, we can easily bound
 them. For instance, above a threshold we clear the buffer and send another
 locked message, or we remove the link altogether.
 
-\paragraph{Duplicated message detection.} \TODO{Rework.} Represented in
-Algorithms~\ref{algo:fifobroadcast} and~\ref{algo:bufferbroadcast} by Function
-$alreadyReceived$. Causal ordering and detecting duplicated receipts are
-orthogonal problems. In this paper, we do not provide an implementation for the
-later. The simplest approach consists in saving all received messages
-(\REF). However, the size of this set linearly and monotonically increases as
-the number of broadcast messages increases. One would prefer an approach based
-on vectors where one entry corresponds to the number of messages received by a
-particular process~\cite{fidge1988timestamps}. Such approach do not require to
-piggyback additional data in the message. However, it requires to store locally
-a vector the size of which increases linearly compared to the number of
-processes that ever broadcast a message. Interval tree
-clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
-becomes linear in terms of number of processes that are currently involved in
-broadcasting. Possible improvements could take advantage of the fact that the
-number of duplicates is equal to the number of incoming links. However, it does
-not hold in dynamic networks where additional links are established. Finding a
-sublinear bound for detecting duplicated receipts remains an open problem.
+\paragraph{Reliable broadcast.} Algorithm~\ref{algo:reliablebroadcast} shows the
+instructions of reliable broadcast. Even in presence of message duplicates it
+avoids multiple deliveries of a same message. To achieve this, the most
+straightforward structure is a set saving all new received messages. However, it
+increases linearly with the number of delivered messages (\REF). Assigning a
+unique identifier $\langle p,\, counter \rangle$ to each message changes the
+complexity. It becomes a vector that increases linearly with the number of
+processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
+interval tree clocks~\cite{almeida2008interval} slightly overloads messages with
+identifiers but it improves the space complexity: the local structure increases
+linearly with the number of processes that are currently involved in
+broadcasting.
+
+
+% \TODO{Rework.} Represented in Algorithms~\ref{algo:fifobroadcast}
+% and~\ref{algo:bufferbroadcast} by Function $alreadyReceived$. Causal ordering
+% and detecting duplicated receipts are orthogonal problems. In this paper, we do
+% not provide an implementation for the later. The simplest approach consists in
+% saving all received messages (\REF). However, the size of this set linearly and
+% monotonically increases as the number of broadcast messages increases. One would
+% prefer an approach based on vectors where one entry corresponds to the number of
+% messages received by a particular process~\cite{fidge1988timestamps}. Such
+% approach do not require to piggyback additional data in the message. However, it
+% requires to store locally a vector the size of which increases linearly compared
+% to the number of processes that ever broadcast a message. Interval tree
+% clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
+% becomes linear in terms of number of processes that are currently involved in
+% broadcasting. Possible improvements could take advantage of the fact that the
+% number of duplicates is equal to the number of incoming links. However, it does
+% not hold in dynamic networks where additional links are established. Finding a
+% sublinear bound for detecting duplicated receipts remains an open problem.
 
 
 \paragraph{Peer-sampling protocol.} The number of messages sent by each process,
