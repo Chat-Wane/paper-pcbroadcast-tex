@@ -16,17 +16,18 @@
   
   \draw[->](0.5*\X, 0pt)node[anchor=south]{$b(m)$}--(2*\X, -1*\Y);
   \draw(1.15*\X, 2pt)--node[anchor=south]{$d(m)$}(1.15*\X, -2pt);
-  \draw[->, dashed](1.75*\X, 0*\Y) -- (3*\X, -1*\Y);
+  \draw[->](1.75*\X, 0*\Y) -- node[sloped,above]{$locked$} (3*\X, -1*\Y);
 
   \draw[->](2*\X, -1*\Y)--(2.5*\X, -2*\Y); %% p2 -> m -> p3
-  \draw[->, dashed](3*\X, -1*\Y)--(3.5*\X, -2*\Y); %% p2 -> l -> p3
+  \draw[->](3*\X, -1*\Y)--(3.5*\X, -2*\Y); %% p2 -> l -> p3
 
   \draw[fill=white](4*\X, 0pt) circle(2pt);
   \draw[fill=white](4*\X, -2*\Y) circle(2pt);
   \draw[->, dashed](4*\X, 0pt) -- (4*\X, -2.5*\Y)
   node[anchor=north]{$p_1$ to $p_3$ safe};
 
-  \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -2*\Y)--(4*\X, 0); %% p3 -> a -> p1
+  \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -2*\Y)--
+  node[sloped, above left]{$ack$}(4*\X, 0); %% p3 -> a -> p1
   
   \draw(2.75*\X, 2 -2*\Y)--node[anchor=north]{$d(m)$}(2.75*\X, -2 - 2*\Y);
   
@@ -36,8 +37,8 @@
   node[anchor=north]{$p_1$ connects to $p_3$};
 
   %% p1 -> m' -> p1
-  \draw[->](2.75*\X, 0pt)node[anchor=south]{$b(m')$} -- (3.75*\X, -1*\Y); 
-  \draw[->](3.75*\X, -1*\Y) -- (5.75*\X, -2*\Y); %% p2 -> m' -> p3
+  \draw[->](2.75*\X, 0pt)node[anchor=south]{$b(m')$} -- (3.9*\X, -1*\Y); 
+  \draw[->](3.9*\X, -1*\Y) -- (5.75*\X, -2*\Y); %% p2 -> m' -> p3
 
   %% p2 -> [m] -> p3
   \draw[->](4.15*\X, 0*\Y)node[anchor=south east]{[$m'$]} -- (4.4*\X, -2*\Y);

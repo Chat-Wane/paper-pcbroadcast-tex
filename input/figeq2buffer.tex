@@ -16,7 +16,8 @@
   
   \draw[->, densely dotted](0.5*\X, 0pt)node[anchor=south]{$b(m)$}--(2.5*\X, -1*\Y);
   \draw(1.15*\X, 2pt)--node[anchor=south]{$d(m)$}(1.15*\X, -2pt);
-  \draw[->, dashed](1.75*\X, 0*\Y) -- (3.5*\X, -1*\Y);
+  \draw[->, densely dotted](1.75*\X, 0*\Y) --
+  node[sloped,above]{$locked$} (3.5*\X, -1*\Y);
   \draw(2.75*\X, 2 -1*\Y)--node[anchor=north]{$d(m)$}(2.75*\X, -2 - 1*\Y);
   \draw(4.6*\X, 2 -1*\Y)--node[anchor=north]{$d(m')$}(4.6*\X, -2 - 1*\Y);
   \draw(5.4*\X, 2 -1*\Y)--node[anchor=north]{$d(m'')$}(5.4*\X, -2 - 1*\Y);
@@ -29,7 +30,8 @@
   \draw[->, dashed](4*\X, 0pt) -- (4*\X, -1.5*\Y)
   node[anchor=north]{$p_1$ to $p_2$ safe};
 
-  \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -1*\Y)--(4*\X, 0); %% p3 -> a -> p1
+  \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -1*\Y)--
+  node[sloped,above]{$ack$}(4*\X, 0); %% p3 -> a -> p1
   
 %%  \draw(3.25*\X, -2-1*\Y )--node[anchor=south]{$d(m)$}(3.25*\X, 2-1*\Y);
 

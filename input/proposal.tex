@@ -6,7 +6,7 @@ In this section, we show that reliable broadcast becomes causal as soon as links
 ensure FIFO order (e.g. TCP). Consequently, it ensures causal delivery of
 messages for free. It checks for duplicate messages the cost of which remains
 confined to a local scope. Contrarily to
-state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,mattern1989virtual,hadzilacos1993fault,mostefaoui2017probabilistic,singhal1992efficient},
+state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient},
 it does not overload messages with control information.  However, we show that
 causal order may be violated in dynamic networks. We propose a causal broadcast
 that works in such settings. The intuition is that causally related messages are
