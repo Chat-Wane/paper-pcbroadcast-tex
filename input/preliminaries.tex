@@ -12,16 +12,21 @@ Definitions and theorems come from~\cite{hadzilacos1994modular}.
   of correct processes is $C$. There are no byzantine processes.
 \end{definition}
 
-\TODO{Replace ``network'' by  ``distributed system'' ?}
+%\TODO{Replace ``network'' by  ``distributed system'' ?}
 
+We define time in a logical sense using Lamport's
+definition~\cite{lamport1978time}.
 
-\begin{definition}[Happen before~\cite{lamport1978time}]
+\begin{definition}[Happen before]
   Happen before is a transitive, irreflexive, and antisymmetric relation that
   defines a strict partial orders of events. At process $p$, Event $e$ happens
   before -- or precedes -- Event $e'$ is noted $e_p \rightarrow e'_p$. The
   sending of a message always precedes its receipt: \\
   $\forall p,\,q \in P, s_p(m) \rightarrow r_q(m)$.
 \end{definition}
+
+Processes communicate by sending messages to other processes. They can send
+messages to specific processes or all of them.
 
 \begin{definition}[Uniform reliable broadcast]
   A process $p$ broadcasts a message $m$ to all processes of the network: \\
@@ -57,6 +62,7 @@ ensures validity, uniform agreement, and uniform integrity.
 In addition to reliably conveying messages to all correct processes, broadcast
 protocols can ensure that messages are delivered in a specific order.
 
+To order messages broadcast from one process, we define FIFO order.
 
 \begin{definition}[FIFO order]
   If a process broadcasts two messages, processes deliver the first before the
@@ -65,11 +71,15 @@ protocols can ensure that messages are delivered in a specific order.
   d_q(m')$.
 \end{definition}
 
+To order messages broadcast by different processes, we define local order.
+
 \begin{definition}[Local order]
   If a process broadcasts a message after having delivered another message
   broadcast by another process, processes deliver the later before the former:\\
   $\forall p,\,q,\,r,\, \in P,\,p\neq q,\,$\\$b_p(m) \wedge d_q(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
 \end{definition}
+
+To order messages broadcast by every processes, we define causal order.
 
 \begin{definition}[Causal order]
   The delivery order of messages follows the happen before relationships of the
@@ -78,8 +88,12 @@ protocols can ensure that messages are delivered in a specific order.
 \end{definition}
 
 \begin{theorem}[\label{theo:causal}Causal order equivalence]
-  The intersection of FIFO order and Local order is equivalent to Causal order.
+  The intersection of FIFO order and local order is equivalent to causal order.
 \end{theorem}
+
+\begin{definition}[Causal broadcast]
+  Causal broadcast is a uniform reliable broadcast ensuring causal order.
+\end{definition}
 
 \begin{figure}
   \begin{center}
@@ -95,10 +109,6 @@ delivers $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$
 before $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
 violating the condition stating that the delivery of $m$ should precede the
 delivery $m'$.
-
-\begin{definition}[Causal broadcast]
-  Causal broadcast is a uniform reliable broadcast ensuring causal order.
-\end{definition}
 
 Multiple approaches exist to enforce causal order by either piggybacking control
 information in each message, or constraining the network topology. In this

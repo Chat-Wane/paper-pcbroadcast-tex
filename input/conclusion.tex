@@ -23,12 +23,13 @@ result means that large and dynamic systems can finally afford causal broadcast.
 
 As future work, we plan to investigate on reducing the space complexity of
 reliable broadcast. Section~\ref{subsec:complexity} reviews structures with
-linearly increasing space consumption. In static network we can prune the
-structure from already received messages, for we know that the number of
-duplicates is equal to the number of incoming links. As for FIFO-based
-broadcast, this does not hold in dynamic networks. We would like to investigate
-on a way to prune the structure in such settings. This would make causal
-broadcast fully scalable as well on generated traffic as on space consumption.
+linearly increasing space consumption. We can reduce this complexity in static
+networks. We can prune the structure from already received messages, for we know
+that the number of duplicates is equal to the number of incoming links. As for
+FIFO-based broadcast, this does not hold in dynamic networks. We would like to
+investigate on a way to prune the structure in such settings. This would make
+causal broadcast fully scalable as well on generated traffic as on space
+consumption.
 
 % As future work, we plan to investigate on the problem of duplicated message
 % detection. Although it only impacts local space complexity, this is the last and
