@@ -102,7 +102,7 @@ becomes causal under certain conditions.
 \begin{proof}
   To prove that FBC-broadcast is causal, we must show that it ensures validity,
   uniform agreement, uniform integrity, and causal order -- that is FIFO order
-  and Local order. \\
+  and local order. \\
   \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
   R-broadcast. \\
   % \textbf{\TODO{Validity:}} A delivery instruction always follows a broadcast
@@ -165,7 +165,7 @@ becomes causal under certain conditions.
   % it receives $m'$. Thus, it delivers $m$ before
   % delivering $m'$. \\
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
-  both FIFO ordering and Local ordering, it ensures Causal ordering.
+  both FIFO ordering and local ordering, it ensures causal ordering.
 \end{proof}
 
 
@@ -340,7 +340,7 @@ link to a process $q$ for causal broadcast,
   those of Theorems~\ref{theo:static} and~\ref{theo:removals}, for the buffers
   do not activate in such instances. For dynamic networks with link additions,
   we must show that FBC-broadcast$^+$ ensures both
-  FIFO order and Local order. \\
+  FIFO order and local order. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$.  Since adding a FIFO link from a Process $r$ to any other Process $s$ is
@@ -417,7 +417,7 @@ link to a process $q$ for causal broadcast,
   % have already received -- or is the origin of the broadcast of --
   % $m$. \TODO{Not over}  
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
-  ensures both FIFO ordering and Local ordering, it ensures Causal ordering.
+  ensures both FIFO ordering and local ordering, it ensures causal ordering.
 \end{proof}
 
 \begin{figure}
