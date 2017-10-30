@@ -1,5 +1,7 @@
 
 \begin{tikzpicture}[scale=1]
+  \small
+
   \newcommand\X{210/7pt};
   \newcommand\Y{30pt};
 
@@ -26,11 +28,8 @@
 
   \draw[->, decorate, decoration={snake, amplitude=0.3mm}](3.5*\X, -2*\Y)--(4*\X, 0); %% p3 -> a -> p1
   
-%%  \draw(3.25*\X, -2-1*\Y )--node[anchor=south]{$d(m)$}(3.25*\X, 2-1*\Y);
-
-%%  \draw[->](3*\X, -1*\Y)--(5*\X, -2*\Y);
-%%  \draw(5.25*\X, -2-2*\Y )--node[anchor=north]{$d(m)$}(5.25*\X, 2-2*\Y);
-
+  \draw(2.75*\X, 2 -2*\Y)--node[anchor=north]{$d(m)$}(2.75*\X, -2 - 2*\Y);
+  
   \draw[fill=white](1.5*\X, 0pt) circle(2pt);
   \draw[fill=white](1.5*\X, -2*\Y) circle(2pt);
   \draw[->, dashed](1.5*\X, 0pt) -- (1.5*\X, -2.5*\Y)
@@ -41,11 +40,14 @@
   \draw[->](3.75*\X, -1*\Y) -- (5.75*\X, -2*\Y); %% p2 -> m' -> p3
 
   %% p2 -> [m] -> p3
-  \draw[->](4.15*\X, 0*\Y)node[anchor=south east]{$s(m')$} -- (4.4*\X, -2*\Y);
+  \draw[->](4.15*\X, 0*\Y)node[anchor=south east]{[$m'$]} -- (4.4*\X, -2*\Y);
+  \draw(4.6*\X, 2 -2*\Y)--node[anchor=north]{$d(m')$}(4.6*\X, -2 - 2*\Y);
+
   %% p2 -> m'' -> p3
   \draw[->](4.5*\X, 0*\Y) node[anchor=south]{$b(m'')$}-- (4.75*\X, -2*\Y);
   \draw[->](4.5*\X, 0*\Y) -- (5.75*\X, -1*\Y); %% p1 -> m'' -> p2
   \draw[->](5.75*\X, -1*\Y) -- (6.25*\X, -2*\Y); %% p2 -> m'' -> p3
+  \draw(5.4*\X, 2 -2*\Y)--node[anchor=north]{$d(m'')$}(5.4*\X, -2 - 2*\Y);
 
   % \draw[->](2.5*\X, 0pt)node[anchor=south]{$b(m')$} -- (2.75*\X, -2*\Y);
   % \draw(3.5*\X, -2pt )--node[anchor=south]{$d(m')$}(3.5*\X, 2pt);

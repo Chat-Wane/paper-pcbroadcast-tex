@@ -420,7 +420,8 @@ link to a process $q$ for causal broadcast,
   \begin{center}
     \input{./input/figsolved.tex}
     \caption{\label{fig:solved}FBC-broadcast$^+$ in dynamic networks. $m'$
-      cannot precede $m$.}
+      cannot precede $m$. $p_2$'s deliveries remain hidden for the sake of
+      clarity.}
   \end{center}
 \end{figure}
 
@@ -446,8 +447,8 @@ path where $m'$ arrives before $m$.
   \begin{center}
     \input{./input/figbuffer.tex}
     \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
-      link addition. $m''$ cannot precede $m'$. \TODO{Not done, deliveries are
-        missing.}}
+      link addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden
+      for the sake of clarity.}
   \end{center}
 \end{figure}
 
@@ -463,7 +464,13 @@ path where $m'$ arrives before $m$.
 buffer usage. The buffer becomes useful when a process broadcasts or forwards a
 message between the opening of a channel and the receipt of the corresponding
 acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
-buffer to ensure causal delivery of messages.  \TODO{not done.}
+buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
+$p_3$. Between the departure of the $locked$ message and the arrival of the
+acknowledgement, $p_1$ broadcasts a message $m'$. Network conditions
+delay the arrival of this message from $p_2$ to $p_3$ such that when Process
+$p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
+$p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
+Process $p_3$ receives and delivers $m'$ before $m''$.
 
 
 \subsection{Complexity}
