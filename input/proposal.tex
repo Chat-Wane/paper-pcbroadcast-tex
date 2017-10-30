@@ -290,18 +290,21 @@ causal broadcast. It solves the dynamic network issues in 3 steps.  Compared to
 Algorithm~\ref{algo:reliablebroadcast}, it adds a structure associating each
 opening channel with a buffer of messages.  When a process $p$ wants to use a
 link to a process $q$ for causal broadcast,
-\begin{itemize}[(i)]
+\begin{enumerate}[(i)]
 \item it must use the FIFO channels already in use to transmit a message to $q$
-  and wait for its acknowledgment. We leave aside the implementation of this
-  send function (e.g. broadcast or routing). However, using already established
-  FIFO links constitutes a cheap way to achieve it.
+  and wait for its acknowledgment (see Line~\ref{line:sendlocked}). We leave
+  aside the implementation of this send function (e.g. broadcast or
+  routing). However, using already established FIFO links constitutes a cheap
+  way to achieve it.
 \item While awaiting for this acknowledgment, $p$ must buffer each message it
-  broadcasts or forwards. When $q$ receives $p$'s message, it acknowledges
-  it. The message it sends can travel through any communication mean.
+  broadcasts or forwards (see
+  Line~\ref{line:bufferbroadcast},~\ref{line:bufferforward}). When $q$ receives
+  $p$'s message, it acknowledges it (see Line~\ref{line:sendack}). The message it sends can travel through any
+  communication mean.
 \item When $p$ receives the acknowledgment from $q$, it uses the FIFO channel
-  from $p$ to $q$ to send its buffered messages. Afterwards, $p$ uses the new
-  channel normally.
-\end{itemize}
+  from $p$ to $q$ to send its buffered messages (see
+  Line~\ref{line:emptybuffer}). Afterwards, $p$ uses the new channel normally.
+\end{enumerate}
 
 \begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
