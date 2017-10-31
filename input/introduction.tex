@@ -8,11 +8,11 @@ protocols~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
 applications~\cite{nedelec2016crate}. Processes can send messages that will
 reach all other processes of their network. In this paper, we focus on causal
 broadcast that ensures that processes order message delivery following the
-happen before relationship~\cite{lamport1978time}. This alleviates systems from
-the burden of tracking causality between its operations. For instance,
-distributed collaborative editors perform deletion immediately, for causal
-broadcast already guaranteed that the message containing the corresponding
-insertion was delivered beforehand.
+happen before relationship~\cite{lamport1978time,schwarz1994detecting}. This
+alleviates systems from the burden of tracking causality between its
+operations. For instance, distributed collaborative editors perform deletion
+immediately, for causal broadcast already guaranteed that the message containing
+the corresponding insertion was delivered beforehand.
 
 Unfortunately, causality tracking is
 expensive~\cite{charronbost1991concerning}. Current approaches either

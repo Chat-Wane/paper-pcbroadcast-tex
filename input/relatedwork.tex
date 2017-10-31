@@ -49,14 +49,18 @@ messages from the need to piggyback any control information.
 
 \paragraph{Topological approaches.} A trivial way to ensure causal delivery of
 messages without message overhead consists in building an overlay network shaped
-as a ring: each broadcast message loops once in FIFO order
-(\REF). Unfortunately, maintaining a specific topology can prove costly in
-dynamic networks subject to churn. Our approach relies on a peer-sampling
-protocol \TODO{(Relies on R-broadcast that relies on such psp)} but we make no
-assumption on the built topology. One can choose the most suitable topology
-depending on network settings. For instance, random peer-sampling
+as a ring: each broadcast message loops once in FIFO order (\REF).
+Unfortunately, maintaining a specific topology can prove costly in dynamic
+networks subject to churn. Our approach relies on a peer-sampling protocol
+\TODO{(Relies on R-broadcast that relies on such psp)} but we make no assumption
+on the built topology. One can choose the most suitable topology depending on
+network settings. For instance, random peer-sampling
 protocols~\cite{jelasity2007gossip} have a low upkeep and guarantee a connected
 network even in dynamic settings.
+
+\TODO{Explain super-peer approaches.}
+
+\TODO{Inter-group broadcast is a kind of topological approach.}
 
 \paragraph{Inter-group
   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group
