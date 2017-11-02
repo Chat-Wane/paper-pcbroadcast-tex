@@ -3,19 +3,30 @@
 
 
 Broadcasting~\cite{hadzilacos1994modular} is a fundamental communication
-mechanism for numerous
+mechanism for numerous distributed
 protocols~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
-applications~\cite{nedelec2016crate}. Processes can send messages that will
-reach all other processes of their network. In this paper, we focus on causal
-broadcast that ensures that processes order message delivery following the
-happen before relationship~\cite{lamport1978time,schwarz1994detecting}. This
-alleviates systems from the burden of tracking causality between its
-operations. For instance, distributed collaborative editors perform deletion
-immediately, for causal broadcast already guaranteed that the message containing
-the corresponding insertion was delivered beforehand.
+applications~\cite{nedelec2016crate}. They generally run in highly dynamic
+environments where processes can join and leave the network at any
+time~\cite{mostefaoui2005static}. Broadcast protocols ensure that all connected
+processes receive and deliver each broadcast message.
+% A dynamic network~\cite{mostefaoui2005static} comprises interconnected
+% processes. Processes can join or leave the network at any moment. Processes can
+% communicate with each other. Broadcasting is a communication mean where a
+% message sent by a process will reach all other processes of the network.
+In this paper, we focus on causal broadcast: the order of message delivery
+follows the happen before
+relationship~\cite{lamport1978time,schwarz1994detecting}. This alleviates
+systems from the burden of tracking causality between its operations.  For
+instance, distributed data stores and collaborative editors feature addition and
+deletion of elements. Causal broadcast ensures that deletions always follows the
+addition of their targeted element.
 
-Unfortunately, causality tracking is
-expensive~\cite{charronbost1991concerning}. Current approaches either
+% For instance, distributed collaborative editors perform deletion immediately,
+% for causal broadcast already guaranteed that the message containing the
+% corresponding insertion was delivered beforehand.
+
+Unfortunately, causality tracking is expensive especially in large and dynamic
+networks~\cite{charronbost1991concerning}. Current approaches either
 \begin{inparaenum}[(i)]
 \item piggyback preceding messages in new broadcast
   messages~\cite{birman1987reliable,hadzilacos1993fault},
