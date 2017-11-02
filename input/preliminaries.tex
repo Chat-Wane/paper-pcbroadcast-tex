@@ -126,17 +126,97 @@ To order messages broadcast by every processes, we define causal order.
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:generalproblem} depicts an example where causal order is
-violated. Process $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and
-delivers $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$
-before $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
-violating the condition stating that the delivery of $m$ should precede the
-delivery $m'$.
+\EXAMPLE{Example of causal order violation.}{Figure~\ref{fig:generalproblem}
+  illustrates the need of an additional mechanism ensuring causal order. Process
+  $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and delivers
+  $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$ before
+  $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
+  violating the condition stating that the delivery of $m$ should precede the
+  delivery of $m'$.  }
 
-Multiple approaches exist to enforce causal order by either piggybacking control
-information in each message, or constraining the network topology. In this
-paper, we introduce a causal broadcast protocol freed from both these
-requirements.
+Multiple approaches achieve causal delivery by piggybacking control information
+in broadcast messages (\REF). Upon receipt of messages, processes check if the
+message is ready to be delivered or must be delayed until preceding messages 
+arrive.
+
+\begin{figure}
+  \begin{center}
+    \input{input/figvector.tex}
+    \caption{\label{fig:vector}Causal broadcast using vector clocks.}
+  \end{center}
+\end{figure}
+
+\EXAMPLE{Example of vector clock-based causal
+  broadcast.}{Figure~\ref{fig:vector} shows a broadcast protocol that ensures
+  causal delivery by using vector clocks. When Process $p_1$ broadcasts its
+  message $m$, it increments its entry in its vector clock and overloads the
+  message with it: $m_{1,\,0,\,0}$. When Process $p_2$ receives the message, it
+  checks if it is ready. It immediately delivers it, for the received vector is
+  only 1 increment away from its own vector clock. Then Process $p_2$ broadcasts
+  a message $m'$. It increments its own entry and overloads the message with its
+  vector $[1,\,1,\,0]$. This acknowledges that the delivery of $m$ precedes the
+  broadcast of $m'$. When Process $p_3$ receives the later, it detects that $m'$
+  is not ready and delays it until it receives and delivers $m$. Then, $p_3$
+  checks $m'$ again. $p_3$ finds that $m'$ is ready and delivers it. Using
+  vector clocks, the message delivery order follows causal order.}
+
+
+Another approach achieves causal delivery without overloading broadcast messages
+with control information (\REF). It only assumes FIFO links and deterministic
+overlay network (\REF). Processes deliver messages as soon as they arrive.
+
+\begin{definition}[FIFO communication channel]
+  If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO
+  channel, $q$ receives $m$ before $m'$.
+\end{definition}
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figstatic.tex}
+    \caption{\label{fig:static}FIFO channels are sufficient to provide causal
+      order in static networks.}
+  \end{center}
+\end{figure}
+
+\EXAMPLE{Example of FIFO-based causal broadcast.}{ Figure~\ref{fig:static} shows
+  a broadcast protocol that ensures causal delivery by using FIFO channels.  The
+  network is static and comprises 3 processes $p_1$, $p_2$, $p_3$ linked to each
+  other. The figure does not show messages forwarded by $p_3$ for the sake of
+  clarity.  The processes receive $m$ and $m'$ multiple times but there exists
+  no link in the paths from $p_2$ to $p_3$ that carries $m'$ without having
+  carried $m$ beforehand. Hence, the delivery of $m$ always precedes the
+  delivery of $m'$ at any process.}
+
+
+Unfortunately, this protocol ensures causal delivery only in static
+networks. This does not hold in dynamic settings where processes can join the
+network, or links can be added.
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figproblem.tex}
+    \caption{\label{fig:problem}Adding FIFO links can cause causal order
+      violations.}
+  \end{center}
+\end{figure}
+
+\EXAMPLE{Example of FIFO-based causal broadcast in dynamic network.}{
+  Figure~\ref{fig:problem} illustrates the issue with the establishment of new
+  FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
+  links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
+  but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
+  $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
+  meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
+  and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
+  compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
+  and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
+}
+
+In this paper, we introduce a causal broadcast protocol that
+\begin{inparaenum}[(i)]
+\item does not convey any control information in broadcast messages, and 
+\item works in both static and dynamic networks.
+\end{inparaenum}
 
 
 %%% Local Variables:

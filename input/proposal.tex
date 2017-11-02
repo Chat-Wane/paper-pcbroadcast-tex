@@ -64,27 +64,6 @@ reliable broadcast. It relies on a peer-sampling protocol that provides links to
 communicate with other processes. When these links are FIFO, the broadcast
 becomes causal under certain conditions.
 
-% The FIFO-based causal broadcast relies on a peer-sampling protocol. It provides
-% a set of neighbors to communicate with via FIFO channels. The peer-sampling
-% protocol must ensure that the network is not partitioned.
-
-\begin{definition}[FIFO communication channel]
-  If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO
-  channel, $q$ receives $m$ before $m'$.
-\end{definition}
-
-% \TODO{Rework this part, rework next algo as well.}
-
-% Algorithm~\ref{algo:fifobroadcast} shows the instructions of the causal
-% broadcast mechanism built using FIFO channels. Functions $\textsc{broadcast}$
-% and $\textsc{forward}$ are distinct although holding the same instructions to
-% highlight that only 1 process broadcasts while all other processes
-% forward. Function $\textsc{receive}$ makes sure that each process forwards each
-% message exactly once. Function $\textsc{alreadyReceived}$ checks if a message
-% has already been received by the process. We voluntarily keep the implementation
-% out of this paper, for it constitutes an orthogonal problem. It is worth noting
-% that this feature is achievable without overhead in terms of message size.
-
 % \begin{definition}[Static network]
 %   A network is static if it comprises an immutable set of edges and an immutable
 %   set of processes.
@@ -105,14 +84,6 @@ becomes causal under certain conditions.
   and local order. \\
   \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
   R-broadcast. \\
-  % \textbf{\TODO{Validity:}} A delivery instruction always follows a broadcast
-  % instruction.\\
-  % \textbf{\TODO{Uniform agreement:}} All processes broadcast or forward messages
-  % before delivery. \TODO{Add eventual receipt. There exist a path from any --
-  %   correct or not -- process to any other correct process.} \\
-  % \textbf{\TODO{Uniform integrity:}} $alreadyReceived$ makes sure that at most
-  % one message is delivered, even if duplicated. Before entering in receipt
-  % instructions, the message must be broadcast. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$. \\
@@ -127,14 +98,6 @@ becomes causal under certain conditions.
   $m'$, Process $q$ received $m$ before $m'$. \\
   Since processes deliver messages in the order they received them, Process $q$
   delivered $m$ before $m'$. \\
-  % Process $p$ broadcast message $m$ before broadcasting $m'$ to all its
-  % neighborhood using FIFO channels. Each neighbor eventually receives and
-  % delivers $m$ then $m'$. Each neighbor forwards each message exactly once in
-  % the order they delivered (\TODO{received?}) them to all its neighbors using
-  % FIFO channels. Since we assume a network without clusters, messages eventually
-  % reach all processes. Process $q$ eventually receives and delivers $m$ first,
-  % then it eventually receives
-  % and delivers $m'$. \\
   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
   delivers $m$ before $m'$. \\
@@ -145,46 +108,27 @@ becomes causal under certain conditions.
   Since Process $q$ delivers $m'$, channels from which it receives $m'$ already
   conveyed $m$. Since processes deliver messages in the order they received
   them, Process $q$ delivers $m$ before $m'$. \\
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % Either Process $q$ received $m$ before Process $p$ or not.
-  % In the later case, since broadcast and forward have identical instructions,
-  % the proof is identical to FIFO's one. In the former case,
-  % \begin{inparaenum}[(i)]
-  % \item since processes deliver messages in the order they receive them, and
-  % \item since Process $q$ already received or broadcast $m$ when Process $p$
-  %   broadcasts $m'$, and
-  % \item since we assume a network without partitions, Process $q$ eventually
-  %   receives, hence delivers, $m'$ afterwards.
-  % \end{inparaenum}
-  %% In any case, Process $q$ delivers $m$ before $m'$. \\
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % Since $p$ delivers $m$ before broadcasting $m'$, it forwards $m$ to all its
-  % neighbors before broadcasting $m'$ to the same neighbors. Similarly to FIFO
-  % ordering, due to the use of FIFO channels, the forwardings, and the absence of
-  % network clusters, Process $q$ already received or eventually receives $m$ when
-  % it receives $m'$. Thus, it delivers $m$ before
-  % delivering $m'$. \\
   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
   both FIFO ordering and local ordering, it ensures causal ordering.
 \end{proof}
 
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figstatic.tex}
-    \caption{\label{fig:static}FIFO channels are sufficient to provide causal
-      order in static networks.}
-  \end{center}
-\end{figure}
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figstatic.tex}
+%     \caption{\label{fig:static}FIFO channels are sufficient to provide causal
+%       order in static networks.}
+%   \end{center}
+% \end{figure}
 
-\paragraph{\emph{Example.}} Figure~\ref{fig:static} shows FBC-broadcast solves
-the causal order violation from Figure~\ref{fig:generalproblem} by using FIFO
-channels.  The figure shows a static network comprising 3 processes $p_1$,
-$p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
-$p_3$ for the sake of clarity.  The processes receive $m$ and $m'$ multiple
-times but there exists no link in the paths from $p_2$ to $p_3$ that carries $m'$
-without having carried $m$ beforehand. Hence, the delivery of $m$ always
-precedes the delivery of $m'$ at any process.
+% \paragraph{\emph{Example.}} Figure~\ref{fig:static} shows FBC-broadcast solves
+% the causal order violation from Figure~\ref{fig:generalproblem} by using FIFO
+% channels.  The figure shows a static network comprising 3 processes $p_1$,
+% $p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
+% $p_3$ for the sake of clarity.  The processes receive $m$ and $m'$ multiple
+% times but there exists no link in the paths from $p_2$ to $p_3$ that carries $m'$
+% without having carried $m$ beforehand. Hence, the delivery of $m$ always
+% precedes the delivery of $m'$ at any process.
 
 % \begin{definition}[Dynamic network]
 %   A network is dynamic if it comprises a mutable set of edges and a mutable set
@@ -227,13 +171,13 @@ precedes the delivery of $m'$ at any process.
   \end{center}
 \end{figure}
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figeq2problem.tex}
-    \caption{\label{fig:eq2problem}2-processes equivalent problem of
-      Figure~\ref{fig:problem}.}
-  \end{center}
-\end{figure}
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figeq2problem.tex}
+%     \caption{\label{fig:eq2problem}2-processes equivalent problem of
+%       Figure~\ref{fig:problem}.}
+%   \end{center}
+% \end{figure}
 
 \begin{proof}
   Figure~\ref{fig:problem} illustrates the issue with the establishment of new
