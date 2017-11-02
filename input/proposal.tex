@@ -85,10 +85,10 @@ becomes causal under certain conditions.
 % out of this paper, for it constitutes an orthogonal problem. It is worth noting
 % that this feature is achievable without overhead in terms of message size.
 
-\begin{definition}[Static network]
-  A network is static if it comprises an immutable set of edges and an immutable
-  set of processes.
-\end{definition}
+% \begin{definition}[Static network]
+%   A network is static if it comprises an immutable set of edges and an immutable
+%   set of processes.
+% \end{definition}
 
 % \paragraph{Static networks.} A network is a set of processes linked by a set
 % of channels. In a static network, processes cannot fail nor leave, and links
@@ -186,22 +186,15 @@ times but there exists no link in the paths from $p_2$ to $p_3$ that carries $m'
 without having carried $m$ beforehand. Hence, the delivery of $m$ always
 precedes the delivery of $m'$ at any process.
 
-% \paragraph{Dynamic networks.} Removing a channel does not impair causal
-% ordering of messages except if it generates network
-% partitions. \TODO{Theorem.}
-
-\begin{definition}[Dynamic network]
-  A network is dynamic if it comprises a mutable set of edges and a mutable set
-  of processes.
-\end{definition}
+% \begin{definition}[Dynamic network]
+%   A network is dynamic if it comprises a mutable set of edges and a mutable set
+%   of processes.
+% \end{definition}
 
 \begin{theorem}[FBC-broadcast in dynamic networks subject to link removals is
   causal]
   As long as the network is not partitioned, FBC-broadcast remains causal when
   the number of links in the network is monotonically decreasing.
-
-%%  \TODO{In fact, it
-%%    remains causal even when partitionned. But uniform agreement is violated.}
 \end{theorem}
 
 \begin{proof}

@@ -5,11 +5,27 @@
 Definitions and theorems come from~\cite{hadzilacos1994modular}.
 
 \begin{definition}[Network]
-  A network $N$ comprises a set of processes $P$ and a set of edges
-  $E: P \times P$. Each process runs a set of instructions
-  sequentially. Processes linked by an edge can communicate with each
-  other. Processes are faulty if they crash, otherwise they are correct. The set
-  of correct processes is $C$. There are no byzantine processes.
+  A network $N$ comprises a set of processes $P$. Each Process runs a set of
+  instructions sequentially. \\
+  A network $N$ also comprises a set of links $E: P \times P$. $p$'s
+  neighborhood $Q$ is the set of links departing from $p$. Processes can
+  communicate with their 
+  neighbors using messages. \\
+  Processes are faulty if they crash, otherwise they are correct. The set of
+  correct processes is $C$. There are no byzantine processes.
+\end{definition}
+
+\begin{definition}[Static and dynamic networks]
+  A network is static if both its set of processes and its set of edges are
+  immutable. Otherwise, the network is dynamic.
+\end{definition}
+
+For the rest of the paper, we only consider networks without partitions.
+
+\begin{definition}[Network partition]
+  A network has partitions if there exist two correct processes without any path
+  between them, i.e., without a link or a sequence of links comprising correct
+  processes only.
 \end{definition}
 
 %\TODO{Replace ``network'' by  ``distributed system'' ?}
@@ -21,7 +37,7 @@ definition~\cite{lamport1978time}.
   Happen before is a transitive, irreflexive, and antisymmetric relation that
   defines a strict partial orders of events. At process $p$, Event $e$ happens
   before -- or precedes -- Event $e'$ is noted $e_p \rightarrow e'_p$. The
-  sending of a message always precedes its receipt: \\
+  sending of a message $s_p(m)$ always precedes its receipt $r_q(m)$: \\
   $\forall p,\,q \in P, s_p(m) \rightarrow r_q(m)$.
 \end{definition}
 
@@ -29,18 +45,22 @@ Processes communicate by sending messages to other processes. They can send
 messages to specific processes or all of them.
 
 \begin{definition}[Uniform reliable broadcast]
-  A process $p$ broadcasts a message $m$ to all processes of the network: \\
+  A process $p$ can broadcast a message $b_p(m)$, receive a message $r_p(m)$,
+  and deliver a message $d_p(m)$.  When a process $p$ broadcasts a message $m$
+  to all processes of the network, correct processes eventually receive it: 
   $\forall p \in P,\, (b_p(m) \Leftrightarrow \forall q \in P,\, r_q(m))$. \\
   Uniform reliable broadcast guarantees 3 properties: \\
-  \textbf{Validity:} If a correct process broadcasts a message, then it eventually
+  \textbf{Validity:} If a correct process broadcasts a message, then it
+  eventually
   delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$. \\
-  \textbf{Uniform Agreement:} If a process -- correct or not -- delivers a message,
-    then all correct processes eventually deliver it:\\
-    $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$. \\
+  \textbf{Uniform Agreement:} If a process -- correct or not -- delivers a
+  message,
+  then all correct processes eventually deliver it:\\
+  $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$. \\
   \textbf{Uniform Integrity:} A process delivers a message at most once, and
-    only if it was previously broadcast:\\
-    $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m)
-    \implies \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
+  only if it was previously broadcast:\\
+  $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m) \implies
+  \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
 \end{definition}
 
 \begin{algorithm}[h]
@@ -50,14 +70,16 @@ messages to specific processes or all of them.
 
 Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
 reliable broadcast. It uses a structure that keeps track of received messages in
-order to deliver them at most once. It uses a peer-sampling protocol that
-provides neighbors to communicate with, i.e., a set of links. Assuming this
-peer-sampling protocol ensures a network without partitions meaning that there
-exists at least one path from any process to any correct process, then all
-correct processes eventually receive all messages at least once: they either
-receive the message directly from the broadcaster or by transitivity. Thus, all
-correct processes eventually deliver all messages exactly once. This algorithm
-ensures validity, uniform agreement, and uniform integrity.
+order to deliver them at most once. 
+%It uses a peer-sampling protocol that
+%provides neighbors to communicate with, i.e., a set of links. 
+%%Assuming a network without partitions meaning that there exists at least one
+%path from any process to any correct process, then all correct processes
+%eventually receive all messages at least once:
+Since the network does not have partitions, processes either receive the message
+directly from the broadcaster or transitively. Thus, all correct processes
+eventually deliver all messages exactly once. This algorithm ensures validity,
+uniform agreement, and uniform integrity.
 
 In addition to reliably conveying messages to all correct processes, broadcast
 protocols can ensure that messages are delivered in a specific order.
@@ -88,7 +110,8 @@ To order messages broadcast by every processes, we define causal order.
 \end{definition}
 
 \begin{theorem}[\label{theo:causal}Causal order equivalence]
-  The intersection of FIFO order and local order is equivalent to causal order.
+%  The intersection of 
+  FIFO order and local order is equivalent to causal order.
 \end{theorem}
 
 \begin{definition}[Causal broadcast]

@@ -1,16 +1,21 @@
 
 \begin{abstract}
   Many distributed protocols and applications rely on causal broadcast to ensure
-  consistency. However, tracking causality while scaling remains an open
-  problem. 
-  State-of-the-art approaches do not scale in large and dynamic networks.
+  consistency.
+  %% However, tracking causality while scaling remains an open
+  %% problem. 
+  However, none of causality tracking state-of-the-art approaches scale in large
+  and dynamic networks.   
+  %% State-of-the-art approaches do not scale in large and
+  %% dynamic networks.
   % State-of-the-art approaches overload messages with control information the
   % size of which increases linearly compared to either the number of processes,
   % or the number of broadcast messages.
   % These approaches are impracticable in large scale systems subject to churn.
   We present a uniform reliable causal broadcast protocol that does not overload
-  messages at all while keeping very small local space requirements. Now, large
-  and dynamic systems can finally afford causal broadcast.
+  messages at all while keeping very small local space requirements. We prove
+  that it works in both static and dynamic networks.  Now, large and dynamic
+  systems can finally afford causal broadcast.
 \end{abstract}
 
 \keywords{Uniform, reliable, causal, broadcast.}
