@@ -17,16 +17,18 @@ In this paper, we focus on causal broadcast: the order of message delivery
 follows the happen before
 relationship~\cite{lamport1978time,schwarz1994detecting}. This alleviates
 systems from the burden of tracking causality between its operations.  For
-instance, distributed data stores and collaborative editors feature addition and
-deletion of elements. Causal broadcast ensures that deletions always follows the
-addition of their targeted element.
-
+instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF) and
+collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
+conflict-free replicated data types (\REF). They feature addition and deletion
+of elements. A deletion must follow the corresponding addition, for the sake of
+consistency (\REF). Causal broadcast relieve these applications from checking
+such constraints.
 % For instance, distributed collaborative editors perform deletion immediately,
 % for causal broadcast already guaranteed that the message containing the
 % corresponding insertion was delivered beforehand.
 
-Unfortunately, causality tracking is expensive especially in large and dynamic
-networks~\cite{charronbost1991concerning}. Current approaches either
+Unfortunately, causality tracking has proven expensive especially in large and
+dynamic networks~\cite{charronbost1991concerning}. Current approaches either
 \begin{inparaenum}[(i)]
 \item piggyback preceding messages in new broadcast
   messages~\cite{birman1987reliable,hadzilacos1993fault},
@@ -36,23 +38,34 @@ networks~\cite{charronbost1991concerning}. Current approaches either
 More recent approaches focus on reducing the size of vectors either by
 \begin{inparaenum}[(a)]
 \item maintaining local structures to send the least amount of changing
-  data~\cite{singhal1992efficient}, or by
+  data~\cite{singhal1992efficient}, by
 \item relaxing the causal order using probabilistic
   structures~\cite{mostefaoui2017probabilistic}, or by
 \item constraining the network topology (\REF).
 \end{inparaenum}
-None of these approaches scales in large and dynamic networks subject to churn,
-for they overload each message with linearly growing data structures that depend
-of the number of processes or the number of messages.
+None of these approaches scales in large and dynamic networks, for they overload
+each message with linearly increasing data structures that depend of the number
+of processes or the number of messages.
 
-In this paper, we solve the scalability issue of causal broadcast. We propose a
-uniform reliable broadcast that ensures causal order on message delivery without
-any message overhead.  It makes use of FIFO channels (e.g. TCP) and relies on a
-peer-sampling protocol~\cite{jelasity2007gossip} ensuring a network without
-partitions \TODO{Specify that R-broadcast needs this and we need R-broadcast}.
-Complexity trade-offs such as the number of messages sent by each process, or
-the number of hops before a broadcast message reach all processes, are
-independent of our protocol and only depends of the peer-sampling protocol.
+
+In static networks, causal broadcast does not need to overload messages with any
+control information~\cite{friedman2004causal}. It simply makes use of FIFO
+communication channels (e.g. TCP) and deterministic overlay networks (\REF) to
+disseminate messages. However, it does not handle dynamic networks where
+membership changes over time.
+
+In this paper, we break the scalability barrier of causal broadcast for large
+and dynamic networks. We propose a uniform reliable broadcast that ensures
+causal delivery without any message overhead. Just as~\cite{friedman2004causal},
+our protocol relies on lightweight assumptions but contrarily to the former, we
+prove that it works in both static and dynamic networks.
+
+% It makes use of FIFO channels (e.g. TCP) and relies on a peer-sampling
+% protocol~\cite{jelasity2007gossip} ensuring a network without partitions
+% \TODO{Specify that R-broadcast needs this and we need R-broadcast}.  Complexity
+% trade-offs such as the number of messages sent by each process, or the number of
+% hops before a broadcast message reach all processes, are independent of our
+% protocol and only depends of the peer-sampling protocol.
 
 The rest of this paper is organized as follows: Section~\ref{sec:preliminaries}
 introduces definitions and theorems about causal
