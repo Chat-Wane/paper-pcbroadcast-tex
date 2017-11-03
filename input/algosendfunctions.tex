@@ -1,0 +1,37 @@
+\SetKwProg{Function}{function}{}{}
+\SetKwProg{Upon}{upon}{}{}
+\SetKwProg{Initially}{INITIALLY:}{}{}
+\SetKwProg{Communication}{COMMUNICATION:}{}{}
+\SetKwProg{Buffer}{BOUNDING BUFFERS:}{}{}
+\SetKwProg{Failure}{HANDLING FAILURES:}{}{}
+
+\small
+
+\DontPrintSemicolon
+\LinesNumbered
+
+\Initially {} { 
+  $Q$ \;
+}
+
+\BlankLine
+
+\Communication {} {
+  
+  \Function{\textsc{sendLocked}($from,\, to,\, id$) } {
+    \lForEach {$q \in Q$} 
+    {\textsc{sendTo}($q,\, \langle 'fwd',\, from,\, to,\, id \rangle$)}
+  }
+
+  \BlankLine
+  
+  \Upon{\textsc{receivedFwd}($from,\, to,\, id$)} {
+    \lIf {$to \in Q$} {\textsc{sendTo}($to,\, \rangle 'locked',\, from,\, to$ }
+  }
+  
+}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:
