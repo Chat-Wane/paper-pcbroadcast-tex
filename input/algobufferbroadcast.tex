@@ -11,10 +11,10 @@
 \LinesNumbered
 
 \Initially {} {
-  $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
-  $B \leftarrow \varnothing$ \tcp*{Buffers of messages}
+  $Q$ \tcp*{$p$'s neighborhood, FIFO links}
+  $B \leftarrow \varnothing$ \tcp*{link $\rightarrow$ buffered messages}
   \BlankLine
-  $counter \leftarrow 0$ \tcp*{Used as identifier}  
+  $counter \leftarrow 0$ \tcp*{Message identifier}
 }
 
 \BlankLine
@@ -24,7 +24,7 @@
     \If{$|Q|>1$} {
       $counter \leftarrow counter+1$ \;
       $Q \leftarrow Q \setminus q$ \;
-      $B[counter] \leftarrow \varnothing$ \;
+      $B[q] \leftarrow \varnothing$ \;
       $\textsc{sendLocked}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
     }
   }
@@ -36,21 +36,21 @@
   }
   
   \BlankLine
-
+  
   \Upon{\textsc{receiveAck}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
-    \If {$id \in B$} {
-      \lForEach {$m \in B[id]$} {$\textsc{sendTo}(to,\, m)$
+    \If {$to \in B$} {
+      \lForEach {$m \in B[to]$} {$\textsc{sendTo}(to,\, m)$
         \label{line:emptybuffer}}
-      $B \leftarrow B \setminus id$ \;
+      $B \leftarrow B \setminus to$ \;
       $Q \leftarrow Q \cup to$ \;
     }
   }
-
+  
   \BlankLine
-
-  % \Upon{\textsc{close}($q$)} {
-  %   $B \leftarrow B \setminus q$ \;
-  % }
+  
+  \Upon{\textsc{close}($q$)} {
+    $B \leftarrow B \setminus q$ \;
+  }
 }
 
 \BlankLine
@@ -58,7 +58,7 @@
 \Dissemination {} {
 
   \Function{\textsc{FBC-broadcast}$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
-    \lForEach {$i \in B$} {$B[i] \leftarrow B[i] \cup m$
+    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferbroadcast} \tcp*[f]{Buffers}}
     $\textsc{R-broadcast}(m)$ \;
   }
@@ -66,7 +66,7 @@
   \BlankLine
   
   \Upon{\textsc{R-deliver}($m$)} {
-    \lForEach {$i \in B$} {$B[i] \leftarrow B[i] \cup m$
+    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferforward} \tcp*[f]{Buffers}}
     $\textsc{FBC-deliver}^+(m)$ \tcp*{$d_p(m)$}
   }

@@ -13,9 +13,9 @@
 
 \Initially {} {
   % $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
-  $B$ \tcp*{id $\rightarrow$ buffered messages}
+  $B$ \tcp*{link $\rightarrow$ buffered messages}
   \BlankLine
-  $I \leftarrow \varnothing$ \tcp*{id $\leftrightarrow$ link}
+  $I \leftarrow \varnothing$ \tcp*{message id $\leftrightarrow$ link}
   $R \leftarrow \varnothing$ \tcp*{link $\rightarrow$ number of retries}
   \BlankLine
   $maxSize \leftarrow \infty $ \;
@@ -32,9 +32,16 @@
   }
 
   \BlankLine
+  
+  \Upon{\textsc{receiveAck}($from,\, to,\, id$)}{
+    $I \leftarrow I \setminus id$ \;
+    $R \leftarrow R \setminus to$ \;
+  }
+  
+  \BlankLine
 
   \Upon{\textsc{FBC-deliver$^+$}($m$)} {
-    \ForEach{$i \in B$ \textbf{\textsc{such that}} $|B[i]| > maxSize$}{
+    \ForEach{$q \in B$ \textbf{\textsc{such that}} $|B[q]| > maxSize$}{
       $\textsc{retry}(q)$ \;
     }
   }
@@ -42,28 +49,19 @@
   \BlankLine
 
   \Upon{\textsc{close}($q$)} {
-    \textsc{emptyBuffer}($q$) \;
+    \lFor{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
     $R \leftarrow R \setminus q$ \;    
   }
 
   \BlankLine
 
   \Function{\textsc{retry}($q$)}{
-    \textsc{emptyBuffer}($q$) \; 
-
+    \lFor{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
+    
     \If{$q \in R$} {
       $R[q] \leftarrow R[q]+ 1$ \;
       \lIf{$R[q] \leq maxRetry$} {\textsc{open}($q$)}
       \lElse{\textsc{close}($q$)}    
-    }
-  }
-  
-  \BlankLine
-
-  \Function{\textsc{emptyBuffer}($q$)}{
-    \ForEach{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{
-      $B \leftarrow B \setminus i$ \;
-      $I \leftarrow I \setminus i$ \;
     }
   }
 }  
@@ -73,7 +71,7 @@
 \Failure {} {
 
   \Upon{\textsc{timeout}($from,\, to,\, id$)}{
-    \lIf {$i \in B$} {\textsc{retry}($q$)} 
+    \lIf {$id \in I$} {\textsc{retry}($to$)} 
   }
 
 }
