@@ -1,0 +1,37 @@
+
+\SetKwProg{Function}{function}{}{}
+\SetKwProg{Upon}{upon}{}{}
+\SetKwProg{Initially}{INITIALLY:}{}{}
+\SetKwProg{Dissemination}{DISSEMINATION:}{}{}
+\SetKwProg{Buffer}{BUFFER:}{}{}
+
+\small
+
+\DontPrintSemicolon
+\LinesNumbered
+
+\Initially {} {
+  $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
+  $B \leftarrow \varnothing$ \tcp*{Buffers of messages}
+  $max \leftarrow \infty $ \tcp*{Buffer size threshold}
+  $timeout \leftarrow \infty$ \tcp*{Acknowledgment timeout}
+  $retry \leftarrow \infty$ \tcp*{Number of Ack retries}
+}
+
+\BlankLine
+
+\Buffer {} {
+  \Upon{\textsc{FBC-deliver$^+$}($m$)} {
+    \ForEach{$q \in B$}{
+      \lIf{$|B[q]| > max$}{
+        $\textsc{open}(q)$ \tcp*{retry}
+      }
+    }
+  }
+}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:
