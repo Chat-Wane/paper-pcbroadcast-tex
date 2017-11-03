@@ -3,7 +3,8 @@
 \SetKwProg{Upon}{upon}{}{}
 \SetKwProg{Initially}{INITIALLY:}{}{}
 \SetKwProg{Dissemination}{DISSEMINATION:}{}{}
-\SetKwProg{Buffer}{BUFFER:}{}{}
+\SetKwProg{Buffer}{BOUNDING BUFFERS:}{}{}
+\SetKwProg{Failure}{HANDLING FAILURES:}{}{}
 
 \small
 
@@ -11,23 +12,70 @@
 \LinesNumbered
 
 \Initially {} {
-  $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
-  $B \leftarrow \varnothing$ \tcp*{Buffers of messages}
-  $max \leftarrow \infty $ \tcp*{Buffer size threshold}
-  $timeout \leftarrow \infty$ \tcp*{Acknowledgment timeout}
-  $retry \leftarrow \infty$ \tcp*{Number of Ack retries}
+  % $Q$ \tcp*{$p$'s neighborhood, FIFO channels}
+  $B$ \tcp*{id $\rightarrow$ buffered messages}
+  \BlankLine
+  $I \leftarrow \varnothing$ \tcp*{id $\leftrightarrow$ link}
+  $R \leftarrow \varnothing$ \tcp*{link $\rightarrow$ number of retries}
+  \BlankLine
+  $maxSize \leftarrow \infty $ \;
+  $maxRetry \leftarrow \infty$ \;
 }
 
 \BlankLine
 
 \Buffer {} {
+
+  \Upon{\textsc{sendLocked}($from,\, to,\, id$)}{
+    \lIf{$q \not\in R$} {$R[q] \leftarrow 0$}
+    $I[id] \leftarrow to$ \;
+  }
+
+  \BlankLine
+
   \Upon{\textsc{FBC-deliver$^+$}($m$)} {
-    \ForEach{$q \in B$}{
-      \lIf{$|B[q]| > max$}{
-        $\textsc{open}(q)$ \tcp*{retry}
-      }
+    \ForEach{$i \in B$ \textbf{\textsc{such that}} $|B[i]| > maxSize$}{
+      $\textsc{retry}(q)$ \;
     }
   }
+
+  \BlankLine
+
+  \Upon{\textsc{close}($q$)} {
+    \textsc{emptyBuffer}($q$) \;
+    $R \leftarrow R \setminus q$ \;    
+  }
+
+  \BlankLine
+
+  \Function{\textsc{retry}($q$)}{
+    \textsc{emptyBuffer}($q$) \; 
+
+    \If{$q \in R$} {
+      $R[q] \leftarrow R[q]+ 1$ \;
+      \lIf{$R[q] \leq maxRetry$} {\textsc{open}($q$)}
+      \lElse{\textsc{close}($q$)}    
+    }
+  }
+  
+  \BlankLine
+
+  \Function{\textsc{emptyBuffer}($q$)}{
+    \ForEach{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{
+      $B \leftarrow B \setminus i$ \;
+      $I \leftarrow I \setminus i$ \;
+    }
+  }
+}  
+
+\BlankLine
+
+\Failure {} {
+
+  \Upon{\textsc{timeout}($from,\, to,\, id$)}{
+    \lIf {$i \in B$} {\textsc{retry}($q$)} 
+  }
+
 }
 
 
