@@ -1,68 +1,58 @@
 
-\section{Causal broadcast}
+\section{Causal broadcast for large and dynamic networks}
 \label{sec:proposal}
 
-In this section, we show that reliable broadcast becomes causal as soon as links
-ensure FIFO order (e.g. TCP). Consequently, it ensures causal delivery of
-messages for free. It checks for duplicate messages the cost of which remains
-confined to a local scope. Contrarily to
-state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient},
-it does not overload messages with control information.  However, we show that
-causal order may be violated in dynamic networks. We propose a causal broadcast
-that works in such settings. The intuition is that causally related messages are
-never missing, for all paths --- including new --- from the broadcaster to every
-peers convey all messages in the appropriate order.  It still does not overload
-messages and the local space requirements remain small. Using this broadcast,
-large and dynamic systems can finally afford causal broadcast.
+In this section, we introduce a causal broadcast protocol that breaks
+scalability barriers for large and dynamic networks. 
+% It does not overload
+% messages with any control information. 
+To provide causal order, most
+state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}
+approaches are reactive, for they check if message deliveries should be delayed
+to avoid causality violations. On the opposite our approach is preventive, for
+messages are immediately delivered on receipt without risk of causality
+violations. This difference removes the need for messages to convey any control
+information. The local space complexity brought by causal ordering remains
+small.  Protocols and applications can finally afford causal broadcast in large
+and dynamic networks.
 
-% We propose an approach guaranteeing causal order to uniform reliable
-% broadcasts. It only makes use of FIFO communication channels (e.g. TCP), and
-% relies on scalable peer-sampling protocols that must not create network
-% partitions (e.g. \SPRAY~\cite{nedelec2017adaptive}, or
-% \CYCLON~\cite{voulgaris2005cyclon}).
+This section describes our algorithm. It proves that it handles both static and
+dynamic networks. It analyses its complexity.
 
-% \TODO{If ok with model section, change this paragraph a bit.}
-% Section~\ref{subsec:fifobroadcast} starts by showing that FIFO-based broadcast
-% is sufficient to provide causal delivery of messages. This result holds if the
-% network is static or links are removed only. It does not hold if links are added
-% to the network. Section~\ref{subsec:bufferbroadcast} provides a simple algorithm
-% that solves this issue. It allows processes to use a causal broadcast which
-% alleviates applications of the burden of tracking causal relationships.
+% \subsection{2-processes equivalent model}
 
-\subsection{2-processes equivalent model}
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/fig2eqmodel.tex}
+%     \caption{\label{fig:2eqmodel}2-processes equivalent of a broadcast from any
+%       process to any other.}
+%     \end{center}
+% \end{figure}
 
-\begin{figure}
-  \begin{center}
-    \input{./input/fig2eqmodel.tex}
-    \caption{\label{fig:2eqmodel}2-processes equivalent of a broadcast from any
-      process to any other.}
-    \end{center}
-\end{figure}
+% \TODO{Maybe not here or maybe remove.}
 
-\TODO{Maybe not here or maybe remove.}
+% When a process broadcasts a message, processes receiving it forward it exactly
+% once. Messages may be received multiple times by a process depending on the
+% peer-sampling protocol. They receive as many duplicated messages as they have
+% incoming links.  Considering only the process that sent the message that led to
+% a forwarding as parent, we can build a directed acyclic graph using the paths
+% taken by messages from the origin of the broadcast to any process.
 
-When a process broadcasts a message, processes receiving it forward it exactly
-once. Messages may be received multiple times by a process depending on the
-peer-sampling protocol. They receive as many duplicated messages as they have
-incoming links.  Considering only the process that sent the message that led to
-a forwarding as parent, we can build a directed acyclic graph using the paths
-taken by messages from the origin of the broadcast to any process.
-
-Figure~\ref{fig:2eqmodel} shows the equivalent model with 2 processes. Channels
-of arbitrary speed convey messages from Process $p_{from}$ to Process
-$p_{to}$. When Process $p_{to}$ sends a message, it sends it through all
-links. Even though they have different speeds that may change at arbitrary time,
-if channels are FIFO, Process $p_{to}$ will receive messages in the same order as
-Process $p_{from}$ sent them.
+% Figure~\ref{fig:2eqmodel} shows the equivalent model with 2 processes. Channels
+% of arbitrary speed convey messages from Process $p_{from}$ to Process
+% $p_{to}$. When Process $p_{to}$ sends a message, it sends it through all
+% links. Even though they have different speeds that may change at arbitrary time,
+% if channels are FIFO, Process $p_{to}$ will receive messages in the same order as
+% Process $p_{from}$ sent them.
 
 
-\subsection{FIFO-based causal broadcast}
-\label{subsec:fifobroadcast}
+% \subsection{FIFO-based causal broadcast}
+% \label{subsec:fifobroadcast}
 
-Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
-reliable broadcast. It relies on a peer-sampling protocol that provides links to
-communicate with other processes. When these links are FIFO, the broadcast
-becomes causal under certain conditions.
+% Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
+% reliable broadcast. It relies on a peer-sampling protocol that provides links to
+% communicate with other processes. When these links are FIFO, the broadcast
+% becomes causal under certain conditions.
 
 % \begin{definition}[Static network]
 %   A network is static if it comprises an immutable set of edges and an immutable
@@ -74,43 +64,43 @@ becomes causal under certain conditions.
 % cannot be created nor removed. In this context, FIFO channels are sufficient
 % to provide causal ordering of messages.
 
-\begin{theorem}[\label{theo:static}FBC-broadcast in static networks is causal]
-  Assuming a static network without partitions, FBC-broadcast is causal.
-\end{theorem}
+% \begin{theorem}[\label{theo:static}FBC-broadcast in static networks is causal]
+%   Assuming a static network without partitions, FBC-broadcast is causal.
+% \end{theorem}
 
-\begin{proof}
-  To prove that FBC-broadcast is causal, we must show that it ensures validity,
-  uniform agreement, uniform integrity, and causal order -- that is FIFO order
-  and local order. \\
-  \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
-  R-broadcast. \\
-  \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
-  a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
-  $m'$. \\
-  Since the peer-sampling protocol ensures that the network is not partitioned,
-  since each process receiving a message forwards it exactly once to all its
-  neighborhood, each message eventually reaches all processes and each link
-  conveys all messages exactly once. \\
-  Since each process forwards each message in a FIFO manner, since messages
-  travel using FIFO channels, and since each channel conveys all messages
-  exactly once, they convey the messages in the order they were broadcast. \\
-  Since Process $p$ broadcasts $m$ before $m'$, and since Process $q$ delivers
-  $m'$, Process $q$ received $m$ before $m'$. \\
-  Since processes deliver messages in the order they received them, Process $q$
-  delivered $m$ before $m'$. \\
-  \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
-  $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-  delivers $m$ before $m'$. \\
-  Since broadcast and forward have identical instructions, we add to ``processes
-  receive the messages in the order they were broadcast'' the statement ``if a
-  process forwards a message before broadcasting one, processes will receive the
-  forwarded message before the broadcast one'' and converse. \\
-  Since Process $q$ delivers $m'$, channels from which it receives $m'$ already
-  conveyed $m$. Since processes deliver messages in the order they received
-  them, Process $q$ delivers $m$ before $m'$. \\
-  \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
-  both FIFO ordering and local ordering, it ensures causal ordering.
-\end{proof}
+% \begin{proof}
+%   To prove that FBC-broadcast is causal, we must show that it ensures validity,
+%   uniform agreement, uniform integrity, and causal order -- that is FIFO order
+%   and local order. \\
+%   \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
+%   R-broadcast. \\
+%   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
+%   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
+%   $m'$. \\
+%   Since the peer-sampling protocol ensures that the network is not partitioned,
+%   since each process receiving a message forwards it exactly once to all its
+%   neighborhood, each message eventually reaches all processes and each link
+%   conveys all messages exactly once. \\
+%   Since each process forwards each message in a FIFO manner, since messages
+%   travel using FIFO channels, and since each channel conveys all messages
+%   exactly once, they convey the messages in the order they were broadcast. \\
+%   Since Process $p$ broadcasts $m$ before $m'$, and since Process $q$ delivers
+%   $m'$, Process $q$ received $m$ before $m'$. \\
+%   Since processes deliver messages in the order they received them, Process $q$
+%   delivered $m$ before $m'$. \\
+%   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
+%   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
+%   delivers $m$ before $m'$. \\
+%   Since broadcast and forward have identical instructions, we add to ``processes
+%   receive the messages in the order they were broadcast'' the statement ``if a
+%   process forwards a message before broadcasting one, processes will receive the
+%   forwarded message before the broadcast one'' and converse. \\
+%   Since Process $q$ delivers $m'$, channels from which it receives $m'$ already
+%   conveyed $m$. Since processes deliver messages in the order they received
+%   them, Process $q$ delivers $m$ before $m'$. \\
+%   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
+%   both FIFO ordering and local ordering, it ensures causal ordering.
+% \end{proof}
 
 
 % \begin{figure}
@@ -135,70 +125,13 @@ becomes causal under certain conditions.
 %   of processes.
 % \end{definition}
 
-\begin{theorem}[FBC-broadcast in dynamic networks subject to link removals is
-  causal]
-  As long as the network is not partitioned, FBC-broadcast remains causal when
-  the number of links in the network is monotonically decreasing.
-\end{theorem}
-
-\begin{proof}
-  Removing a link does not change the delivery order of causally related
-  messages. Proof of Theorem~\ref{theo:static} about causal order holds.
-  However, removing a link may create network partitions. In such case, a
-  message may not reach all processes. FBC-broadcast still ensures causal order,
-  but uniform agreement is violated.
-  % Consider Process $p$ belongs to partition $A$, Process $q$ belongs to
-  % partition $B$. Messages broadcast by processes of Partition $A$ reach
-  % processes of Partition $B$, but not the converse, assuming links are
-  % unidirectional. Processes $p$ broadcasts a message $m$ received and delivered
-  % by $q$. Then $q$ broadcasts a message $m'$
-  % As long as the removal of links do not partition the network, messages reach
-  % all processes. The proof is therefore identical to that of
-  % Theorem~\ref{theo:static}.
-\end{proof}
-
-\begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to
-  link additions is not causal]
-  Using FBC-broadcast, adding links to the network may lead to causal order
-  violations.
-\end{theorem}
-
-\begin{figure}
-  \begin{center}
-    \input{./input/figproblem.tex}
-    \caption{\label{fig:problem}Adding a FIFO channel endangers causal
-      ordering.}
-  \end{center}
-\end{figure}
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figeq2problem.tex}
-%     \caption{\label{fig:eq2problem}2-processes equivalent problem of
-%       Figure~\ref{fig:problem}.}
-%   \end{center}
-% \end{figure}
-
-\begin{proof}
-  Figure~\ref{fig:problem} illustrates the issue with the establishment of new
-  FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
-  links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
-  but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
-  $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
-  meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
-  and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
-  compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
-  and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
-\end{proof}
+\subsection{Operation}
 
 Handling dynamic networks is mandatory for causal broadcast
 mechanisms. Unfortunately, FBC-broadcast fails when links are added to the
 network. Staying with the principle of FIFO-based broadcast, we extend
 FBC-broadcast to fully handle dynamic networks. The solution is lightweight and
 only uses local knowledge.
-
-\subsection{FIFO-based causal broadcast+}
-\label{subsec:bufferbroadcast}
 
 The issue is that new links may act as shortcut for messages. First messages
 that travel through new links may arrive before preceding messages that took
@@ -210,17 +143,10 @@ knows the potentially missing messages. It sends them in the right order using
 the new FIFO link, then it starts using it normally. Consequently, new links
 do not create diffusion paths breaking causal order.
 
-% This may create gaps in causal delivery, i.e., messages that should be delivered
-% are still missing.  FIFO-based causal broadcast$^+$ aims to ensure that
-% additional links never create gaps. The idea is to employ already working FIFO
-% channels to know which messages arrived, at marginal cost. For instance,
-% assuming that we have $d_p(m) \rightarrow d_p(m')$ and
-% $d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
-% and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
-% subsequent message from $p$ becomes safe to travel through the newly added link.
-
-%%Knowing that at least Message $m$ arrived allows the process to send
-%%depending messages $m'$, $m''$ 
+\begin{algorithm}[h]
+  \input{./input/algobufferbroadcast.tex}
+  \caption{\label{algo:bufferbroadcast}FBC-broadcast$^+$ at Process $p$.}
+\end{algorithm}
 
 
 Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
@@ -244,10 +170,143 @@ link to a process $q$ for causal broadcast,
   Line~\ref{line:emptybuffer}). Afterwards, $p$ uses the new channel normally.
 \end{enumerate}
 
-\begin{algorithm}[h]
-  \input{./input/algobufferbroadcast.tex}
-  \caption{\label{algo:bufferbroadcast}FBC-broadcast$^+$ at Process $p$.}
-\end{algorithm}
+\begin{figure}
+  \begin{center}
+    \input{./input/figsolved.tex}
+    \caption{\label{fig:solved}FBC-broadcast$^+$ in dynamic networks. $m'$
+      cannot precede $m$. $p_2$'s deliveries remain hidden for the sake of
+      clarity.}
+  \end{center}
+\end{figure}
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figeq2solved.tex}
+%     \caption{\label{fig:eq2solved}2-processes equivalent of Figure~\ref{fig:solved}.}
+%   \end{center}
+% \end{figure}
+
+\paragraph{\emph{Example without buffer.}} Figure~\ref{fig:solved} shows how our
+algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
+a FIFO channel links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links
+$p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
+to $p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, $m$
+precedes this message at $p_3$. When $p_3$ acknowledges this message to $p_1$
+using any communication way, the later knows that it $p_3$ received and
+delivered at least $m$. Hence, all subsequent broadcast from $p_1$ can use the
+new communication channel safely. When $p_1$ broadcasts $m'$, there exist no
+path where $m'$ arrives before $m$.
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figbuffer.tex}
+    \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
+      link addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden
+      for the sake of clarity.}
+  \end{center}
+\end{figure}
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figeq2buffer.tex}
+%     \caption{\label{fig:eq2buffer}2-processes equivalent of
+%       Figure~\ref{fig:buffer}.}
+%   \end{center}
+% \end{figure}
+
+\paragraph{\emph{Example with buffer.}} The previous example does not depict the
+buffer usage. The buffer becomes useful when a process broadcasts or forwards a
+message between the opening of a channel and the receipt of the corresponding
+acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
+buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
+$p_3$. Between the departure of the $locked$ message and the arrival of the
+acknowledgment, $p_1$ broadcasts a message $m'$. Network conditions
+delay the arrival of this message from $p_2$ to $p_3$ such that when Process
+$p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
+$p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
+Process $p_3$ receives and delivers $m'$ before $m''$.
+
+
+
+\subsection{Proofs}
+
+\begin{theorem}[FBC-broadcast in static networks is causal]
+  \TODO{Meow}
+\end{theorem}
+
+\begin{theorem}[FBC-broadcast in dynamic networks subject to link removals is
+  causal]
+  As long as the network is not partitioned, FBC-broadcast remains causal when
+  the number of links in the network is monotonically decreasing.
+\end{theorem}
+
+\begin{proof}
+  \TODO{Redo.}  
+  Removing a link does not change the delivery order of causally related
+  messages. Proof of Theorem~\ref{theo:static} about causal order holds.
+  However, removing a link may create network partitions. In such case, a
+  message may not reach all processes. FBC-broadcast still ensures causal order,
+  but uniform agreement is violated.
+  % Consider Process $p$ belongs to partition $A$, Process $q$ belongs to
+  % partition $B$. Messages broadcast by processes of Partition $A$ reach
+  % processes of Partition $B$, but not the converse, assuming links are
+  % unidirectional. Processes $p$ broadcasts a message $m$ received and delivered
+  % by $q$. Then $q$ broadcasts a message $m'$
+  % As long as the removal of links do not partition the network, messages reach
+  % all processes. The proof is therefore identical to that of
+  % Theorem~\ref{theo:static}.
+\end{proof}
+
+% \begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to
+%   link additions is not causal]
+%   Using FBC-broadcast, adding links to the network may lead to causal order
+%   violations.
+% \end{theorem}
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figproblem.tex}
+%     \caption{\label{fig:problem}Adding a FIFO channel endangers causal
+%       ordering.}
+%   \end{center}
+% \end{figure}
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figeq2problem.tex}
+%     \caption{\label{fig:eq2problem}2-processes equivalent problem of
+%       Figure~\ref{fig:problem}.}
+%   \end{center}
+% \end{figure}
+
+% \begin{proof}
+%   Figure~\ref{fig:problem} illustrates the issue with the establishment of new
+%   FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
+%   links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
+%   but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
+%   $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
+%   meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
+%   and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
+%   compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
+%   and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
+% \end{proof}
+
+
+
+
+
+% This may create gaps in causal delivery, i.e., messages that should be delivered
+% are still missing.  FIFO-based causal broadcast$^+$ aims to ensure that
+% additional links never create gaps. The idea is to employ already working FIFO
+% channels to know which messages arrived, at marginal cost. For instance,
+% assuming that we have $d_p(m) \rightarrow d_p(m')$ and
+% $d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
+% and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
+% subsequent message from $p$ becomes safe to travel through the newly added link.
+
+%%Knowing that at least Message $m$ arrived allows the process to send
+%%depending messages $m'$, $m''$ 
+
 
 
 % Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
@@ -267,9 +326,9 @@ link to a process $q$ for causal broadcast,
 % channels.  Once it receives the acknowledgment, $p$ empties the buffer of
 % messages to $q$ and start using the channel normally.
 
-\begin{theorem}[FBC-broadcast$^+$ is causal]
-  As long as the network is not partitioned, FBC-broadcast$^+$ is causal in both
-  static and dynamic networks.
+\begin{theorem}[FBC-broadcast in dynamic network subject to link additions is
+  causal]
+  \TODO{Meow.}
 \end{theorem}
 
 \begin{proof}
@@ -357,62 +416,22 @@ link to a process $q$ for causal broadcast,
   ensures both FIFO ordering and local ordering, it ensures causal ordering.
 \end{proof}
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figsolved.tex}
-    \caption{\label{fig:solved}FBC-broadcast$^+$ in dynamic networks. $m'$
-      cannot precede $m$. $p_2$'s deliveries remain hidden for the sake of
-      clarity.}
-  \end{center}
-\end{figure}
+\begin{theorem}[FBC-broadcast is causal in dynamic networks]
+  \TODO{Miaw.}
+\end{theorem}
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figeq2solved.tex}
-    \caption{\label{fig:eq2solved}2-processes equivalent of Figure~\ref{fig:solved}.}
-  \end{center}
-\end{figure}
+\begin{proof}
+  \TODO{Directly deduced from above theorems, meow.}
+\end{proof}
 
-\paragraph{\emph{Example without buffer.}} Figure~\ref{fig:solved} shows how our
-algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
-a FIFO channel links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links
-$p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
-to $p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, $m$
-precedes this message at $p_3$. When $p_3$ acknowledges this message to $p_1$
-using any communication way, the later knows that it $p_3$ received and
-delivered at least $m$. Hence, all subsequent broadcast from $p_1$ can use the
-new communication channel safely. When $p_1$ broadcasts $m'$, there exist no
-path where $m'$ arrives before $m$.
+\begin{theorem}[FBC-broadcast$^+$ is causal]
+  As long as the network is not partitioned, FBC-broadcast$^+$ is causal in both
+  static and dynamic networks.
+\end{theorem}
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figbuffer.tex}
-    \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
-      link addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden
-      for the sake of clarity.}
-  \end{center}
-\end{figure}
-
-\begin{figure}
-  \begin{center}
-    \input{./input/figeq2buffer.tex}
-    \caption{\label{fig:eq2buffer}2-processes equivalent of
-      Figure~\ref{fig:buffer}.}
-  \end{center}
-\end{figure}
-
-\paragraph{\emph{Example with buffer.}} The previous example does not depict the
-buffer usage. The buffer becomes useful when a process broadcasts or forwards a
-message between the opening of a channel and the receipt of the corresponding
-acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
-buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
-$p_3$. Between the departure of the $locked$ message and the arrival of the
-acknowledgement, $p_1$ broadcasts a message $m'$. Network conditions
-delay the arrival of this message from $p_2$ to $p_3$ such that when Process
-$p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
-$p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
-Process $p_3$ receives and delivers $m'$ before $m''$.
-
+\begin{proof}
+  \TODO{Directly deduced from above theorems, meow.}
+\end{proof}
 
 \subsection{Complexity}
 \label{subsec:complexity}
