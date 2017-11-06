@@ -481,11 +481,17 @@ complexity of causal ordering, the complexity of reliable broadcast, and the
 complexity brought by the overlay network.
 
 \paragraph{Causal ordering.} Regarding traffic, broadcast messages do not need
-to convey any control information. Regarding local space consumption, our
-protocol maintains one buffer per link during its acknowledgment time. We assume
-that this time is short so the number of buffered messages stays small. Network
-conditions can make this assumption false. Algorithm~\ref{algo:boundingbuffer}
-allows to bound the size of each buffer and handle network failures.
+to convey any control information. However, processes must send the message to
+all their neighborhood. It creates as many copies as neighbors. This number of
+copies may constitute an issue when the size of messages is large. To solve this
+issue, processes can send identifiers instead of large messages then send these
+messages on demand.  It introduces additionnal delays in communications but
+greatly reduces generated traffic (\REF).  Regarding local space consumption,
+our protocol maintains one buffer per link during its acknowledgment time. We
+assume that this time is short so the number of buffered messages stays
+small. Network conditions can make this assumption
+false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size of each
+buffer and handle network failures.
 
 % While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
 % means that they can grow unbounded, we can easily bound them. For instance,
@@ -525,22 +531,23 @@ broadcasting.
 % sublinear bound for detecting duplicated receipts remains an open problem.
 
 
-\paragraph{Overlay network.} Values such as the number of messages sent
-by each process, or the number of hops for a message to reach all processes, are
+\paragraph{Overlay network.} Values such as the number of messages sent by each
+process, or the number of hops for a message to reach all processes, are
 interdependent values brought by the overlay network. For instance, random
 peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
 properties similar to those of random graphs~\cite{erdos1959random}. They
 provide each process with a random subset of neighbors the size of which is
 considerably smaller than the network size. Since the neighborhood size is
 logarithmic compared to the network size, the number of messages sent by each
-process for each broadcast message is logarithmic. Since it builds a topology
-close to random graphs, messages take a logarithmic number of hops to reach all
-processes. In addition, random peer-sampling protocols such as
-\SPRAY~\cite{nedelec2017adaptive} or \CYCLON~\cite{voulgaris2005cyclon} create
-links using only neighbor-to-neighbor interactions, i.e., they establish links
-only two hops apart. It takes only 4 hops for a new link to get acknowledged.
-The overhead brought by these messages is negligible. The acknowledgment time of
-buffers, hence the size of buffers, remains small.
+process for each broadcast message is logarithmic.  Since random peer-sampling
+protocols build topologies close to random graphs, messages take a logarithmic
+number of hops to reach all processes. In addition, random peer-sampling
+protocols such as \SPRAY~\cite{nedelec2017adaptive} or
+\CYCLON~\cite{voulgaris2005cyclon} create links using only neighbor-to-neighbor
+interactions, i.e., they establish links only two hops apart. It takes only 4
+hops for a new link to get acknowledged.  The overhead brought by these messages
+is negligible. The acknowledgment time of buffers, hence the size of buffers,
+remains small.
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
