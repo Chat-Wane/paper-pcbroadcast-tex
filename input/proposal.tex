@@ -127,35 +127,53 @@ dynamic networks. It analyses its complexity.
 
 \subsection{Operation}
 
-Handling dynamic networks is mandatory for causal broadcast
-mechanisms. Unfortunately, FBC-broadcast fails when links are added to the
-network. Staying with the principle of FIFO-based broadcast, we extend
-FBC-broadcast to fully handle dynamic networks. The solution is lightweight and
-only uses local knowledge.
+Reliable broadcast (see Algorithm~\ref{algo:reliablebroadcast}) along with FIFO
+links allows causal delivery of broadcast messages at no
+cost~\cite{friedman2004causal}. Broadcast does not overload messages with any
+control information. However, this does not hold in dynamic networks.
 
-The issue is that new links may act as shortcut for messages. First messages
-that travel through new links may arrive before preceding messages that took
-longer paths. New links create additional diffusion paths that potentially
-disorder messages. To solve this issue, we make sure that even new links convey
-all messages in the right order. The idea is to use already established FIFO
-links to acknowledge the receipt of messages at a marginal cost. The process
-knows the potentially missing messages. It sends them in the right order using
-the new FIFO link, then it starts using it normally. Consequently, new links
-do not create diffusion paths breaking causal order.
+In dynamic networks, processes can leave the network or join it at any time.
+They also can remove or add links to other processes. For causal broadcast,
+leaving the network is equivalent to link removals; joining the network is
+equivalent to link additions. It simply removes or adds potential diffusion
+paths.
+
+Link removals are not an issue as long as it does not partition the network: the
+order of message deliveries remains unchanged. However, link additions are
+problematic.  The issue is that new links may act as shortcut for
+messages. First messages that travel through new links may arrive before
+preceding messages that took longer paths. New links create additional diffusion
+paths that potentially disorder messages. 
+
+Solving this issue requires that even new links convey all messages in the right
+order. Sending all broadcast messages since the beginning would be too
+costly. Instead, a process $p$ creating a link to a process $q$ needs to know
+the messages received by $q$ to send potentially missing messages in the right
+order using this link. While obtaining $q$'s acknowledgment would be costly in
+general settings, using already created FIFO links keeps it cheap. Once missing
+messages have been sent through this new link, $p$ starts to use it
+normally. New links do not create diffusion paths that could break causal order.
+
+% Keeping the algorithm preventive allows to broadcast messages without
+% overloading them.
+% The idea is to use already established FIFO links to acknowledge the receipt of
+% messages at a marginal cost. The process knows the potentially missing
+% messages. It sends them in the right order using the new FIFO link, then it
+% starts using it normally. Consequently, new links do not create diffusion paths
+% breaking causal order.
 
 \begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
-  \caption{\label{algo:bufferbroadcast}FBC-broadcast$^+$ at Process $p$.}
+  \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
 \end{algorithm}
 
-
-Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
-causal broadcast. It solves the dynamic network issues in 3 steps.  Compared to
-Algorithm~\ref{algo:reliablebroadcast}, it adds a structure associating each
-opening channel with a buffer of messages.  When a process $p$ wants to use a
-link to a process $q$ for causal broadcast,
+Algorithm~\ref{algo:bufferbroadcast} shows the instructions of \CBROADCAST. 
+% It solves the dynamic network issues in 3 steps.  
+Compared to Algorithm~\ref{algo:reliablebroadcast}, it adds a structure
+associating each opening link with a buffer of messages.  When a process $p$
+wants to use a link to a process $q$ for causal broadcast,
 \begin{enumerate}[(i)]
-\item it must use the FIFO channels already in use to transmit a message to $q$
+\item it must use the FIFO links already in use to transmit a message to $q$
   and wait for its acknowledgment (see Line~\ref{line:sendlocked}). We leave
   aside the implementation of this send function (e.g. broadcast or
   routing). However, using already established FIFO links constitutes a cheap
@@ -163,19 +181,18 @@ link to a process $q$ for causal broadcast,
 \item While awaiting for this acknowledgment, $p$ must buffer each message it
   broadcasts or forwards (see
   Line~\ref{line:bufferbroadcast},~\ref{line:bufferforward}). When $q$ receives
-  $p$'s message, it acknowledges it (see Line~\ref{line:sendack}). The message it sends can travel through any
-  communication mean.
-\item When $p$ receives the acknowledgment from $q$, it uses the FIFO channel
+  $p$'s message, it acknowledges it (see Line~\ref{line:sendack}). The message
+  it sends can travel through any communication mean.
+\item When $p$ receives the acknowledgment from $q$, it uses the FIFO link
   from $p$ to $q$ to send its buffered messages (see
-  Line~\ref{line:emptybuffer}). Afterwards, $p$ uses the new channel normally.
+  Line~\ref{line:emptybuffer}). Afterwards, $p$ uses the new link normally.
 \end{enumerate}
 
 \begin{figure}
   \begin{center}
     \input{./input/figsolved.tex}
-    \caption{\label{fig:solved}FBC-broadcast$^+$ in dynamic networks. $m'$
-      cannot precede $m$. $p_2$'s deliveries remain hidden for the sake of
-      clarity.}
+    \caption{\label{fig:solved}\CBROADCAST in dynamic networks. $m'$ cannot
+      precede $m$. $p_2$'s deliveries remain hidden for the sake of clarity.}
   \end{center}
 \end{figure}
 
@@ -188,21 +205,21 @@ link to a process $q$ for causal broadcast,
 
 \paragraph{\emph{Example without buffer.}} Figure~\ref{fig:solved} shows how our
 algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
-a FIFO channel links $p_1$ to $p_2$; another link $p_2$ to $p_3$; none links
+a FIFO channel links $p_1$ to $p_2$; another links $p_2$ to $p_3$; none links
 $p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
-to $p_3$. It sends a message to $p_3$ using its FIFO channels. Thus, $m$
-precedes this message at $p_3$. When $p_3$ acknowledges this message to $p_1$
-using any communication way, the later knows that it $p_3$ received and
-delivered at least $m$. Hence, all subsequent broadcast from $p_1$ can use the
-new communication channel safely. When $p_1$ broadcasts $m'$, there exist no
-path where $m'$ arrives before $m$.
+to $p_3$. It sends a message to $p_3$ using its FIFO links. Thus, $m$ precedes
+this message at $p_3$. When $p_3$ acknowledges this message to $p_1$ using any
+communication way, the later knows that it $p_3$ received and delivered at least
+$m$. Hence, all subsequent broadcast from $p_1$ can use the new communication
+link safely. When $p_1$ broadcasts $m'$, there exist no path where $m'$ arrives
+before $m$.
 
 \begin{figure}
   \begin{center}
     \input{./input/figbuffer.tex}
-    \caption{\label{fig:buffer}Role of the buffer in FBC-broadcast$^+$ during
-      link addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden
-      for the sake of clarity.}
+    \caption{\label{fig:buffer}Role of the buffer in \CBROADCAST during link
+      addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden for
+      the sake of clarity.}
   \end{center}
 \end{figure}
 
@@ -216,7 +233,7 @@ path where $m'$ arrives before $m$.
 
 \paragraph{\emph{Example with buffer.}} The previous example does not depict the
 buffer usage. The buffer becomes useful when a process broadcasts or forwards a
-message between the opening of a channel and the receipt of the corresponding
+message between the opening of a link and the receipt of the corresponding
 acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
 buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
 $p_3$. Between the departure of the $locked$ message and the arrival of the
@@ -356,7 +373,7 @@ Process $p_3$ receives and delivers $m'$ before $m''$.
   from $p$ to $q$ with arbitrary settings but still FIFO.  \TODO{Should this be
     a proof?  Maybe a proof of equivalent model if kept}. \\   
   Since Process $q$ delivers $m'$ it either received $m'$ from already well
-  established channels, or from the new one. In the former case, the proof is
+  established links, or from the new one. In the former case, the proof is
   identical to that of Theorem~\ref{theo:static}. In the latter case, Process
   $q$ delivers $m'$ means that process $p$ broadcasts $m$ then $m'$ either
   \begin{inparaenum}[(i)]
@@ -368,9 +385,9 @@ Process $p_3$ receives and delivers $m'$ before $m''$.
   \end{inparaenum}
   We must show that either 
   \begin{inparaenum}[(1)]
-  \item \label{show:one} Process $q$ already received $m$ from another channel
-    before receiving $m'$ from the new channel,
-  \item \label{show:two} or that this new channel conveyed $m$ before $m'$.
+  \item \label{show:one} Process $q$ already received $m$ from another link
+    before receiving $m'$ from the new link,
+  \item \label{show:two} or that this new link conveyed $m$ before $m'$.
   \end{inparaenum}
 
   \begin{itemize}
@@ -385,7 +402,7 @@ Process $p_3$ receives and delivers $m'$ before $m''$.
     of buffering.
   \item [(\ref{case:four})] Since Process $p$ empties the buffer containing $m$
     when it receives the acknowledgment, and since Process $p$ broadcasts $m'$
-    afterwards using the new channel, it shows~(\ref{show:two}).
+    afterwards using the new link, it shows~(\ref{show:two}).
   \item [(\ref{case:five})] It directly shows~(\ref{show:two}).
   \end{itemize}
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

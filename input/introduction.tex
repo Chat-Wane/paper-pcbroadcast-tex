@@ -21,8 +21,8 @@ instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF) and
 collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
 conflict-free replicated data types (\REF). They feature addition and deletion
 of elements. A deletion must follow the corresponding addition, for the sake of
-consistency (\REF). Causal broadcast relieve these applications from checking
-such constraints.
+consistency (\REF). Causal broadcast relieves these applications from
+continuously checking such constraints.
 % For instance, distributed collaborative editors perform deletion immediately,
 % for causal broadcast already guaranteed that the message containing the
 % corresponding insertion was delivered beforehand.
@@ -47,7 +47,6 @@ None of these approaches scales in large and dynamic networks, for they overload
 each message with linearly increasing data structures that depend of the number
 of processes or the number of messages.
 
-
 In static networks, causal broadcast does not need to overload messages with any
 control information~\cite{friedman2004causal}. It simply makes use of FIFO
 communication channels (e.g. TCP) and deterministic overlay networks (\REF) to
@@ -56,9 +55,16 @@ membership changes over time.
 
 In this paper, we break the scalability barrier of causal broadcast for large
 and dynamic networks. We propose a uniform reliable broadcast that ensures
-causal delivery without any message overhead. Just as~\cite{friedman2004causal},
-our protocol relies on lightweight assumptions but contrarily to the former, we
-prove that it works in both static and dynamic networks.
+causal delivery without any message overhead.  To provide causal order, most
+state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}
+approaches are reactive, for they check if message deliveries should be delayed
+to avoid causality violations. On the opposite our approach is preventive, for
+messages are immediately delivered on receipt without risk of causality
+violations. We prove that our causal broadcast protocol handles both static and
+dynamic networks.
+
+% relies on lightweight assumptions but contrarily to the former, we prove that it
+% handles both static and dynamic networks.
 
 % It makes use of FIFO channels (e.g. TCP) and relies on a peer-sampling
 % protocol~\cite{jelasity2007gossip} ensuring a network without partitions
@@ -69,9 +75,10 @@ prove that it works in both static and dynamic networks.
 
 The rest of this paper is organized as follows: Section~\ref{sec:preliminaries}
 introduces definitions and theorems about causal
-broadcast. Section~\ref{sec:proposal} describes our causal broadcast mechanism
-and provides the corresponding proofs. Section~\ref{sec:relatedwork} reviews the
-related work. We conclude in Section~\ref{sec:conclusion}.
+broadcast. Section~\ref{sec:proposal} describes our causal broadcast mechanism,
+provides the corresponding proofs and complexity
+analysis. Section~\ref{sec:relatedwork} reviews the related work. We conclude in
+Section~\ref{sec:conclusion}.
 
 
 % Broadcast is a communication primitive allowing a process to send a message to
