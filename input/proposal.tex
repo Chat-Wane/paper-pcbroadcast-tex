@@ -481,15 +481,15 @@ complexity of causal ordering, the complexity of reliable broadcast, and the
 complexity brought by the overlay network.
 
 \paragraph{Causal ordering.} Regarding traffic, broadcast messages do not need
-to convey any control information. However, processes must send the message to
-all their neighborhood. It creates as many copies as neighbors. This number of
-copies may constitute an issue when the size of messages is large. To solve this
-issue, processes can send identifiers instead of large messages then send these
-messages on demand.  It introduces additionnal delays in communications but
-greatly reduces generated traffic (\REF).  Regarding local space consumption,
-our protocol maintains one buffer per link during its acknowledgment time. We
-assume that this time is short so the number of buffered messages stays
-small. Network conditions can make this assumption
+to convey any control information. However, processes must send each message to
+all their neighborhood exactly once. It creates as many copies as
+neighbors. This number of copies may constitute an issue when the size of
+messages is large. To solve this issue, processes can send identifiers instead
+of large messages then send these messages on demand.  It introduces additionnal
+delays in communications but greatly reduces generated traffic (\REF).
+Regarding local space consumption, our protocol maintains one buffer per link
+during its acknowledgment time. We assume that this time is short so the number
+of buffered messages stays small. Network conditions can make this assumption
 false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size of each
 buffer and handle network failures.
 

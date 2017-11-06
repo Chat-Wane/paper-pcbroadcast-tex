@@ -4,12 +4,13 @@
 
 Definitions and theorems come from~\cite{hadzilacos1994modular}.
 
-\begin{definition}[Network]
-  A network $N$ comprises a set of processes $P$. Each Process runs a set of
+\begin{definition}[\TODO{Overlay} Network]
+  An \TODO{overlay} network $N$ comprises a set of processes $P$. Each Process
+  runs a set of
   instructions sequentially. \\
   A network $N$ also comprises a set of links $E: P \times P$. $p$'s
   neighborhood $Q$ is the set of links departing from $p$. Processes can
-  communicate with their 
+  communicate with their
   neighbors using messages. \\
   Processes are faulty if they crash, otherwise they are correct. The set of
   correct processes is $C$. There are no byzantine processes.
@@ -165,9 +166,10 @@ Another approach achieves causal delivery without overloading broadcast messages
 with control information (\REF). It only assumes FIFO links and deterministic
 overlay network (\REF). Processes deliver messages as soon as they arrive.
 
-\begin{definition}[FIFO communication channel]
-  If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO
-  channel, $q$ receives $m$ before $m'$.
+\begin{definition}[FIFO link]
+  If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO link,
+  $q$ receives $m$ before $m'$:
+  $s_p(m) \rightarrow s_p(m') \implies r_q(m) \rightarrow r_q(m')$
 \end{definition}
 
 \begin{figure}
