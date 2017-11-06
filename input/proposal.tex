@@ -247,7 +247,7 @@ Process $p_3$ receives and delivers $m'$ before $m''$.
 \begin{algorithm}
   \input{input/algoboundingbuffer.tex}
   \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
-    failures.}
+    network failures.}
 \end{algorithm}
 
 While Algorithm~\ref{algo:bufferbroadcast} ensures causal order of message
@@ -266,6 +266,8 @@ a timeout. We only keep the buffer corresponding to the latest locked
 message. We bound the number of retries so the protocol does not stay stuck in a
 loop of retries.
 
+\TODO{Example of failure management? (Will not look nice).}
+
 % \begin{algorithm}
 %   \input{input/algosendfunctions.tex}
 %   \caption{\label{algo:sendfunctions}Implementation of sending functions in
@@ -275,31 +277,32 @@ loop of retries.
 
 \subsection{Proofs}
 
-\begin{theorem}[FBC-broadcast in static networks is causal]
-  \TODO{Meow}
-\end{theorem}
+This section provides the proofs that our approach work in both static and
+dynamic networks.
 
-\begin{theorem}[FBC-broadcast in dynamic networks subject to link removals is
-  causal]
-  As long as the network is not partitioned, FBC-broadcast remains causal when
-  the number of links in the network is monotonically decreasing.
+\begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
+  \CBROADCAST is a causal broadcast in static networks.
 \end{theorem}
 
 \begin{proof}
-  \TODO{Redo.}  
-  Removing a link does not change the delivery order of causally related
-  messages. Proof of Theorem~\ref{theo:static} about causal order holds.
-  However, removing a link may create network partitions. In such case, a
-  message may not reach all processes. FBC-broadcast still ensures causal order,
-  but uniform agreement is violated.
-  % Consider Process $p$ belongs to partition $A$, Process $q$ belongs to
-  % partition $B$. Messages broadcast by processes of Partition $A$ reach
-  % processes of Partition $B$, but not the converse, assuming links are
-  % unidirectional. Processes $p$ broadcasts a message $m$ received and delivered
-  % by $q$. Then $q$ broadcasts a message $m'$
-  % As long as the removal of links do not partition the network, messages reach
-  % all processes. The proof is therefore identical to that of
-  % Theorem~\ref{theo:static}.
+  In static network settings, \CBROADCAST does not use any buffer. Its
+  instructions are those of reliable broadcast from
+  Algorithm~\ref{algo:reliablebroadcast}. The proof can be found in
+  Paper~\cite{friedman2004causal}.
+\end{proof}
+
+\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to removals\label{lem:removals}]
+  \CBROADCAST is a causal broadcast in dynamic networks where processes can
+  leave the network or links can be removed.
+\end{lemma}
+
+\begin{proof}
+  Removing a process from the network is equivalent to removing all the links
+  going to and out this process. We assume that removals do not create network
+  partitions.  Removing a link does not change the delivery order of causally
+  related messages. Identically to the proof of Theorem~\ref{theo:static}, our
+  causal broadcast does not use buffers in such settings. The proof is identical
+  to that of Paper~\cite{friedman2004causal}.
 \end{proof}
 
 % \begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to
@@ -371,27 +374,27 @@ loop of retries.
 % channels.  Once it receives the acknowledgment, $p$ empties the buffer of
 % messages to $q$ and start using the channel normally.
 
-\begin{theorem}[FBC-broadcast in dynamic network subject to link additions is
-  causal]
-  \TODO{Meow.}
-\end{theorem}
+\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to additions\label{lem:additions}]
+  \CBROADCAST is a causal broadcast in dynamic networks where processes can join
+  the network or links can be added.
+\end{lemma}
 
 \begin{proof}
-  For static and dynamic networks with link removals, the proof is identical to
-  those of Theorems~\ref{theo:static} and~\ref{theo:removals}, for the buffers
-  do not activate in such instances. For dynamic networks with link additions,
-  we must show that FBC-broadcast$^+$ ensures both
+  To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
+  validity, uniform agreement, uniform integrity, and causal order -- that is
   FIFO order and local order. \\
+  \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST is an
+  \textsc{R-broadcast}. \\
   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
   $m'$.  Since adding a FIFO link from a Process $r$ to any other Process $s$ is
   like adding potential FIFO paths from $p$ to $q$, we summarize this as a link
   from $p$ to $q$ with arbitrary settings but still FIFO.  \TODO{Should this be
-    a proof?  Maybe a proof of equivalent model if kept}. \\   
+    a proof?  Maybe a proof of equivalent model if kept}. \\
   Since Process $q$ delivers $m'$ it either received $m'$ from already well
   established links, or from the new one. In the former case, the proof is
   identical to that of Theorem~\ref{theo:static}. In the latter case, Process
-  $q$ delivers $m'$ means that process $p$ broadcasts $m$ then $m'$ either
+  $q$ delivers $m'$ means that Process $p$ broadcasts $m$ then $m'$ either
   \begin{inparaenum}[(i)]
   \item \label{case:one} $m'$ during buffering and $m$ before buffering;
   \item \label{case:two} $m'$ during buffering and $m$ during buffering;
@@ -457,41 +460,37 @@ loop of retries.
   % in our Algorithm compared to FIFO order demonstration is that Process $q$ may
   % have already received -- or is the origin of the broadcast of --
   % $m$. \TODO{Not over}  
-  \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast$^+$
-  ensures both FIFO ordering and local ordering, it ensures causal ordering.
+  \textbf{Causal:} From Theorem~\ref{theo:causal}, since \CBROADCAST ensures
+  both FIFO order and local order, it ensures causal order.
 \end{proof}
 
-\begin{theorem}[FBC-broadcast is causal in dynamic networks]
-  \TODO{Miaw.}
+\begin{theorem}[\CBROADCAST is a causal broadcast]
+  \CBROADCAST is a causal broadcast in both static and dynamic network settings.
 \end{theorem}
 
 \begin{proof}
-  \TODO{Directly deduced from above theorems, meow.}
-\end{proof}
-
-\begin{theorem}[FBC-broadcast$^+$ is causal]
-  As long as the network is not partitioned, FBC-broadcast$^+$ is causal in both
-  static and dynamic networks.
-\end{theorem}
-
-\begin{proof}
-  \TODO{Directly deduced from above theorems, meow.}
+  For static networks, it comes from Theorem~\ref{theo:static}. For dynamic
+  networks, it comes from Lemmas~\ref{lem:removals}~and~\ref{lem:additions}.
 \end{proof}
 
 \subsection{Complexity}
 \label{subsec:complexity}
 
-We review and discuss about the complexity of FBC-broadcast$^+$. We distinguish
-the complexity led by causal ordering, the complexity led by reliable
-broadcast, and the complexity led by the peer-sampling protocol.
+We review and discuss about the complexity of \CBROADCAST. We distinguish the
+complexity of causal ordering, the complexity of reliable broadcast, and the
+complexity brought by the overlay network.
 
-\paragraph{Causal ordering.} Regarding traffic, the broadcast and forwarded
-messages do not need to convey any control information. Regarding local space
-consumption, our algorithm only requires to maintain buffers when a link is
-being acknowledged. While Algorithm~\ref{algo:bufferbroadcast} shows no buffer
-management which means that they can grow unbounded, we can easily bound
-them. For instance, above a threshold we clear the buffer and send another
-locked message, or we remove the link altogether.
+\paragraph{Causal ordering.} Regarding traffic, broadcast messages do not need
+to convey any control information. Regarding local space consumption, our
+protocol maintains one buffer per link during its acknowledgment time. We assume
+that this time is short so the number of buffered messages stays small. Network
+conditions can make this assumption false. Algorithm~\ref{algo:boundingbuffer}
+allows to bound the size of each buffer and handle network failures.
+
+% While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
+% means that they can grow unbounded, we can easily bound them. For instance,
+% above a threshold we clear the buffer and send another locked message, or we
+% remove the link altogether.
 
 \paragraph{Reliable broadcast.} Algorithm~\ref{algo:reliablebroadcast} shows the
 instructions of reliable broadcast. Even in presence of message duplicates it
@@ -526,22 +525,22 @@ broadcasting.
 % sublinear bound for detecting duplicated receipts remains an open problem.
 
 
-\paragraph{Peer-sampling protocol.} The number of messages sent by each process,
-the number of hops for a message to reach all processes, \TODO{etc.} are
-interdependent values set by the peer-sampling protocol. For instance, random
-peer-sampling protocols~\cite{jelasity2007gossip} provide each process with a
-random subset of neighbors the size of which is considerably smaller than the
-network size. Since the neighborhood size is logarithmic compared to the network
-size, the number of messages sent by each process for each broadcast is
-logarithmic. Since it builds a topology close to random graphs, messages take a
-logarithmic number of hops to reach all processes, \TODO{etc.}  In addition,
-random peer-sampling protocols such as \SPRAY~\cite{nedelec2017adaptive} or
-\CYCLON~\cite{voulgaris2005cyclon} build neighborhoods using only
-neighbor-to-neighbor interactions, i.e., they establish links only two hops
-apart. Thus, it becomes easy to design a 4-hops $sendLocked$-$sendAck$
-function. Under such settings, we can assume that buffers that grow between the
-departure of a locked message and the arrival of the corresponding
-acknowledgment remain small in size, even without threshold policies.
+\paragraph{Overlay network.} Values such as the number of messages sent
+by each process, or the number of hops for a message to reach all processes, are
+interdependent values brought by the overlay network. For instance, random
+peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
+properties similar to those of random graphs~\cite{erdos1959random}. They
+provide each process with a random subset of neighbors the size of which is
+considerably smaller than the network size. Since the neighborhood size is
+logarithmic compared to the network size, the number of messages sent by each
+process for each broadcast message is logarithmic. Since it builds a topology
+close to random graphs, messages take a logarithmic number of hops to reach all
+processes. In addition, random peer-sampling protocols such as
+\SPRAY~\cite{nedelec2017adaptive} or \CYCLON~\cite{voulgaris2005cyclon} create
+links using only neighbor-to-neighbor interactions, i.e., they establish links
+only two hops apart. It takes only 4 hops for a new link to get acknowledged.
+The overhead brought by these messages is negligible. The acknowledgment time of
+buffers, hence the size of buffers, remains small.
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
