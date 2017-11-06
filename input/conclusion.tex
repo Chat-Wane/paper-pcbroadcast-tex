@@ -9,9 +9,10 @@
 
 
 In this paper, we described a uniform reliable causal broadcast protocol that
-breaks scalability barriers. Its space complexity remains small and can be
-bounded easily. It does not overload messages with any control information. This
-result means that large and dynamic systems can finally afford causal broadcast.
+breaks scalability barriers for large and dynamic networks. Its space complexity
+remains small and can be bounded easily. It does not overload messages with any
+control information. This result means that large and dynamic systems can
+finally afford causal broadcast.
 
 % This makes our causal broadcast suitable for large scale networks subject to
 % churn.
@@ -28,8 +29,8 @@ As future work, we plan to investigate on reducing the space complexity of
 reliable broadcast. Section~\ref{subsec:complexity} reviews structures with
 linearly increasing space consumption. We can reduce this complexity in static
 networks. We can prune the structure from already received messages, for we know
-that the number of duplicates is equal to the number of incoming links. As for
-FIFO-based broadcast, this does not hold in dynamic networks. We would like to
+that the number of duplicates is equal to the number of incoming
+links. Unfortunately, this does not hold in dynamic networks. We would like to
 investigate on a way to prune the structure in such settings. This would make
 causal broadcast fully scalable as well on generated traffic as on space
 consumption.

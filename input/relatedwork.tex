@@ -16,7 +16,7 @@ increase quickly depending on the application. In our approach, a similar
 behavior arises during buffering. However, as discussed in
 Section~\ref{subsec:complexity}, we can assume that links are quickly checked so
 the buffer size stays small, and we can easily set a threshold on the buffer
-size.
+size (see Algorithm~\ref{algo:boundingbuffer}).
 
 \paragraph{Vector clock
   approaches~\cite{fidge1988timestamps,mattern1989virtual}.} A vector clock is a
@@ -45,7 +45,8 @@ order under a computable boundary. The size of control information in messages
 depends of the desired boundary. In comparison to these vector-based approaches,
 our broadcast cannot compare any pair of messages. Nevertheless, accurate causal
 delivery is a feature provided by default by the propagation scheme. It frees up
-messages from the need to piggyback any control information.
+messages from the need to piggyback any control
+information~\cite{friedman2004causal}.
 
 \paragraph{Topological approaches.} A trivial way to ensure causal delivery of
 messages without message overhead consists in building an overlay network shaped
