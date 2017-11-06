@@ -250,6 +250,22 @@ Process $p_3$ receives and delivers $m'$ before $m''$.
     failures.}
 \end{algorithm}
 
+While Algorithm~\ref{algo:bufferbroadcast} ensures causal order of message
+deliveries, buffers consume unbounded space. For instance, if the message
+acknowledging the locked message fails to reach its destination, the
+corresponding buffer continues to grow over broadcast and forwarded messages. 
+
+Algorithm~\ref{algo:boundingbuffer} aims to bound the size of buffers and handle
+network failures, i.e., crashed processes or lost messages. Now, our causal
+broadcast can reset the buffer of a new link. Resets happen when either the
+buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
+acknowledgment message took too long to come back (see
+Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
+a link. When a process receives an acknowledgment, it knows if it expired due to
+a timeout. We only keep the buffer corresponding to the latest locked
+message. We bound the number of retries so the protocol does not stay stuck in a
+loop of retries.
+
 % \begin{algorithm}
 %   \input{input/algosendfunctions.tex}
 %   \caption{\label{algo:sendfunctions}Implementation of sending functions in

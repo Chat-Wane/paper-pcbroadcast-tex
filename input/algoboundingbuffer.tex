@@ -41,7 +41,8 @@
   \BlankLine
 
   \Upon{\textsc{FBC-deliver$^+$}($m$)} {
-    \ForEach{$q \in B$ \textbf{\textsc{such that}} $|B[q]| > maxSize$}{
+    \ForEach{$q \in B$ \textbf{\textsc{such that}} $|B[q]| > maxSize$
+      \label{line:maxsize}}{
       $\textsc{retry}(q)$ \;
     }
   }
@@ -71,7 +72,7 @@
 \Failure {} {
 
   \Upon{\textsc{timeout}($from,\, to,\, id$)}{
-    \lIf {$id \in I$} {\textsc{retry}($to$)} 
+    \lIf {$id \in I$} {\textsc{retry}($to$)\label{line:timeout}}
   }
 
 }
