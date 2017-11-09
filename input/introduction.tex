@@ -48,10 +48,10 @@ each message with linearly increasing data structures that depend of the number
 of processes or the number of messages.
 
 In static networks, causal broadcast does not need to overload messages with any
-control information~\cite{friedman2004causal}. It simply makes use of FIFO
-communication channels (e.g. TCP) and deterministic overlay networks (\REF) to
-disseminate messages. However, it does not handle dynamic networks where
-membership changes over time.
+control information~\cite{friedman2004causal}. \TODO{overall, O(1) in messages.} It
+simply makes use of FIFO communication channels (e.g. TCP) and deterministic
+overlay networks (\REF) to disseminate messages. However, it does not handle
+dynamic networks where membership changes over time.
 
 In this paper, we break the scalability barrier of causal broadcast for large
 and dynamic networks. We propose a uniform reliable broadcast that outperforms

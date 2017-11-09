@@ -2,13 +2,144 @@
 \section{Issues and motivations}
 \label{sec:motivations}
 
-Most state-of-the-art approaches are
+\begin{table}
+  \caption{\label{table:comparison} Space and time complexity of causal broadcast protocols. $N$ is the number of processes that ever broadcast a message. $W$ is the number of messages that are received by the process but not yet ready to be delivered.
+    $P$ is the number of messages that are received between once and the number of expected copies.
+    $B$ is the size of the set of temporary buffers.}
+  \input{input/tableoverlayvstimestamp.tex}
+\end{table}
+
+Table~\ref{table:comparison} highlights the differences in complexity between
+reactive and preventive approaches. It also positions our approach towards
+state-of-the-art.
+
+\subsection{Reactive approaches}
+
+First row of Table~\ref{table:comparison} shows a vector-clock-based
+representative~\cite{schwarz1994detecting} of reactive approaches. Most
+state-of-the-art approaches are
 reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. They
-overload each broadcast message with control information that allows processes
-to check if it can be delivered. Unfortunately, the size of these control
-information increases linearly with either the number of
-messages~\cite{hadzilacos1993fault} or the number of processes that ever
-broadcast a
-message~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}.
+handle dynamic networks, i.e., processes can join or leave the network, and
+links can be added or removed at any time. Their operation requires that each
+broadcast message conveys control information.
+
+\PAR{Message overhead.}{The size of these control information increases linearly
+  with either the number of messages~\cite{hadzilacos1993fault} or the number of
+  processes that ever broadcast a
+  message~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. These
+  approaches do not handle large networks. These approaches eventually become
+  impracticable in dynamic networks, for processes claim an entry when they join
+  that cannot be safely reclaimed when they leave.}
+
+\PAR{Local space.}{Control information becomes useful to check if a message is
+  ready to be delivered, i.e., messages that should be delivered beforehand are
+  actually delivered. Each process locally maintains a vector representing the
+  current state of delivery ($O(N)$).  In case the message is not ready, it goes
+  into a buffer along with its control information ($O(W.N)$).}
+
+\PAR{Delivery time.}{Upon each receipt, a process must check again all waiting
+  messages $W$. A message is ready if 1 entry only among all $N$ entries is
+  incremented. It requires $O(N)$ steps, hence $O(W.N)$ for the whole
+  buffer. Applications where efficiency is an important matter (\REF) cannot use
+  these approaches, for they slow down over time.}
 
 
+\begin{figure}
+  \begin{center}
+    \input{input/figvector.tex}
+    \caption{\label{fig:vector}Causal broadcast using vector clocks.}
+  \end{center}
+\end{figure}
+
+
+\EXAMPLE{Example of vector clock-based causal
+  broadcast.}{Figure~\ref{fig:vector} shows a broadcast protocol that ensures
+  causal delivery by using vector clocks. When Process $p_1$ broadcasts its
+  message $m$, it increments its entry in its vector clock and overloads the
+  message with it: $m_{1,\,0,\,0}$. When Process $p_2$ receives the message, it
+  checks if it is ready. It immediately delivers it, for the received vector is
+  only 1 increment away from its own vector clock. Then Process $p_2$ broadcasts
+  a message $m'$. It increments its own entry and overloads the message with its
+  vector $[1,\,1,\,0]$. This acknowledges that the delivery of $m$ precedes the
+  broadcast of $m'$. When Process $p_3$ receives the later, it detects that $m'$
+  is not ready and delays it until it receives and delivers $m$. Then, $p_3$
+  checks $m'$ again. $p_3$ finds that $m'$ is ready and delivers it. Using
+  vector clocks, the message delivery order follows causal order.}
+
+
+\TODO{Conclusion?}
+
+
+\subsection{Preventive approaches}
+
+Second row of Table~\ref{table:comparison} shows a representative of preventive
+approaches~\cite{friedman2004causal}. It clearly outperforms reactive approaches
+but only works for static networks. The overhead of messages is constant, for it
+only rely on FIFO links. The local structure can be pruned, for the network is
+static and the number of copies of a same message is known. Messages arrive
+ready so processes deliver them in constant time.
+
+% \PAR{Message overhead.}{This approach relies on FIFO links. Each message must
+%   convey only 1 scalar to implement FIFO. Since processes must deliver each
+%   message exactly once, each message also convey a unique identifier, e.g.,
+%   $\langle process\_id,\, increasing\_counter\rangle$. Hence, $O(1)$.}
+
+% \PAR{Local space.}{Since the network is static, each process knows the number of
+%   copies it must receive. It can prune its local structure when it receives the
+%   expected number of copies. We cannot achieve better local space complexity.}
+
+% \PAR{Delivery time.}{Received messages are ready when they arrive. Processes
+%   only check if the received message is a copy of an already delivered
+%   message. It achieves this in constant time.}
+
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figstatic.tex}
+    \caption{\label{fig:static}Preventive approach in static networks.}
+  \end{center}
+\end{figure}
+
+\EXAMPLE{Example of preventive broadcast.}{Figure~\ref{fig:static} shows
+  a broadcast protocol that ensures causal delivery by using FIFO channels.  The
+  network is static and comprises 3 processes $p_1$, $p_2$, $p_3$ linked to each
+  other. The figure does not show messages forwarded by $p_3$ for the sake of
+  clarity.  The processes receive $m$ and $m'$ multiple times but there exists
+  no link in the paths from $p_2$ to $p_3$ that carries $m'$ without having
+  carried $m$ beforehand. Hence, the delivery of $m$ always precedes the
+  delivery of $m'$ at any process.}
+
+
+Unfortunately, this protocol ensures causal delivery only in static
+networks. This does not hold in dynamic settings where processes can join the
+network, or links can be added.
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figproblem.tex}
+    \caption{\label{fig:problem}Preventive approach in dynamic network.}
+  \end{center}
+\end{figure}
+
+\EXAMPLE{Example of preventive approach in dynamic network.}{
+  Figure~\ref{fig:problem} illustrates the issue with the establishment of new
+  FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
+  links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
+  but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
+  $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
+  meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
+  and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
+  compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
+  and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
+}
+
+\subsection{Objective}
+
+\TODO{Meow.}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:

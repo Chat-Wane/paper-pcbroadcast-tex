@@ -1,5 +1,19 @@
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
 
+\setlength{\tabcolsep}{3pt} % General space between cols (6pt standard)
 
-\begin{tabularx}{0.9\textwidth}{@{}Xcccc@{}}
-
+\begin{tabularx}{0.98\columnwidth}{@{}Xcccc@{}}
+%  \toprule
+  & dynamic & message overhead & local space &  delivery time \\ \cmidrule{2-5}
+  reactive~\cite{schwarz1994detecting} & \cmark & $O(N)$ & $O(N+W.N)$ & $O(W.N)$ \\
+  preventive~\cite{friedman2004causal} & \xmark & $O(1)$ & $O(P)$ & $O(1)$ \\ %\hline
+  objective & \cmark & $?<O(N)$ & $O(N)\leq \, ?$ & $? \leq O(W.N)$ \\ \hline\hline
+  \textbf{this paper} & \textbf{\cmark} & $\mathbf{O(1)}$ & $\mathbf{O(N+B)}$ & $\mathbf{O(1)}$ \\ 
+%  \bottomrule
 \end{tabularx}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:
