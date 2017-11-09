@@ -2,4 +2,13 @@
 \section{Issues and motivations}
 \label{sec:motivations}
 
-Most state-of-the-art approaches are reactive
+Most state-of-the-art approaches are
+reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. They
+overload each broadcast message with control information that allows processes
+to check if it can be delivered. Unfortunately, the size of these control
+information increases linearly with either the number of
+messages~\cite{hadzilacos1993fault} or the number of processes that ever
+broadcast a
+message~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}.
+
+
