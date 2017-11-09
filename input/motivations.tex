@@ -38,7 +38,7 @@ broadcast message conveys control information.
   into a buffer along with its control information ($O(W.N)$).}
 
 \PAR{Delivery time.}{Upon each receipt, a process must check again all waiting
-  messages $W$. A message is ready if 1 entry only among all $N$ entries is
+  messages $W$. A message is ready if only 1 entry among all $N$ entries is
   incremented. It requires $O(N)$ steps, hence $O(W.N)$ for the whole
   buffer. Applications where efficiency is an important matter (\REF) cannot use
   these approaches, for they slow down over time.}
@@ -96,18 +96,18 @@ ready so processes deliver them in constant time.
 \begin{figure}
   \begin{center}
     \input{./input/figstatic.tex}
-    \caption{\label{fig:static}Preventive approach in static networks.}
+    \caption{\label{fig:static}Preventive broadcast in static networks.}
   \end{center}
 \end{figure}
 
-\EXAMPLE{Example of preventive broadcast.}{Figure~\ref{fig:static} shows
-  a broadcast protocol that ensures causal delivery by using FIFO channels.  The
-  network is static and comprises 3 processes $p_1$, $p_2$, $p_3$ linked to each
-  other. The figure does not show messages forwarded by $p_3$ for the sake of
-  clarity.  The processes receive $m$ and $m'$ multiple times but there exists
-  no link in the paths from $p_2$ to $p_3$ that carries $m'$ without having
-  carried $m$ beforehand. Hence, the delivery of $m$ always precedes the
-  delivery of $m'$ at any process.}
+\EXAMPLE{Example of preventive broadcast in static
+  network.}{Figure~\ref{fig:static} shows a broadcast protocol that ensures
+  causal delivery by using FIFO channels.  The network is static and comprises 3
+  processes $p_1$, $p_2$, $p_3$ linked to each other. The figure does not show
+  messages forwarded by $p_3$ for the sake of clarity.  The processes receive
+  $m$ and $m'$ multiple times but there exists no link in the paths from $p_2$
+  to $p_3$ that carries $m'$ without having carried $m$ beforehand. Hence, the
+  delivery of $m$ always precedes the delivery of $m'$ at any process.}
 
 
 Unfortunately, this protocol ensures causal delivery only in static
@@ -117,7 +117,7 @@ network, or links can be added.
 \begin{figure}
   \begin{center}
     \input{./input/figproblem.tex}
-    \caption{\label{fig:problem}Preventive approach in dynamic network.}
+    \caption{\label{fig:problem}Preventive broadcast in dynamic network.}
   \end{center}
 \end{figure}
 
@@ -135,7 +135,22 @@ network, or links can be added.
 
 \subsection{Objective}
 
-\TODO{Meow.}
+Third row of Table~\ref{table:comparison} shows our objective. We want to
+outperform reactive approaches by using the preventive principle extended to
+dynamic networks. To handle large and dynamic networks, our protocol must
+overload messages with control information sublinearly increasing with the
+network size. We expect delivery time to reflect this complexity change by
+becoming sublinear too. We expect local space complexity to be at least linearly
+increasing with the number of processes, for no approach does better in dynamic
+networks.
+
+Fourth row of Table~\ref{table:comparison} shows the complexity we achieve with
+our causal broadcast. Similarly to the preventive approach, complexity stays
+constant in terms of message overhead and delivery time. As expected, the local
+space complexity is at least linearly increasing with the number of
+processes. Our algorithm requires another local structure to ensure causal
+order. However, as shown in Algorithm~\ref{algo:boundingbuffer}, we can bound
+it.
 
 
 
