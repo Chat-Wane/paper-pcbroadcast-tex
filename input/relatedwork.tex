@@ -5,50 +5,49 @@
 This section reviews the related work going from piggybacking approaches to
 vector approaches and their following compaction approaches.
 
-\paragraph{Piggybacking
-  approaches~\cite{birman1987reliable,hadzilacos1993fault}.}
-A trivial way to ensure causal ordering of messages is to piggyback all causally
-related messages since the last broadcast message along with the newly broadcast
-message. Similarly to our approach, these broadcast protocols can deliver
-messages as soon as they arrive.  However, even by piggybacking the identifiers
-of messages instead of messages themselves, the broadcast message size may
-increase quickly depending on the application. In our approach, a similar
-behavior arises during buffering. However, as discussed in
-Section~\ref{subsec:complexity}, we can assume that links are quickly checked so
-the buffer size stays small, and we can easily set a threshold on the buffer
-size (see Algorithm~\ref{algo:boundingbuffer}).
+\PAR{Piggybacking approaches~\cite{birman1987reliable,hadzilacos1993fault}.}{A
+  trivial way to ensure causal ordering of messages is to piggyback all causally
+  related messages since the last broadcast message along with the newly
+  broadcast message. Similarly to our approach, these broadcast protocols can
+  deliver messages as soon as they arrive.  However, even by piggybacking the
+  identifiers of messages instead of messages themselves, the broadcast message
+  size may increase quickly depending on the application. In our approach, a
+  similar behavior arises during buffering. However, as discussed in
+  Section~\ref{subsec:complexity}, we can assume that links are quickly checked
+  so the buffer size stays small, and we can easily set a threshold on the
+  buffer size (see Algorithm~\ref{algo:boundingbuffer}).}
 
-\paragraph{Vector clock
-  approaches~\cite{fidge1988timestamps,mattern1989virtual}.} A vector clock is a
-vector of monotonically increasing counters.  It encodes the partial order of
-messages using this vector: $VC(m) < VC(m') \implies m \rightarrow m'$.  Before
-delivering a message, processes using vector-based broadcast check if the vector
-of the message is ready regarding their local vector. If it detects any missing
-preceding message, the process delays the delivery. These approaches are
-blocking while our approach remains non-blocking.  In addition, to implement
-this vector-based broadcast
-\begin{inparaenum}[(i)]
-\item each process must maintain a vector locally;
-\item each message must piggyback such vector;
-\item there is 1 counter for each process of the network.
-\end{inparaenum}
-To accurately track causality, processes cannot share their entry. To safely
-track causality, processes cannot reclaim entries. Hence, even with
-\textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
-linearly in terms of number of processes that ever broadcast a message.
-Paper~\cite{almeida2008interval} reduces this complexity to depend of the actual
-number of processes in the network. Still, these approaches do not scale,
-particularly in dynamic networks subject to churn and
-failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
-sacrifices on causality tracking accuracy: messages may be delivered out of
-order under a computable boundary. The size of control information in messages
-depends of the desired boundary. In comparison to these vector-based approaches,
-our broadcast cannot compare any pair of messages. Nevertheless, accurate causal
-delivery is a feature provided by default by the propagation scheme. It frees up
-messages from the need to piggyback any control
-information~\cite{friedman2004causal}.
+\PAR{Vector clock approaches~\cite{fidge1988timestamps,mattern1989virtual}.}{A
+  vector clock is a vector of monotonically increasing counters.  It encodes the
+  partial order of messages using this vector:
+  $VC(m) < VC(m') \implies m \rightarrow m'$.  Before delivering a message,
+  processes using vector-based broadcast check if the vector of the message is
+  ready regarding their local vector. If it detects any missing preceding
+  message, the process delays the delivery. These approaches are blocking while
+  our approach remains non-blocking.  In addition, to implement this
+  vector-based broadcast
+  \begin{inparaenum}[(i)]
+  \item each process must maintain a vector locally;
+  \item each message must piggyback such vector;
+  \item there is 1 counter for each process of the network.
+  \end{inparaenum}
+  To accurately track causality, processes cannot share their entry. To safely
+  track causality, processes cannot reclaim entries. Hence, even with
+  \textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
+  linearly in terms of number of processes that ever broadcast a message.
+  Paper~\cite{almeida2008interval} reduces this complexity to depend of the
+  actual number of processes in the network. Still, these approaches do not
+  scale, particularly in dynamic networks subject to churn and
+  failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
+  sacrifices on causality tracking accuracy: messages may be delivered out of
+  order under a computable boundary. The size of control information in messages
+  depends of the desired boundary. In comparison to these vector-based
+  approaches, our broadcast cannot compare any pair of messages. Nevertheless,
+  accurate causal delivery is a feature provided by default by the propagation
+  scheme. It frees up messages from the need to piggyback any control
+  information~\cite{friedman2004causal}.}
 
-\paragraph{Topological approaches.} A trivial way to ensure causal delivery of
+\PAR{Topological approaches.}{A trivial way to ensure causal delivery of
 messages without message overhead consists in building an overlay network shaped
 as a ring: each broadcast message loops once in FIFO order (\REF).
 Unfortunately, maintaining a specific topology can prove costly in dynamic
@@ -57,14 +56,14 @@ networks subject to churn. Our approach relies on a peer-sampling protocol
 on the built topology. One can choose the most suitable topology depending on
 network settings. For instance, random peer-sampling
 protocols~\cite{jelasity2007gossip} have a low upkeep and guarantee a connected
-network even in dynamic settings.
+network even in dynamic settings.}
 
 \TODO{Explain super-peer approaches.}
 
 \TODO{Inter-group broadcast is a kind of topological approach.}
 
-\paragraph{Inter-group
-  broadcast~\cite{johnson1998scalable,johnson1999intergroup}.} Inter-group
+\PAR{Inter-group
+  broadcast~\cite{johnson1998scalable,johnson1999intergroup}.}{Inter-group
 broadcast allows processes to broadcast messages to members of several
 inter-connected networks. Paper~\cite{johnson1999intergroup} states that
 inter-group causal broadcast is ensured when groups that internally ensure
@@ -72,7 +71,7 @@ causal broadcast are linked together by communication channels that ensure FIFO
 ordering of messages. One can employ these approaches to cluster the network in
 subsystems. Control information in messages depends of the size of each small
 subsystem. Our approach is an extreme case where each process is a
-subsystem.
+subsystem.}
 
 %% The union of paths taken by broadcast messages builds a diffusion tree, i.e.,
 %% a directed acyclic graph, that may change at each broadcast.

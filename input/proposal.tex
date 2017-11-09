@@ -203,7 +203,7 @@ wants to use a link to a process $q$ for causal broadcast,
 %   \end{center}
 % \end{figure}
 
-\paragraph{\emph{Example without buffer.}} Figure~\ref{fig:solved} shows how our
+\EXAMPLE{Example without buffer.}{Figure~\ref{fig:solved} shows how our
 algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
 a FIFO channel links $p_1$ to $p_2$; another links $p_2$ to $p_3$; none links
 $p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
@@ -212,7 +212,7 @@ this message at $p_3$. When $p_3$ acknowledges this message to $p_1$ using any
 communication way, the later knows that it $p_3$ received and delivered at least
 $m$. Hence, all subsequent broadcast from $p_1$ can use the new communication
 link safely. When $p_1$ broadcasts $m'$, there exist no path where $m'$ arrives
-before $m$.
+before $m$.}
 
 \begin{figure}
   \begin{center}
@@ -231,7 +231,7 @@ before $m$.
 %   \end{center}
 % \end{figure}
 
-\paragraph{\emph{Example with buffer.}} The previous example does not depict the
+\EXAMPLE{Example with buffer.}{The previous example does not depict the
 buffer usage. The buffer becomes useful when a process broadcasts or forwards a
 message between the opening of a link and the receipt of the corresponding
 acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
@@ -241,7 +241,7 @@ acknowledgment, $p_1$ broadcasts a message $m'$. Network conditions
 delay the arrival of this message from $p_2$ to $p_3$ such that when Process
 $p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
 $p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
-Process $p_3$ receives and delivers $m'$ before $m''$.
+Process $p_3$ receives and delivers $m'$ before $m''$.}
 
 
 \begin{algorithm}
@@ -480,36 +480,36 @@ We review and discuss about the complexity of \CBROADCAST. We distinguish the
 complexity of causal ordering, the complexity of reliable broadcast, and the
 complexity brought by the overlay network.
 
-\paragraph{Causal ordering.} Regarding traffic, broadcast messages do not need
-to convey any control information. However, processes must send each message to
-all their neighborhood exactly once. It creates as many copies as
-neighbors. This number of copies may constitute an issue when the size of
-messages is large. To solve this issue, processes can send identifiers instead
-of large messages then send these messages on demand.  It introduces additionnal
-delays in communications but greatly reduces generated traffic (\REF).
-Regarding local space consumption, our protocol maintains one buffer per link
-during its acknowledgment time. We assume that this time is short so the number
-of buffered messages stays small. Network conditions can make this assumption
-false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size of each
-buffer and handle network failures.
+\PAR{Causal ordering.}{Regarding traffic, broadcast messages do not need to
+  convey any control information. However, processes must send each message to
+  all their neighborhood exactly once. It creates as many copies as
+  neighbors. This number of copies may constitute an issue when the size of
+  messages is large. To solve this issue, processes can send identifiers instead
+  of large messages then send these messages on demand.  It introduces
+  additionnal delays in communications but greatly reduces generated traffic
+  (\REF).  Regarding local space consumption, our protocol maintains one buffer
+  per link during its acknowledgment time. We assume that this time is short so
+  the number of buffered messages stays small. Network conditions can make this
+  assumption false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size
+  of each buffer and handle network failures.}
 
 % While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
 % means that they can grow unbounded, we can easily bound them. For instance,
 % above a threshold we clear the buffer and send another locked message, or we
 % remove the link altogether.
 
-\paragraph{Reliable broadcast.} Algorithm~\ref{algo:reliablebroadcast} shows the
-instructions of reliable broadcast. Even in presence of message duplicates it
-avoids multiple deliveries of a same message. To achieve this, the most
-straightforward structure is a set saving all new received messages. However, it
-increases linearly with the number of delivered messages (\REF). Assigning a
-unique identifier $\langle p,\, counter \rangle$ to each message changes the
-complexity. It becomes a vector that increases linearly with the number of
-processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
-interval tree clocks~\cite{almeida2008interval} slightly overloads messages with
-identifiers but it improves the space complexity: the local structure increases
-linearly with the number of processes that are currently involved in
-broadcasting.
+\PAR{Reliable broadcast.}{Algorithm~\ref{algo:reliablebroadcast} shows the
+  instructions of reliable broadcast. Even in presence of message duplicates it
+  avoids multiple deliveries of a same message. To achieve this, the most
+  straightforward structure is a set saving all new received messages. However,
+  it increases linearly with the number of delivered messages (\REF). Assigning
+  a unique identifier $\langle p,\, counter \rangle$ to each message changes the
+  complexity. It becomes a vector that increases linearly with the number of
+  processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
+  interval tree clocks~\cite{almeida2008interval} slightly overloads messages
+  with identifiers but it improves the space complexity: the local structure
+  increases linearly with the number of processes that are currently involved in
+  broadcasting.}
 
 
 % \TODO{Rework.} Represented in Algorithms~\ref{algo:fifobroadcast}
@@ -531,23 +531,23 @@ broadcasting.
 % sublinear bound for detecting duplicated receipts remains an open problem.
 
 
-\paragraph{Overlay network.} Values such as the number of messages sent by each
-process, or the number of hops for a message to reach all processes, are
-interdependent values brought by the overlay network. For instance, random
-peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
-properties similar to those of random graphs~\cite{erdos1959random}. They
-provide each process with a random subset of neighbors the size of which is
-considerably smaller than the network size. Since the neighborhood size is
-logarithmic compared to the network size, the number of messages sent by each
-process for each broadcast message is logarithmic.  Since random peer-sampling
-protocols build topologies close to random graphs, messages take a logarithmic
-number of hops to reach all processes. In addition, random peer-sampling
-protocols such as \SPRAY~\cite{nedelec2017adaptive} or
-\CYCLON~\cite{voulgaris2005cyclon} create links using only neighbor-to-neighbor
-interactions, i.e., they establish links only two hops apart. It takes only 4
-hops for a new link to get acknowledged.  The overhead brought by these messages
-is negligible. The acknowledgment time of buffers, hence the size of buffers,
-remains small.
+\PAR{Overlay network.}{Values such as the number of messages sent by each
+  process, or the number of hops for a message to reach all processes, are
+  interdependent values brought by the overlay network. For instance, random
+  peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
+  properties similar to those of random graphs~\cite{erdos1959random}. They
+  provide each process with a random subset of neighbors the size of which is
+  considerably smaller than the network size. Since the neighborhood size is
+  logarithmic compared to the network size, the number of messages sent by each
+  process for each broadcast message is logarithmic.  Since random peer-sampling
+  protocols build topologies close to random graphs, messages take a logarithmic
+  number of hops to reach all processes. In addition, random peer-sampling
+  protocols such as \SPRAY~\cite{nedelec2017adaptive} or
+  \CYCLON~\cite{voulgaris2005cyclon} create links using only
+  neighbor-to-neighbor interactions, i.e., they establish links only two hops
+  apart. It takes only 4 hops for a new link to get acknowledged.  The overhead
+  brought by these messages is negligible. The acknowledgment time of buffers,
+  hence the size of buffers, remains small.}
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
