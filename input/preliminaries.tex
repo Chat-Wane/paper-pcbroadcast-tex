@@ -119,22 +119,6 @@ To order messages broadcast by every processes, we define causal order.
   Causal broadcast is a uniform reliable broadcast ensuring causal order.
 \end{definition}
 
-\begin{figure}
-  \begin{center}
-  \input{./input/figgeneralproblem.tex}
-  \caption{\label{fig:generalproblem}Broadcast without causal order
-    enforcement.}
-  \end{center}
-\end{figure}
-
-\EXAMPLE{Example of causal order violation.}{Figure~\ref{fig:generalproblem}
-  illustrates the need of an additional mechanism ensuring causal order. Process
-  $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and delivers
-  $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$ before
-  $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
-  violating the condition stating that the delivery of $m$ should precede the
-  delivery of $m'$.  }
-
 % Multiple approaches achieve causal delivery by piggybacking control information
 % in broadcast messages (\REF). Upon receipt of messages, processes check if the
 % message is ready to be delivered or must be delayed until preceding messages 

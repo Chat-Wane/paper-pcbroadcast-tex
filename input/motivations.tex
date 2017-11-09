@@ -2,6 +2,29 @@
 \section{Issues and motivations}
 \label{sec:motivations}
 
+\begin{figure}
+  \begin{center}
+  \input{./input/figgeneralproblem.tex}
+  \caption{\label{fig:generalproblem}Broadcast without causal order
+    enforcement.}
+  \end{center}
+\end{figure}
+
+
+\TODO{Bla bla bla intuition is to avoid the following example. It becomes
+  obvious if $m$ is insertion and $m'$ is removal.}
+
+\EXAMPLE{Example of causal order violation.}{Figure~\ref{fig:generalproblem}
+  illustrates the need of an additional mechanism ensuring causal order. Process
+  $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and delivers
+  $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$ before
+  $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
+  violating the condition stating that the delivery of $m$ should precede the
+  delivery of $m'$.}
+
+\TODO{Meow miaw causal broadcast is meant to avoid these.}
+
+
 \begin{table}
   \caption{\label{table:comparison} Space and time complexity of causal broadcast protocols. $N$ is the number of processes that ever broadcast a message. $W$ is the number of messages that are received by the process but not yet ready to be delivered.
     $P$ is the number of messages that are received between once and the number of expected copies.
