@@ -11,24 +11,45 @@
 \end{figure}
 
 
-\TODO{Bla bla bla intuition is to avoid the following example. It becomes
-  obvious if $m$ is insertion and $m'$ is removal.}
+% \TODO{Bla bla bla intuition is to avoid the following example. It becomes
+%   obvious if $m$ is insertion and $m'$ is removal.}
+
+Broadcast protocols ensure that all connected processes receive and deliver each
+broadcast message~\cite{hadzilacos1994modular}. Applications often require more
+guarantees on message delivery to ensure consistency criteria (\REF). For
+instance, conflict-free replicated data types~\cite{shapiro2011comprehensive}
+are replicated data structures ensuring eventual
+consistency~\cite{bailis2013eventual}. CRDTs for sets~\cite{mukund2014optimized}
+and sequences~\cite{weiss2009logoot} are extensively used in distributed data
+stores such as Riak, Dynamo, or Cassandra (\REF) and distributed collaborative
+editors such as Crate, or Peerpad (\REF). They feature basic operations such as
+insertion and deletion that require causal order: the deletion of an element
+must follow its insertion.
 
 \EXAMPLE{Example of causal order violation.}{Figure~\ref{fig:generalproblem}
-  illustrates the need of an additional mechanism ensuring causal order. Process
-  $p_1$ broadcasts and delivers $m$. Process $p_2$ receives and delivers
-  $m$. Then, it broadcasts and delivers $m'$. Process $p_3$ receives $m'$ before
-  $m$. Without any causal order enforcement, $p_3$ delivers $m'$ before $m$
-  violating the condition stating that the delivery of $m$ should precede the
-  delivery of $m'$.}
+  illustrates the need of a mechanism ensuring causal order in message
+  deliveries. Process $p_1$ broadcasts and delivers $m$. Process $p_2$ receives
+  and delivers $m$. Then, it broadcasts and delivers $m'$. Process $p_3$
+  receives $m'$ before $m$. Without any causal order enforcement, $p_3$ delivers
+  $m'$ before $m$ violating the condition stating that the delivery of $m$
+  should precede the delivery of $m'$.}
+
+In this example, if each process hosts the replica of a set. Process $p_1$
+inserts the element $a$ in the set and broadcasts the operation in $m$. Process
+$p_2$ receives the operation and integrates $a$ to its own copy. Then, Process
+$p_2$ removes $a$ from its set and broadcast the operation in $m'$. Process
+$p_3$ receives $m'$ stating that $a$ should be removed. Since it does not have
+$a$ in its replica, it does nothing. When it receives $m$ it adds $a$ to its
+replica. Copies are divergent, for $p_1$ and $p_2$ ends up empty while $p_3$ has
+$a$. It breaks eventual consistency.
 
 \TODO{Meow miaw causal broadcast is meant to avoid these.}
 
 
 \begin{table}
-  \caption{\label{table:comparison} Space and time complexity of causal broadcast protocols. $N$ is the number of processes that ever broadcast a message. $W$ is the number of messages that are received by the process but not yet ready to be delivered.
-    $P$ is the number of messages that are received between once and the number of expected copies.
-    $B$ is the size of the set of temporary buffers.}
+  \caption{\label{table:comparison} Space and time complexity of causal broadcast protocols. $N$ is the number of processes. $W$ is the number of messages received but waiting to be delivered.
+    $P$ is the number of messages that are not yet purged.
+    $B$ is the size of a set of temporary buffers.}
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 
