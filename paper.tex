@@ -4,15 +4,16 @@
 %% url
 \usepackage{url}
 %% maths
-\usepackage{amsmath}
+\usepackage{amsmath,amssymb}
 %%\usepackage{amsfonts}
-\usepackage{amssymb}
 %% \usepackage{amsthm}
 %% algorithms
 %\usepackage{algorithm}
 \usepackage{algorithmicx}
 %\usepackage[noend]{algpseudocode}
 \usepackage[ruled, linesnumbered, noend]{algorithm2e}
+
+\usepackage{lipsum}
 
 \usepackage{pifont}
 
@@ -32,8 +33,7 @@
 \usetikzlibrary{arrows.meta,decorations.pathreplacing,decorations.pathmorphing,plotmarks,shapes,matrix}
 \tikzset{>={Latex[width=3pt,length=5pt]}}
 %% transform eps in pdf crossplateform
-\usepackage{epstopdf}
-\usepackage{epsfig}
+\usepackage{epstopdf,epsfig}
 %% hyphenation
 \usepackage{hyphenat}
 \hyphenation{brow-sers brow-ser}
@@ -75,10 +75,17 @@
   BP 92208, 44322 Nantes Cedex 3, France\\
   \url{first.last@univ-nantes.fr}}
 
+\newcommand{\affDoe}{Affiliations\\
+  Street\\
+  City, Country\\
+  \url{first.last@anonymous.com}}
+
 % \author{Brice N{\'e}delec, Pascal Molli, and Achour Most{\'e}faoui \aff \affLSNN}
 
 % \author{\IEEEauthorblockN{Brice N{\'e}delec}\IEEEauthorrefmark{1}, Pascal Molli\IEEEauthorrefmark{1} and Achour Most{\'e}faoui\IEEEauthorrefmark{1}\\\IEEEauthorblockA{\IEEEauthorrefmark{1}\affLSNN}}
 
+\author{\IEEEauthorblockN{Jane Doe}\IEEEauthorrefmark{1}, \IEEEauthorblockN{John
+    Doe}\IEEEauthorrefmark{1}\\\IEEEauthorblockA{\IEEEauthorrefmark{1}\affDoe}}
 
 % \proceedings{}
 
@@ -95,9 +102,9 @@
 \input{input/relatedwork.tex}
 \input{input/conclusion.tex}
 
-% \input{input/acknowledgment.tex}
+\input{input/acknowledgment.tex}
 
-%%\bibliographystyle{abbrv}
+\bibliographystyle{IEEEtran}
 \bibliography{bibliographie}
   
 \end{document}

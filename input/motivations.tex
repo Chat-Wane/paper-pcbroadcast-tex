@@ -19,20 +19,20 @@ broadcast message~\cite{hadzilacos1994modular}. Applications often require more
 guarantees on message delivery to ensure consistency criteria (\REF). For
 instance, conflict-free replicated data types~\cite{shapiro2011comprehensive}
 are replicated data structures ensuring eventual
-consistency~\cite{bailis2013eventual}. CRDTs for sets~\cite{mukund2014optimized}
-and sequences~\cite{weiss2009logoot} are extensively used in distributed data
-stores such as Riak, Dynamo, or Cassandra (\REF) and distributed collaborative
-editors such as Crate, or Peerpad (\REF). They feature basic operations such as
+consistency~\cite{bailis2013eventual}. Replicas eventually converge to an
+identical state. CRDTs for sets~\cite{mukund2014optimized} and
+sequences~\cite{weiss2009logoot} are extensively used in distributed data stores
+such as Riak, Dynamo, or Cassandra (\REF) and distributed collaborative editors
+such as Crate, or Peerpad (\REF). They feature basic operations such as
 insertion and deletion that require causal order: the deletion of an element
 must follow its insertion.
 
-\EXAMPLE{Example of causal order violation.}{Figure~\ref{fig:generalproblem}
-  illustrates the need of a mechanism ensuring causal order in message
-  deliveries. Process $p_1$ broadcasts and delivers $m$. Process $p_2$ receives
-  and delivers $m$. Then, it broadcasts and delivers $m'$. Process $p_3$
-  receives $m'$ before $m$. Without any causal order enforcement, $p_3$ delivers
-  $m'$ before $m$ violating the condition stating that the delivery of $m$
-  should precede the delivery of $m'$.}
+Figure~\ref{fig:generalproblem} illustrates the need of a mechanism ensuring
+causal order in message deliveries. Process $p_1$ broadcasts and delivers
+$m$. Process $p_2$ receives and delivers $m$. Then, it broadcasts and delivers
+$m'$. Process $p_3$ receives $m'$ before $m$. Without any causal order
+enforcement, $p_3$ delivers $m'$ before $m$ violating the condition stating that
+the delivery of $m$ should precede the delivery of $m'$.
 
 In this example, if each process hosts the replica of a set. Process $p_1$
 inserts the element $a$ in the set and broadcasts the operation in $m$. Process
@@ -43,8 +43,10 @@ $a$ in its replica, it does nothing. When it receives $m$ it adds $a$ to its
 replica. Copies are divergent, for $p_1$ and $p_2$ ends up empty while $p_3$ has
 $a$. It breaks eventual consistency.
 
-\TODO{Meow miaw causal broadcast is meant to avoid these.}
-
+Causal broadcast ensures causal order on message deliveries. Consequently, it
+releases applications from the burden of tracking causal relationship between
+operations. However, causality tracking has proven expensive in large and
+dynamic networks (\REF).
 
 \begin{table}
   \caption{\label{table:comparison} Space and time complexity of causal broadcast protocols. $N$ is the number of processes. $W$ is the number of messages received but waiting to be delivered.
@@ -53,9 +55,13 @@ $a$. It breaks eventual consistency.
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 
-Table~\ref{table:comparison} highlights the differences in complexity between
-reactive and preventive approaches. It also positions our approach towards
-state-of-the-art.
+We distinguish two families of causal broadcast. Reactive approaches check at
+each receipt if the delivery of the message would violate causal order. In such
+case, they delay the delivery until preceding messages arrive. Preventive
+approaches make sure that messages are always ready to be delivered when a
+process receives it.  Table~\ref{table:comparison} highlights the limitations of
+state-of-the-art reactive and preventive approaches. It states our objective and
+it positions our approach towards state-of-the-art.
 
 \subsection{Reactive approaches}
 
@@ -193,8 +199,8 @@ our causal broadcast. Similarly to the preventive approach, complexity stays
 constant in terms of message overhead and delivery time. As expected, the local
 space complexity is at least linearly increasing with the number of
 processes. Our algorithm requires another local structure to ensure causal
-order. However, as shown in Algorithm~\ref{algo:boundingbuffer}, we can bound
-it.
+order. However, we show that we can bound it in
+Algorithm~\ref{algo:boundingbuffer}.
 
 
 
