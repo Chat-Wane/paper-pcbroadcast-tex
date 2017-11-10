@@ -26,43 +26,43 @@
 
 \Buffer {} {
 
-  \Upon{\textsc{sendLocked}($from,\, to,\, id$)}{
+  \Upon{\textup{sendLocked}($from,\, to,\, id$)}{
     \lIf{$q \not\in R$} {$R[q] \leftarrow 0$}
     $I[id] \leftarrow to$ \;
   }
 
   \BlankLine
   
-  \Upon{\textsc{receiveAck}($from,\, to,\, id$)}{
+  \Upon{\textup{receiveAck}($from,\, to,\, id$)}{
     $I \leftarrow I \setminus id$ \;
     $R \leftarrow R \setminus to$ \;
   }
   
   \BlankLine
 
-  \Upon{\textsc{FBC-deliver$^+$}($m$)} {
-    \ForEach{$q \in B$ \textbf{\textsc{such that}} $|B[q]| > maxSize$
+  \Upon{\textup{FBC-deliver$^+$}($m$)} {
+    \ForEach{$q \in B$ \textbf{\textup{such that}} $|B[q]| > maxSize$
       \label{line:maxsize}}{
-      $\textsc{retry}(q)$ \;
+      $\textup{retry}(q)$ \;
     }
   }
 
   \BlankLine
 
-  \Upon{\textsc{close}($q$)} {
-    \lFor{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
+  \Upon{\textup{close}($q$)} {
+    \lFor{$i \in I$ \textbf{\textup{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
     $R \leftarrow R \setminus q$ \;    
   }
 
   \BlankLine
 
-  \Function{\textsc{retry}($q$)}{
-    \lFor{$i \in I$ \textbf{\textsc{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
+  \Function{\textup{retry}($q$)}{
+    \lFor{$i \in I$ \textbf{\textup{such that}} $I[i]=q$}{$I \leftarrow I \setminus i$}
     
     \If{$q \in R$} {
       $R[q] \leftarrow R[q]+ 1$ \;
-      \lIf{$R[q] \leq maxRetry$} {\textsc{open}($q$)}
-      \lElse{\textsc{close}($q$)}    
+      \lIf{$R[q] \leq maxRetry$} {\textup{open}($q$)}
+      \lElse{\textup{close}($q$)}    
     }
   }
 }  
@@ -71,8 +71,8 @@
 
 \Failure {} {
 
-  \Upon{\textsc{timeout}($from,\, to,\, id$)}{
-    \lIf {$id \in I$} {\textsc{retry}($to$)\label{line:timeout}}
+  \Upon{\textup{timeout}($from,\, to,\, id$)}{
+    \lIf {$id \in I$} {\textup{retry}($to$)\label{line:timeout}}
   }
 
 }

@@ -20,26 +20,26 @@
 \BlankLine
 
 \Safety {} {
-  \Upon{\textsc{open}($q$)} {
+  \Upon{\textup{open}($q$)} {
     \If{$|Q|>1$} {
       $counter \leftarrow counter+1$ \;
       $Q \leftarrow Q \setminus q$ \;
       $B[q] \leftarrow \varnothing$ \;
-      $\textsc{sendLocked}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
+      $\textup{sendLocked}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
     }
   }
   
   \BlankLine
   
-  \Upon{\textsc{receiveLocked}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
-    $\textsc{sendAck}(from,\, to,\, id)$ \label{line:sendack} \;
+  \Upon{\textup{receiveLocked}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
+    $\textup{sendAck}(from,\, to,\, id)$ \label{line:sendack} \;
   }
   
   \BlankLine
   
-  \Upon{\textsc{receiveAck}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
+  \Upon{\textup{receiveAck}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
     \If {$to \in B$} {
-      \lForEach {$m \in B[to]$} {$\textsc{sendTo}(to,\, m)$
+      \lForEach {$m \in B[to]$} {$\textup{sendTo}(to,\, m)$
         \label{line:emptybuffer}}
       $B \leftarrow B \setminus to$ \;
       $Q \leftarrow Q \cup to$ \;
@@ -48,7 +48,7 @@
   
   \BlankLine
   
-  \Upon{\textsc{close}($q$)} {
+  \Upon{\textup{close}($q$)} {
     $B \leftarrow B \setminus q$ \;
   }
 }
@@ -57,18 +57,18 @@
 
 \Dissemination {} {
 
-  \Function{\textsc{FBC-broadcast}$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
+  \Function{\textup{FBC-broadcast}$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferbroadcast} \tcp*[f]{Buffers}}
-    $\textsc{R-broadcast}(m)$ \;
+    $\textup{R-broadcast}(m)$ \;
   }
   
   \BlankLine
   
-  \Upon{\textsc{R-deliver}($m$)} {
+  \Upon{\textup{R-deliver}($m$)} {
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferforward} \tcp*[f]{Buffers}}
-    $\textsc{FBC-deliver}^+(m)$ \tcp*{$d_p(m)$}
+    $\textup{FBC-deliver}^+(m)$ \tcp*{$d_p(m)$}
   }
 
 }
