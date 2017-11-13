@@ -11,119 +11,157 @@ state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamp
 approaches are reactive, for they check if message deliveries should be delayed
 to avoid causality violations. On the opposite our approach is preventive, for
 messages are immediately delivered on receipt without risk of causality
-violations. This difference removes the need for messages to convey any control
-information. The local space complexity brought by causal ordering remains
-small.  Protocols and applications can finally afford causal broadcast in large
-and dynamic networks.
+violations. This difference not only removes most of control information
+piggybacked in broadcast messages, but also leads to constant delivery
+time. Protocols and applications can finally afford causal broadcast in large
+and dynamic networks. \TODO{They are more efficient too.}
 
-This section describes our algorithm. It proves that it handles both static and
-dynamic networks. It analyses its complexity.
+% This section states  the definitions. It describes our algorithm. It proves that
+% it handles both static and dynamic networks. It analyses its complexity.
 
-% \subsection{2-processes equivalent model}
+\subsection{Model}
 
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/fig2eqmodel.tex}
-%     \caption{\label{fig:2eqmodel}2-processes equivalent of a broadcast from any
-%       process to any other.}
-%     \end{center}
-% \end{figure}
+Definitions and theorems come from~\cite{hadzilacos1994modular}.
 
-% \TODO{Maybe not here or maybe remove.}
+\begin{definition}[\TODO{Overlay} Network]
+  An \TODO{overlay} network $N$ comprises a set of processes $P$. Each Process
+  runs a set of
+  instructions sequentially. \\
+  A network $N$ also comprises a set of links $E: P \times P$. $p$'s
+  neighborhood $Q$ is the set of links departing from $p$. Processes can
+  communicate with their
+  neighbors using messages. \\
+  Processes are faulty if they crash, otherwise they are correct. The set of
+  correct processes is $C$. There are no byzantine processes.
+\end{definition}
 
-% When a process broadcasts a message, processes receiving it forward it exactly
-% once. Messages may be received multiple times by a process depending on the
-% peer-sampling protocol. They receive as many duplicated messages as they have
-% incoming links.  Considering only the process that sent the message that led to
-% a forwarding as parent, we can build a directed acyclic graph using the paths
-% taken by messages from the origin of the broadcast to any process.
+\begin{definition}[Static and dynamic networks]
+  A network is static if both its set of processes and its set of edges are
+  immutable. Otherwise, the network is dynamic.
+\end{definition}
 
-% Figure~\ref{fig:2eqmodel} shows the equivalent model with 2 processes. Channels
-% of arbitrary speed convey messages from Process $p_{from}$ to Process
-% $p_{to}$. When Process $p_{to}$ sends a message, it sends it through all
-% links. Even though they have different speeds that may change at arbitrary time,
-% if channels are FIFO, Process $p_{to}$ will receive messages in the same order as
-% Process $p_{from}$ sent them.
+For the rest of the paper, we only consider networks without partitions.
+
+\begin{definition}[Network partition]
+  A network has partitions if there exist two correct processes without any path
+  between them, i.e., without a link or a sequence of links comprising correct
+  processes only.
+\end{definition}
+
+%\TODO{Replace ``network'' by  ``distributed system'' ?}
+
+We define time in a logical sense using Lamport's
+definition~\cite{lamport1978time}.
+
+\begin{definition}[Happen before]
+  Happen before is a transitive, irreflexive, and antisymmetric relation that
+  defines a strict partial orders of events. At process $p$, Event $e$ happens
+  before -- or precedes -- Event $e'$ is noted $e_p \rightarrow e'_p$. The
+  sending of a message $s_p(m)$ always precedes its receipt $r_q(m)$: \\
+  $\forall p,\,q \in P, s_p(m) \rightarrow r_q(m)$.
+\end{definition}
+
+Processes communicate by sending messages to other processes. They can send
+messages to specific processes or all of them.
+
+\begin{definition}[Uniform reliable broadcast]
+  A process $p$ can broadcast a message $b_p(m)$, receive a message $r_p(m)$,
+  and deliver a message $d_p(m)$.  When a process $p$ broadcasts a message $m$
+  to all processes of the network, correct processes eventually receive it: 
+  $\forall p \in P,\, (b_p(m) \Leftrightarrow \forall q \in P,\, r_q(m))$. \\
+  Uniform reliable broadcast guarantees 3 properties: \\
+  \textbf{Validity:} If a correct process broadcasts a message, then it
+  eventually
+  delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$. \\
+  \textbf{Uniform Agreement:} If a process -- correct or not -- delivers a
+  message,
+  then all correct processes eventually deliver it:\\
+  $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$. \\
+  \textbf{Uniform Integrity:} A process delivers a message at most once, and
+  only if it was previously broadcast:\\
+  $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m) \implies
+  \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
+\end{definition}
+
+\begin{algorithm}[h]
+  \input{./input/algoreliablebroadcast.tex}
+  \caption{\label{algo:reliablebroadcast}R-broadcast at Process $p$.}
+\end{algorithm}
+
+Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
+reliable broadcast. It uses a structure that keeps track of received messages in
+order to deliver them at most once. 
+%It uses a peer-sampling protocol that
+%provides neighbors to communicate with, i.e., a set of links. 
+%%Assuming a network without partitions meaning that there exists at least one
+%path from any process to any correct process, then all correct processes
+%eventually receive all messages at least once:
+Since the network does not have partitions, processes either receive the message
+directly from the broadcaster or transitively. Thus, all correct processes
+eventually deliver all messages exactly once. This algorithm ensures validity,
+uniform agreement, and uniform integrity.
+
+In addition to reliably conveying messages to all correct processes, broadcast
+protocols can ensure that messages are delivered in a specific order.
+
+To order messages broadcast from one process, we define FIFO order.
+
+\begin{definition}[FIFO order]
+  If a process broadcasts two messages, processes deliver the first before the
+  second:\\
+  $\forall p,\,q \in P,\,$\\$b_p(m) \rightarrow b_p(m') \implies d_q(m) \rightarrow
+  d_q(m')$.
+\end{definition}
+
+To order messages broadcast by different processes, we define local order.
+
+\begin{definition}[Local order]
+  If a process broadcasts a message after having delivered another message
+  broadcast by another process, processes deliver the later before the former:\\
+  $\forall p,\,q,\,r,\, \in P,\,p\neq q,\,$\\$b_p(m) \wedge d_q(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+\end{definition}
+
+To order messages broadcast by every processes, we define causal order.
+
+\begin{definition}[Causal order]
+  The delivery order of messages follows the happen before relationships of the
+  corresponding broadcasts:\\ $\forall
+  p,\,q,\,r \in P,\,$\\$b_p(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+\end{definition}
+
+\begin{theorem}[\label{theo:causal}Causal order equivalence]
+%  The intersection of 
+  FIFO order and local order is equivalent to causal order.
+\end{theorem}
+
+\begin{definition}[Causal broadcast]
+  Causal broadcast is a uniform reliable broadcast ensuring causal order.
+\end{definition}
+
+% Multiple approaches achieve causal delivery by piggybacking control information
+% in broadcast messages (\REF). Upon receipt of messages, processes check if the
+% message is ready to be delivered or must be delayed until preceding messages 
+% arrive. \TODO{Should I briefly state the limitations? (complexity).}
 
 
-% \subsection{FIFO-based causal broadcast}
-% \label{subsec:fifobroadcast}
 
-% Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
-% reliable broadcast. It relies on a peer-sampling protocol that provides links to
-% communicate with other processes. When these links are FIFO, the broadcast
-% becomes causal under certain conditions.
+% Another approach achieves causal delivery without overloading broadcast messages
+% with control information (\REF). It only assumes FIFO links and deterministic
+% overlay network (\REF). Processes deliver messages as soon as they arrive.
 
-% \begin{definition}[Static network]
-%   A network is static if it comprises an immutable set of edges and an immutable
-%   set of processes.
+% \begin{definition}[FIFO link]
+%   If Process $p$ sends a message $m$ then $m'$ to Process $q$ using a FIFO link,
+%   $q$ receives $m$ before $m'$:
+%   $s_p(m) \rightarrow s_p(m') \implies r_q(m) \rightarrow r_q(m')$
 % \end{definition}
 
-% \paragraph{Static networks.} A network is a set of processes linked by a set
-% of channels. In a static network, processes cannot fail nor leave, and links
-% cannot be created nor removed. In this context, FIFO channels are sufficient
-% to provide causal ordering of messages.
 
-% \begin{theorem}[\label{theo:static}FBC-broadcast in static networks is causal]
-%   Assuming a static network without partitions, FBC-broadcast is causal.
-% \end{theorem}
+% In this paper, we introduce a causal broadcast protocol that
+% \begin{inparaenum}[(i)]
+% \item does not convey any control information in broadcast messages, and 
+% \item handles both static and dynamic networks.
+% \end{inparaenum}
 
-% \begin{proof}
-%   To prove that FBC-broadcast is causal, we must show that it ensures validity,
-%   uniform agreement, uniform integrity, and causal order -- that is FIFO order
-%   and local order. \\
-%   \textbf{Validity, uniform agreement, uniform integrity:} FBC-broadcast is an
-%   R-broadcast. \\
-%   \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
-%   a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
-%   $m'$. \\
-%   Since the peer-sampling protocol ensures that the network is not partitioned,
-%   since each process receiving a message forwards it exactly once to all its
-%   neighborhood, each message eventually reaches all processes and each link
-%   conveys all messages exactly once. \\
-%   Since each process forwards each message in a FIFO manner, since messages
-%   travel using FIFO channels, and since each channel conveys all messages
-%   exactly once, they convey the messages in the order they were broadcast. \\
-%   Since Process $p$ broadcasts $m$ before $m'$, and since Process $q$ delivers
-%   $m'$, Process $q$ received $m$ before $m'$. \\
-%   Since processes deliver messages in the order they received them, Process $q$
-%   delivered $m$ before $m'$. \\
-%   \textbf{Local:} Suppose a process $p$ delivers $m$ before broadcasting
-%   $m'$. Consider a correct process $q$ that delivers $m'$. We must show that $q$
-%   delivers $m$ before $m'$. \\
-%   Since broadcast and forward have identical instructions, we add to ``processes
-%   receive the messages in the order they were broadcast'' the statement ``if a
-%   process forwards a message before broadcasting one, processes will receive the
-%   forwarded message before the broadcast one'' and converse. \\
-%   Since Process $q$ delivers $m'$, channels from which it receives $m'$ already
-%   conveyed $m$. Since processes deliver messages in the order they received
-%   them, Process $q$ delivers $m$ before $m'$. \\
-%   \textbf{Causal:} From Theorem~\ref{theo:causal}, since FBC-broadcast ensures
-%   both FIFO ordering and local ordering, it ensures causal ordering.
-% \end{proof}
-
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figstatic.tex}
-%     \caption{\label{fig:static}FIFO channels are sufficient to provide causal
-%       order in static networks.}
-%   \end{center}
-% \end{figure}
-
-% \paragraph{\emph{Example.}} Figure~\ref{fig:static} shows FBC-broadcast solves
-% the causal order violation from Figure~\ref{fig:generalproblem} by using FIFO
-% channels.  The figure shows a static network comprising 3 processes $p_1$,
-% $p_2$, and $p_3$ linked to each other. The figure does not show messages sent by
-% $p_3$ for the sake of clarity.  The processes receive $m$ and $m'$ multiple
-% times but there exists no link in the paths from $p_2$ to $p_3$ that carries $m'$
-% without having carried $m$ beforehand. Hence, the delivery of $m$ always
-% precedes the delivery of $m'$ at any process.
-
-% \begin{definition}[Dynamic network]
-%   A network is dynamic if it comprises a mutable set of edges and a mutable set
-%   of processes.
-% \end{definition}
 
 \subsection{Operation}
 
