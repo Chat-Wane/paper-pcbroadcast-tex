@@ -19,55 +19,68 @@ relationship~\cite{lamport1978time,schwarz1994detecting}. This alleviates
 systems from the burden of tracking causality between its operations.  For
 instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF) and
 collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
-conflict-free replicated data types (\REF). They feature addition and deletion
-of elements. A deletion must follow the corresponding addition, for the sake of
-eventual consistency (\REF). Causal broadcast relieves these applications from
-continuously checking such constraints.
+conflict-free replicated data
+types~\cite{shapiro2011comprehensive,shapiro2011conflict}. They feature addition
+and deletion of elements. A deletion must follow the corresponding addition, for
+the sake of eventual consistency~\cite{bailis2013eventual}. Causal broadcast
+relieves these applications from continuously checking such constraints.
 % For instance, distributed collaborative editors perform deletion immediately,
 % for causal broadcast already guaranteed that the message containing the
 % corresponding insertion was delivered beforehand.
 
-Unfortunately, causality tracking has proven expensive especially in large and
-dynamic networks~\cite{charronbost1991concerning}. Current approaches either
+Unfortunately, accurate causality tracking has proven expensive especially in
+large and dynamic networks~\cite{charronbost1991concerning}. Most approaches are
+reactive: they check if preceding messages are missing at each receipt and
+deliver or delay the message accordingly. They either
 \begin{inparaenum}[(i)]
 \item piggyback preceding messages in new broadcast
   messages~\cite{birman1987reliable,hadzilacos1993fault},
 \item or maintain and send vector clocks along with new broadcast
   messages~\cite{fidge1988timestamps,mattern1989virtual}.
 \end{inparaenum}
-More recent approaches focus on reducing the size of vectors either by
+Approaches reduce the size of vectors either by
 \begin{inparaenum}[(a)]
 \item maintaining local structures to send the least amount of changing
-  data~\cite{singhal1992efficient}, by
-\item relaxing the causal order using probabilistic
-  structures~\cite{mostefaoui2017probabilistic}, or by
+  data~\cite{singhal1992efficient}, or by
+% \item relaxing the causal order using probabilistic
+%   structures~\cite{mostefaoui2017probabilistic}, or by
 \item constraining the network topology (\REF).
 \end{inparaenum}
-None of these approaches scales in large and dynamic networks, for they overload
-each message with linearly increasing data structures that depend of the number
-of processes or the number of messages.
+None of these approaches scales in large and dynamic networks, for
+% they overload each message with linearly increasing data
+% structures. % that depend of the number of processes or the number of messages.
+generated traffic and delivery time of messages increase linearly with the
+number of processes.
 
-In static networks, causal broadcast does not need to overload messages with any
-control information~\cite{friedman2004causal}. \TODO{overall, O(1) in messages.} It
-simply makes use of FIFO communication channels (e.g. TCP) and deterministic
-overlay networks (\REF) to disseminate messages. However, it does not handle
-dynamic networks where membership changes over time.
+In static networks, causal broadcast can be
+preventive~\cite{friedman2004causal}: processes receive messages that are
+immediately ready for causal delivery. It overloads messages with constant size
+control information, for it uses FIFO communication links. Delivery time of
+messages is constant, for it only discards message duplicates. Nothing limits
+the scalability of the system.
+% It simply makes use of FIFO communication channels (e.g. TCP) and
+% deterministic overlay networks (\REF) to disseminate messages.
+However, it does not handle network membership changes. We would like a
+preventive causal broadcast that generalizes these complexity to dynamic
+networks. Causal broadcast would finally become affordable for large and dynamic
+systems.
 
 In this paper, we break the scalability barrier of causal broadcast for large
 and dynamic networks. We propose a uniform reliable broadcast that outperforms
 state-of-the-art in size of broadcast messages, execution time complexity, and
-local space complexity.
-%%ensures causal delivery without any message overhead. 
-To provide causal order, most state-of-the-art approaches are
-reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient},
-for they check if message deliveries should be delayed to avoid causality
-violations. On the opposite our approach is
-preventive~\cite{birman1987reliable,friedman2004causal}, for messages are
-immediately delivered on receipt without risk of causality violations. Broadcast
-messages do not convey any control information. Messages are delivered in
-constant time. The local space complexity is that of a reliable broadcast plus
-buffers of messages the size of which can be bounded.  We prove that our causal
-broadcast protocol handles both static and dynamic networks.
+local space complexity. Our approach belongs to preventive causal
+broadcast. Message overhead is constant. Message delivery time is
+constant. Local space complexity is that of reliable broadcast plus buffers of
+messages the size of which can be bounded.
+%% ensures causal delivery without any message overhead.
+% To provide causal order, most state-of-the-art approaches are
+% reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient},
+% for they check if message deliveries should be delayed to avoid causality
+% violations. On the opposite our approach is
+% preventive~\cite{birman1987reliable,friedman2004causal}, for messages are
+% immediately delivered on receipt without risk of causality violations.
+We prove that our causal broadcast protocol handles both static and dynamic
+networks. \TODO{Experiment.}
 % relies on lightweight assumptions but contrarily to the former, we prove that it
 % handles both static and dynamic networks.
 
