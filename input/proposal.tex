@@ -21,19 +21,26 @@ and dynamic networks. \TODO{They are more efficient too.}
 
 \subsection{Model}
 
-Definitions and theorems come from~\cite{hadzilacos1994modular}.
+Definitions and theorems come from~\cite{hadzilacos1994modular}. A network
+comprise processes. Processes can communicate with part of the network via
+messages. They may not have full knowledge of network membership, for
+maintenance costs become too expansive in large and dynamic networks. Instead,
+processes build overlay networks with local partial view the size of which is
+generally much smaller than the actual network size.
 
-\begin{definition}[\TODO{Overlay} Network]
-  An \TODO{overlay} network $N$ comprises a set of processes $P$. Each Process
-  runs a set of
-  instructions sequentially. \\
-  A network $N$ also comprises a set of links $E: P \times P$. $p$'s
+\begin{definition}[Overlay network]
+  Just as a network, an overlay network $N$ comprises a set of processes
+  $P$. Each Process runs a
+  set of instructions sequentially. \\
+  An overlay network $N$ also comprises a set of links $E: P \times P$. $p$'s
   neighborhood $Q$ is the set of links departing from $p$. Processes can
-  communicate with their
-  neighbors using messages. \\
+  communicate with their neighbors using messages. \\
   Processes are faulty if they crash, otherwise they are correct. The set of
   correct processes is $C$. There are no byzantine processes.
 \end{definition}
+
+For the rest of this paper, we will speak of networks and overlay networks
+indifferently.
 
 \begin{definition}[Static and dynamic networks]
   A network is static if both its set of processes and its set of edges are
@@ -96,10 +103,11 @@ order to deliver them at most once.
 %%Assuming a network without partitions meaning that there exists at least one
 %path from any process to any correct process, then all correct processes
 %eventually receive all messages at least once:
-Since the network does not have partitions, processes either receive the message
-directly from the broadcaster or transitively. Thus, all correct processes
-eventually deliver all messages exactly once. This algorithm ensures validity,
-uniform agreement, and uniform integrity.
+Since processes may not have full membership knowledge, processes must forward
+broadcast messages. Since the network does not have partitions, processes either
+receive the message directly from the broadcaster or transitively. Thus, all
+correct processes eventually deliver all messages exactly once. This algorithm
+ensures validity, uniform agreement, and uniform integrity.
 
 In addition to reliably conveying messages to all correct processes, broadcast
 protocols can ensure that messages are delivered in a specific order.
@@ -524,7 +532,7 @@ complexity brought by the overlay network.
   neighbors. This number of copies may constitute an issue when the size of
   messages is large. To solve this issue, processes can send identifiers instead
   of large messages then send these messages on demand.  It introduces
-  additionnal delays in communications but greatly reduces generated traffic
+  additional delays in communications but greatly reduces generated traffic
   (\REF).  Regarding local space consumption, our protocol maintains one buffer
   per link during its acknowledgment time. We assume that this time is short so
   the number of buffered messages stays small. Network conditions can make this
