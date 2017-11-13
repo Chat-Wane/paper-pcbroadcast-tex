@@ -55,93 +55,82 @@ dynamic networks (\REF).
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 
-We distinguish two families of causal broadcast. Reactive approaches check at
-each receipt if the delivery of the message would violate causal order. In such
-case, they delay the delivery until preceding messages arrive. Preventive
-approaches make sure that messages are always ready to be delivered when a
-process receives it.  Table~\ref{table:comparison} highlights the limitations of
-state-of-the-art reactive and preventive approaches. It states our objective and
-it positions our approach towards state-of-the-art.
+% We distinguish two families of causal broadcast. Reactive approaches check at
+% each receipt if the delivery of the message would violate causal order. In such
+% case, they delay the delivery until preceding messages arrive. Preventive
+% approaches make sure that messages are always ready to be delivered when a
+% process receives it.  Table~\ref{table:comparison} highlights the limitations of
+% state-of-the-art reactive and preventive approaches. It states our objective and
+% it positions our approach towards state-of-the-art.
 
-\subsection{Reactive approaches}
+% \subsection{Reactive approaches}
 
-First row of Table~\ref{table:comparison} shows a vector-clock-based
-representative~\cite{schwarz1994detecting} of reactive approaches. Most
-state-of-the-art approaches are
-reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. They
-handle dynamic networks, i.e., processes can join or leave the network, and
-links can be added or removed at any time. Their operation requires that each
-broadcast message conveys control information.
+First row of Table~\ref{table:comparison} shows the complexity of a
+vector-clock-based representative~\cite{schwarz1994detecting} of reactive
+approaches. % Most state-of-the-art approaches are
+% reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. 
+Each broadcast message conveys control information the size of which increases
+linearly with the number of processes. Each process must check at each receipt
+if the message is ready for causal delivery which takes linear time in terms of
+number of processes and number of messages delayed. Consequently, even if its
+operation works in dynamic networks where membership changes over time, it
+eventually becomes unpractical. 
 
-\PAR{Message overhead.}{The size of these control information increases linearly
-  with either the number of messages~\cite{hadzilacos1993fault} or the number of
-  processes that ever broadcast a
-  message~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. These
-  approaches do not handle large networks. These approaches eventually become
-  impracticable in dynamic networks, for processes claim an entry when they join
-  that cannot be safely reclaimed when they leave.}
+% , and links can be added or removed at any time.
 
-\PAR{Local space.}{Control information becomes useful to check if a message is
-  ready to be delivered, i.e., messages that should be delivered beforehand are
-  actually delivered. Each process locally maintains a vector representing the
-  current state of delivery ($O(N)$).  In case the message is not ready, it goes
-  into a buffer along with its control information ($O(W.N)$).}
+% \PAR{Message overhead.}{The size of these control information increases linearly
+%   with either the number of messages~\cite{hadzilacos1993fault} or the number of
+%   processes that ever broadcast a
+%   message~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}. These
+%   approaches do not handle large networks. These approaches eventually become
+%   impracticable in dynamic networks, for processes claim an entry when they join
+%   that cannot be safely reclaimed when they leave.}
 
-\PAR{Delivery time.}{Upon each receipt, a process must check again all waiting
-  messages $W$. A message is ready if only 1 entry among all $N$ entries is
-  incremented. It requires $O(N)$ steps, hence $O(W.N)$ for the whole
-  buffer. Applications where efficiency is an important matter (\REF) cannot use
-  these approaches, for they slow down over time.}
+% \PAR{Local space.}{Control information becomes useful to check if a message is
+%   ready to be delivered, i.e., messages that should be delivered beforehand are
+%   actually delivered. Each process locally maintains a vector representing the
+%   current state of delivery ($O(N)$).  In case the message is not ready, it goes
+%   into a buffer along with its control information ($O(W.N)$).}
 
-
-\begin{figure}
-  \begin{center}
-    \input{input/figvector.tex}
-    \caption{\label{fig:vector}Causal broadcast using vector clocks.}
-  \end{center}
-\end{figure}
+% \PAR{Delivery time.}{Upon each receipt, a process must check again all waiting
+%   messages $W$. A message is ready if only 1 entry among all $N$ entries is
+%   incremented. It requires $O(N)$ steps, hence $O(W.N)$ for the whole
+%   buffer. Applications where efficiency is an important matter (\REF) cannot use
+%   these approaches, for they slow down over time.}
 
 
-\EXAMPLE{Example of vector clock-based causal
-  broadcast.}{Figure~\ref{fig:vector} shows a broadcast protocol that ensures
-  causal delivery by using vector clocks. When Process $p_1$ broadcasts its
-  message $m$, it increments its entry in its vector clock and overloads the
-  message with it: $m_{1,\,0,\,0}$. When Process $p_2$ receives the message, it
-  checks if it is ready. It immediately delivers it, for the received vector is
-  only 1 increment away from its own vector clock. Then Process $p_2$ broadcasts
-  a message $m'$. It increments its own entry and overloads the message with its
-  vector $[1,\,1,\,0]$. This acknowledges that the delivery of $m$ precedes the
-  broadcast of $m'$. When Process $p_3$ receives the later, it detects that $m'$
-  is not ready and delays it until it receives and delivers $m$. Then, $p_3$
-  checks $m'$ again. $p_3$ finds that $m'$ is ready and delivers it. Using
-  vector clocks, the message delivery order follows causal order.}
+% \begin{figure}
+%   \begin{center}
+%     \input{input/figvector.tex}
+%     \caption{\label{fig:vector}Causal broadcast using vector clocks.}
+%   \end{center}
+% \end{figure}
 
 
-\TODO{Conclusion?}
+% \EXAMPLE{Example of vector clock-based causal
+%   broadcast.}{Figure~\ref{fig:vector} shows a broadcast protocol that ensures
+%   causal delivery by using vector clocks. When Process $p_1$ broadcasts its
+%   message $m$, it increments its entry in its vector clock and overloads the
+%   message with it: $m_{1,\,0,\,0}$. When Process $p_2$ receives the message, it
+%   checks if it is ready. It immediately delivers it, for the received vector is
+%   only 1 increment away from its own vector clock. Then Process $p_2$ broadcasts
+%   a message $m'$. It increments its own entry and overloads the message with its
+%   vector $[1,\,1,\,0]$. This acknowledges that the delivery of $m$ precedes the
+%   broadcast of $m'$. When Process $p_3$ receives the later, it detects that $m'$
+%   is not ready and delays it until it receives and delivers $m$. Then, $p_3$
+%   checks $m'$ again. $p_3$ finds that $m'$ is ready and delivers it. Using
+%   vector clocks, the message delivery order follows causal order.}
 
 
-\subsection{Preventive approaches}
+% \TODO{Conclusion?}
 
-Second row of Table~\ref{table:comparison} shows a representative of preventive
-approaches~\cite{friedman2004causal}. It clearly outperforms reactive approaches
-but only works for static networks. The overhead of messages is constant, for it
-only rely on FIFO links. The local structure can be pruned, for the network is
-static and the number of copies of a same message is known. Messages arrive
-ready so processes deliver them in constant time.
 
-% \PAR{Message overhead.}{This approach relies on FIFO links. Each message must
-%   convey only 1 scalar to implement FIFO. Since processes must deliver each
-%   message exactly once, each message also convey a unique identifier, e.g.,
-%   $\langle process\_id,\, increasing\_counter\rangle$. Hence, $O(1)$.}
+% \subsection{Preventive approaches}
 
-% \PAR{Local space.}{Since the network is static, each process knows the number of
-%   copies it must receive. It can prune its local structure when it receives the
-%   expected number of copies. We cannot achieve better local space complexity.}
-
-% \PAR{Delivery time.}{Received messages are ready when they arrive. Processes
-%   only check if the received message is a copy of an already delivered
-%   message. It achieves this in constant time.}
-
+On the opposite, second row of Table~\ref{table:comparison} shows the complexity
+of a preventive approach~\cite{friedman2004causal}. It outperforms the reactive
+approach: message overhead is constant; it safely prunes the local structure;
+message delivery time is constant. \TODO{How, and why it works.}
 
 \begin{figure}
   \begin{center}
@@ -160,9 +149,23 @@ ready so processes deliver them in constant time.
   delivery of $m$ always precedes the delivery of $m'$ at any process.}
 
 
-Unfortunately, this protocol ensures causal delivery only in static
-networks. This does not hold in dynamic settings where processes can join the
-network, or links can be added.
+However, this only holds for static networks where membership remains unchanged,
+and processes cannot add nor remove communication links. As soon as a process
+adds a communication link to another process, causal delivery may be violated. 
+
+% \PAR{Message overhead.}{This approach relies on FIFO links. Each message must
+%   convey only 1 scalar to implement FIFO. Since processes must deliver each
+%   message exactly once, each message also convey a unique identifier, e.g.,
+%   $\langle process\_id,\, increasing\_counter\rangle$. Hence, $O(1)$.}
+
+% \PAR{Local space.}{Since the network is static, each process knows the number of
+%   copies it must receive. It can prune its local structure when it receives the
+%   expected number of copies. We cannot achieve better local space complexity.}
+
+% \PAR{Delivery time.}{Received messages are ready when they arrive. Processes
+%   only check if the received message is a copy of an already delivered
+%   message. It achieves this in constant time.}
+
 
 \begin{figure}
   \begin{center}
@@ -183,23 +186,23 @@ network, or links can be added.
   and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
 }
 
-\subsection{Objective}
+% \subsection{Objective}
 
-Third row of Table~\ref{table:comparison} shows our objective. We want to
-outperform reactive approaches by using the preventive principle extended to
-dynamic networks. To handle large and dynamic networks, our protocol must
-overload messages with control information sublinearly increasing with the
-network size. We expect delivery time to reflect this complexity change by
-becoming sublinear too. We expect local space complexity to be at least linearly
-increasing with the number of processes, for no approach does better in dynamic
-networks.
+% Third row of Table~\ref{table:comparison} shows our objective. We want to
+% outperform reactive approaches by using the preventive principle extended to
+% dynamic networks. To handle large and dynamic networks, our protocol must
+% overload messages with control information sublinearly increasing with the
+% network size. We expect delivery time to reflect this complexity change by
+% becoming sublinear too. We expect local space complexity to be at least linearly
+% increasing with the number of processes, for no approach does better in dynamic
+% networks.
 
-Fourth row of Table~\ref{table:comparison} shows the complexity we achieve with
+Last row of Table~\ref{table:comparison} shows the complexity we achieve with
 our causal broadcast. Similarly to the preventive approach, complexity stays
-constant in terms of message overhead and delivery time. As expected, the local
-space complexity is at least linearly increasing with the number of
-processes. Our algorithm requires another local structure to ensure causal
-order. However, we show that we can bound it in
+constant in terms of message overhead and delivery time. The local space
+complexity is linear in terms of number of processes. \TODO{We expect this to be
+  the minimum in dynamic settings.} In addition, our algorithm employs another
+local structure to ensure causal order but we show that we can bound it in
 Algorithm~\ref{algo:boundingbuffer}.
 
 
