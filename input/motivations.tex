@@ -10,13 +10,14 @@
   \end{center}
 \end{figure}
 
-\begin{figure}
+\begin{figure*}
   \begin{center}
     \input{./input/figdisseminationtree.tex}
     \caption{\label{fig:disseminationtree}Dissemination tree preserving causal
-      relationships.}
+      relationships. From $A$ to $F$, all dissemination paths carry $a$ before
+      $a'$.}
   \end{center}
-\end{figure}
+\end{figure*}
 
 
 % \TODO{Bla bla bla intuition is to avoid the following example. It becomes
@@ -137,8 +138,34 @@ eventually becomes expensive and inefficient.
 
 On the opposite, second row of Table~\ref{table:comparison} shows the complexity
 of a preventive approach~\cite{friedman2004causal}. It outperforms the reactive
-approach: message overhead is constant; it safely prunes the local structure;
-message delivery time is constant. \TODO{How, and why it works.}
+approach: message overhead is constant; it safely prunes its local structure;
+message delivery time is constant.
+
+It uses FIFO communication links to preserve causal order of
+messages. Intuitively, the dissemination pattern automatically makes sure that
+no path from a process to any other process carries messages out of causal
+order. Figure~\ref{fig:disseminationtree} shows an example of message
+dissemination. Process~A broadcasts $a$ then $a'$. All processes must receive
+these messages in that order. Process~A sends it to the network using all its
+links. Process~B and Process~C necessarily receive these messages in that order
+for links are FIFO. They forward these messages in that order using all their
+links too.
+
+Other processes necessarily receive these messages in that order for no
+subsequent path will ever carry $a'$ before $a$.  We see that in spite of
+concurrent messages broadcast at different time, Process~F always receives $a$
+before $a'$.
+
+
+Process~B broadcasts $b$ right after it received $a$. Thus, its outgoing links
+convey $a'\,b\,a$ to D and E. Identically, Process~D broadcasts $d$ before it
+receives any broadcast message, and Process~E broadcasts $e$ then $e'$ after
+receiving $a$.
+
+
+In addition, it receives
+
+\TODO{How, and why it works.}
 
 \begin{figure}
   \begin{center}

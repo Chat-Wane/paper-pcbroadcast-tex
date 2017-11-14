@@ -6,13 +6,22 @@
   \newcommand\X{210/5pt};
   \newcommand\Y{30pt};
   
+  \draw[->] ( -1*\X, 0.6*\Y) -- ( -5+0*\X, 0*\Y);
+  \draw[->] ( -1*\X, 0*\Y) -- ( -5+0*\X, 0*\Y);
+  \draw[->] ( -1*\X, -0.6*\Y) -- ( -5+0*\X, 0*\Y);
+
+  \draw[<-] ( 5*\X, 0.6*\Y) -- ( 5+4*\X, 0*\Y);
+  \draw[<-] ( 5*\X, 0*\Y) -- ( 5+4*\X, 0*\Y);
+  \draw[<-] ( 5*\X, -0.6*\Y) -- ( 5+4*\X, 0*\Y);
+
+
   \draw[fill=white] (0*\X, 0*\Y) node{A} +(-5pt, -5pt) rectangle +(5pt, 5pt);
 
   \draw[fill=white] (1*\X, -1*\Y) node{B} +(-5pt, -5pt) rectangle +(5pt, 5pt);
 
-  \draw[fill=white] (2*\X, -2*\Y) node{C} +(-5pt, -5pt) rectangle +(5pt, 5pt);
+  \draw[fill=white] (2*\X, -2*\Y) node{E} +(-5pt, -5pt) rectangle +(5pt, 5pt);
   \draw[fill=white] (2*\X,  0*\Y) node{D} +(-5pt, -5pt) rectangle +(5pt, 5pt);
-  \draw[fill=white] (2*\X,  2*\Y) node{E} +(-5pt, -5pt) rectangle +(5pt, 5pt);
+  \draw[fill=white] (2*\X,  2*\Y) node{C} +(-5pt, -5pt) rectangle +(5pt, 5pt);
 
   \draw[fill=white] (4*\X, 0*\Y) node{F} +(-5pt, -5pt) rectangle +(5pt, 5pt);
 
@@ -22,9 +31,9 @@
   \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$a'\,b\,a$} (-5+2*\X, 0*\Y); %% B->D
   \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$a'\,b\,a$} (-5+2*\X, -2*\Y); %% B->C
 
-  \draw[->](5+2*\X,  2*\Y) -- node[sloped, above]{$e\,a'\,a$} (-5+4*\X, 0*\Y); %% E->F
+  \draw[->](5+2*\X,  2*\Y) -- node[sloped, above]{$c\,a'\,a$} (-5+4*\X, 0*\Y); %% E->F
   \draw[->](5+2*\X,  0*\Y) -- node[sloped, above]{$a'\,b\,a\,d$} (-5+4*\X, 0*\Y); %% D->F
-  \draw[->](5+2*\X, -2*\Y) -- node[sloped, above]{$a'\,b\,\,c'\,c\,a$} (-5+4*\X, 0*\Y); %% C->F
+  \draw[->](5+2*\X, -2*\Y) -- node[sloped, above]{$a'\,b\,\,e'\,e\,a$} (-5+4*\X, 0*\Y); %% C->F
 
   
 
