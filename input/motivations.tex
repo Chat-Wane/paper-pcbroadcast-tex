@@ -5,8 +5,9 @@
 \begin{figure}
   \begin{center}
   \input{./input/figgeneralproblem.tex}
-  \caption{\label{fig:generalproblem}Broadcast without causal order
-    enforcement.}
+  \caption{\label{fig:generalproblem}Broadcast without causal order enforcement
+    causes causal order violation. It breaks eventual consistency, for replicas
+    do not converge.}
   \end{center}
 \end{figure}
 
@@ -16,9 +17,9 @@
     \input{./input/figdisseminationtree.tex}
     \caption{\label{fig:disseminationtree}Dissemination graph preserving causal
       relationships. For simplicity sake, we hide incoming messages of A and
-      outgoing messages from F.  From A to F, all dissemination paths carry $a$
-      before $a'$; $a'$ before $c$; $a$ before $b$; $a$ before $e$; $e$ before
-      $e'$.}
+      outgoing messages from F.  All dissemination paths arriving to F carry $a$
+      before $a'$; and also $a'$ before $c$, $a$ before $b$, $a$ before $e$, $e$
+      before $e'$.}
   \end{center}
 \end{figure*}
 
@@ -40,20 +41,25 @@ insertion and deletion that require causal order: the deletion of an element
 must follow its insertion.
 
 Figure~\ref{fig:generalproblem} illustrates the need of a mechanism ensuring
-causal order in message deliveries. Process $p_1$ broadcasts and delivers
-$m$. Process $p_2$ receives and delivers $m$. Then, it broadcasts and delivers
-$m'$. Process $p_3$ receives $m'$ before $m$. Without any causal order
-enforcement, $p_3$ delivers $m'$ before $m$ violating the condition stating that
-the delivery of $m$ should precede the delivery of $m'$.
-
-In this example, if each process hosts the replica of a set. Process $p_1$
-inserts the element $a$ in the set and broadcasts the operation in $m$. Process
-$p_2$ receives the operation and integrates $a$ to its own copy. Then, Process
-$p_2$ removes $a$ from its set and broadcast the operation in $m'$. Process
-$p_3$ receives $m'$ stating that $a$ should be removed. Since it does not have
-$a$ in its replica, it does nothing. When it receives $m$ it adds $a$ to its
-replica. Copies are divergent, for $p_1$ and $p_2$ ends up empty while $p_3$ has
-$a$. It breaks eventual consistency.
+causal order in message deliveries. % Process $p_1$ broadcasts and delivers
+% $m$. Process $p_2$ receives and delivers $m$. Then, it broadcasts and delivers
+% $m'$. Process $p_3$ receives $m'$ before $m$. Without any causal order
+% enforcement, $p_3$ delivers $m'$ before $m$ violating the condition stating that
+% the delivery of $m$ should precede the delivery of $m'$.
+In this example, each process hosts the replica of a set. It starts
+empty. Process $p_1$ inserts the element $a$ in the set along with its unique
+identifier: $i_{1,\,1})$. It broadcasts the new element and its
+identifier. Process $p_2$ receives the operation and integrates $a_{1,\,1}$ to
+its own copy. Then, Process $p_2$ removes this element from its set and
+broadcast the operation: $r(a_{1,\,1})$. Process $p_3$ receives the message
+stating that $a_{1,\,1}$ should be removed. Since its replica does not comprise
+this element, it executes the removal but the set remains unchanged. When
+Process $p_3$ finally receives the message stating that it should add
+$a_{1,\,1}$ to its replica, it integrates it. Replicas become divergent, for
+$p_1$ and $p_2$ ends up empty while $p_3$ has $a_{1,\,1}$. It breaks eventual
+consistency. A causal ordering mechanism would have avoided such situation. For
+instance, $p_3$ could have delayed the execution of the removal until the
+receipt and execution of the corresponding insertion.
 
 Causal broadcast ensures causal order on message deliveries. Consequently, it
 releases applications from the burden of tracking causal relationship between
@@ -144,9 +150,9 @@ of a preventive approach~\cite{friedman2004causal}. It outperforms the reactive
 approach: message overhead is constant; it safely prunes its local structure;
 message delivery time is constant.
 
-It uses FIFO communication links to preserve causal order of
-messages. Intuitively, the dissemination pattern automatically makes sure that
-no path from a process to any other process carries messages out of causal
+This preventive approach uses FIFO communication links to preserve causal order
+of messages. Intuitively, the dissemination pattern automatically makes sure
+that no path from a process to any other process carries messages out of causal
 order. Figure~\ref{fig:disseminationtree} shows an example of message
 dissemination. Process~A broadcasts $a$ then $a'$. All processes must receive
 $a$ before $a'$. Process~A sends it to the network using all its
