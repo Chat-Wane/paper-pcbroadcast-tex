@@ -10,12 +10,15 @@
   \end{center}
 \end{figure}
 
+
 \begin{figure*}
   \begin{center}
     \input{./input/figdisseminationtree.tex}
-    \caption{\label{fig:disseminationtree}Dissemination tree preserving causal
-      relationships. From $A$ to $F$, all dissemination paths carry $a$ before
-      $a'$.}
+    \caption{\label{fig:disseminationtree}Dissemination graph preserving causal
+      relationships. For simplicity sake, we hide incoming messages of A and
+      outgoing messages from F.  From A to F, all dissemination paths carry $a$
+      before $a'$; $a'$ before $c$; $a$ before $b$; $a$ before $e$; $e$ before
+      $e'$.}
   \end{center}
 \end{figure*}
 
@@ -146,26 +149,19 @@ messages. Intuitively, the dissemination pattern automatically makes sure that
 no path from a process to any other process carries messages out of causal
 order. Figure~\ref{fig:disseminationtree} shows an example of message
 dissemination. Process~A broadcasts $a$ then $a'$. All processes must receive
-these messages in that order. Process~A sends it to the network using all its
-links. Process~B and Process~C necessarily receive these messages in that order
-for links are FIFO. They forward these messages in that order using all their
-links too.
+$a$ before $a'$. Process~A sends it to the network using all its
+links. Process~B and Process~C necessarily receive $a$ before $a'$ for links are
+FIFO. They forward these messages in FIFO order using all their links too.
+Other processes necessarily receive $a$ before $a'$ for no subsequent path will
+ever carry $a'$ before $a$.  We see that in spite of concurrent messages
+broadcast at different time, Process~F always receives $a$ before
+$a'$. Concurrent messages also have causal relationship to ensure.  Since
+Process~B broadcasts $b$ right after it received $a$, all processes must receive
+$a$ before $b$. Since Process~C broadcasts $c$ after the receipt of $a'$, all
+processes must receive $c$ after $a'$, hence after $a$. However, there is no
+constraint between message deliveries of $c$ and $b$. Process~F can receive them
+in any order.
 
-Other processes necessarily receive these messages in that order for no
-subsequent path will ever carry $a'$ before $a$.  We see that in spite of
-concurrent messages broadcast at different time, Process~F always receives $a$
-before $a'$.
-
-
-Process~B broadcasts $b$ right after it received $a$. Thus, its outgoing links
-convey $a'\,b\,a$ to D and E. Identically, Process~D broadcasts $d$ before it
-receives any broadcast message, and Process~E broadcasts $e$ then $e'$ after
-receiving $a$.
-
-
-In addition, it receives
-
-\TODO{How, and why it works.}
 
 \begin{figure}
   \begin{center}
