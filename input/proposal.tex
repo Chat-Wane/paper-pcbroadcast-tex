@@ -242,13 +242,6 @@ wants to use a link to a process $q$ for causal broadcast,
   \end{center}
 \end{figure}
 
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figeq2solved.tex}
-%     \caption{\label{fig:eq2solved}2-processes equivalent of Figure~\ref{fig:solved}.}
-%   \end{center}
-% \end{figure}
-
 \EXAMPLE{Example without buffer.}{Figure~\ref{fig:solved} shows how our
 algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
 a FIFO channel links $p_1$ to $p_2$; another links $p_2$ to $p_3$; none links
@@ -268,14 +261,6 @@ before $m$.}
       the sake of clarity.}
   \end{center}
 \end{figure}
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figeq2buffer.tex}
-%     \caption{\label{fig:eq2buffer}2-processes equivalent of
-%       Figure~\ref{fig:buffer}.}
-%   \end{center}
-% \end{figure}
 
 \EXAMPLE{Example with buffer.}{The previous example does not depict the
 buffer usage. The buffer becomes useful when a process broadcasts or forwards a
@@ -320,6 +305,16 @@ loop of retries.
 %     neighbor-to-neighbor peer-sampling protocols.}
 % \end{algorithm}
 
+\begin{figure*}
+  \begin{center}
+    \subfloat[Part A][Process A broadcasts a.]
+    {\input{./input/figpreventivesolveA.tex}}
+    \hspace{20pt}
+    \subfloat[Part B][Meow]
+    {\input{./input/figpreventivesolveB.tex}}
+  \end{center}
+\end{figure*}
+
 
 \subsection{Proofs}
 
@@ -351,76 +346,8 @@ dynamic networks.
   to that of Paper~\cite{friedman2004causal}.
 \end{proof}
 
-% \begin{theorem}[\label{theo:removals}FBC-broadcast in dynamic network subject to
-%   link additions is not causal]
-%   Using FBC-broadcast, adding links to the network may lead to causal order
-%   violations.
-% \end{theorem}
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figproblem.tex}
-%     \caption{\label{fig:problem}Adding a FIFO channel endangers causal
-%       ordering.}
-%   \end{center}
-% \end{figure}
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figeq2problem.tex}
-%     \caption{\label{fig:eq2problem}2-processes equivalent problem of
-%       Figure~\ref{fig:problem}.}
-%   \end{center}
-% \end{figure}
-
-% \begin{proof}
-%   Figure~\ref{fig:problem} illustrates the issue with the establishment of new
-%   FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
-%   links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
-%   but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
-%   $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
-%   meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
-%   and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
-%   compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
-%   and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
-% \end{proof}
-
-
-
-
-
-% This may create gaps in causal delivery, i.e., messages that should be delivered
-% are still missing.  FIFO-based causal broadcast$^+$ aims to ensure that
-% additional links never create gaps. The idea is to employ already working FIFO
-% channels to know which messages arrived, at marginal cost. For instance,
-% assuming that we have $d_p(m) \rightarrow d_p(m')$ and
-% $d_p(m') \rightarrow d_p(m'')$, if Process $p$ knows that Process $q$ received
-% and delivered at least $m$, it can send $m'$ then $m''$ to Process $q$. Any
-% subsequent message from $p$ becomes safe to travel through the newly added link.
-
-%%Knowing that at least Message $m$ arrived allows the process to send
-%%depending messages $m'$, $m''$ 
-
-
-
-% Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our improved
-% FIFO-based causal broadcast. Similarly to Algorithm~\ref{algo:fifobroadcast},
-% each process has a set of neighbors to communicate with via FIFO
-% channels. Messages transitively reach all processes using forwarding. Processes
-% deliver and forward each message exactly once.  
-
-
-%When Process $p$ gets notified that another FIFO channel to Process $q$ is
-%available, it associates this channel with an empty buffer of messages.
-% It also
-%sends a \emph{locked} message to $q$. 
-
-% Process $p$ does not use the new links until Process $q$ confirmed the receipt
-% of the locked message. Acknowledgments do not have to travel through FIFO
-% channels.  Once it receives the acknowledgment, $p$ empties the buffer of
-% messages to $q$ and start using the channel normally.
-
-\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to additions\label{lem:additions}]
+\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
+  additions\label{lem:additions}]
   \CBROADCAST is a causal broadcast in dynamic networks where processes can join
   the network or links can be added.
 \end{lemma}

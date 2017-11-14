@@ -6,13 +6,13 @@
   \newcommand\X{210/5pt};
   \newcommand\Y{30pt};
   
-  \draw[->] ( -1*\X, 0.6*\Y) -- ( -5+0*\X, 0*\Y);
-  \draw[->] ( -1*\X, 0*\Y) -- ( -5+0*\X, 0*\Y);
-  \draw[->] ( -1*\X, -0.6*\Y) -- ( -5+0*\X, 0*\Y);
+  \draw[->] ( -1*\X, 1*\Y) -- ( -5+0*\X, 0*\Y);
+  \draw[->] ( -1*\X, 0*\Y) node[anchor=east, align=center]{Rest\\of the\\network} -- ( -5+0*\X, 0*\Y);
+  \draw[->] ( -1*\X, -1*\Y) -- ( -5+0*\X, 0*\Y);
 
-  \draw[<-] ( 5*\X, 0.6*\Y) -- ( 5+4*\X, 0*\Y);
-  \draw[<-] ( 5*\X, 0*\Y) -- ( 5+4*\X, 0*\Y);
-  \draw[<-] ( 5*\X, -0.6*\Y) -- ( 5+4*\X, 0*\Y);
+  \draw[<-] ( 5*\X, 1*\Y) -- ( 5+4*\X, 0*\Y);
+  \draw[<-] ( 5*\X, 0*\Y) node[anchor=west, align=center]{Rest\\of the\\network}-- ( 5+4*\X, 0*\Y);
+  \draw[<-] ( 5*\X, -1*\Y) -- ( 5+4*\X, 0*\Y);
 
 
   \draw[fill=white] (0*\X, 0*\Y) node{\textbf{A}} +(-5pt, -5pt) rectangle +(5pt, 5pt);
@@ -25,15 +25,15 @@
 
   \draw[fill=white] (4*\X, 0*\Y) node{\textbf{F}} +(-5pt, -5pt) rectangle +(5pt, 5pt);
 
-  \draw[->](5+0*\X, 0*\Y) -- node[sloped, above]{$a'\,a$} (-5+2*\X,  2*\Y); %% A->E
-  \draw[->](5+0*\X, 0*\Y) -- node[sloped, above]{$a'\,a$} (-5+1*\X, -1*\Y); %% A->B
+  \draw[->](5+0*\X, 0*\Y) -- node[sloped, above]{\COLOR{$a'\,a$}} (-5+2*\X,  2*\Y); %% A->E
+  \draw[->](5+0*\X, 0*\Y) -- node[sloped, above]{\COLOR{$a'\,a$}} (-5+1*\X, -1*\Y); %% A->B
 
-  \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$a'\,b\,a$} (-5+2*\X, 0*\Y); %% B->D
-  \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$a'\,b\,a$} (-5+2*\X, -2*\Y); %% B->C
+  \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$\COLOR{a'}\,b\,\COLOR{a}$} (-5+2*\X, 0*\Y); %% B->D
+  \draw[->](5+1*\X, -1*\Y) -- node[sloped, above]{$\COLOR{a'}\,b\,\COLOR{a}$} (-5+2*\X, -2*\Y); %% B->C
 
-  \draw[->](5+2*\X,  2*\Y) -- node[sloped, above]{$c\,a'\,a$} (-5+4*\X, 0*\Y); %% E->F
-  \draw[->](5+2*\X,  0*\Y) -- node[sloped, above]{$a'\,b\,a\,d$} (-5+4*\X, 0*\Y); %% D->F
-  \draw[->](5+2*\X, -2*\Y) -- node[sloped, above]{$a'\,b\,\,e'\,e\,a$} (-5+4*\X, 0*\Y); %% C->F
+  \draw[->](5+2*\X,  2*\Y) -- node[sloped, above]{$c\,\COLOR{a'\,a}$} (-5+4*\X, 0*\Y); %% E->F
+  \draw[->](5+2*\X,  0*\Y) -- node[sloped, above]{$\COLOR{a'}\,b\,\COLOR{a}\,d$} (-5+4*\X, 0*\Y); %% D->F
+  \draw[->](5+2*\X, -2*\Y) -- node[sloped, above]{$\COLOR{a'}\,b\,\,e'\,e\,\COLOR{a}$} (-5+4*\X, 0*\Y); %% C->F
 
   
 
