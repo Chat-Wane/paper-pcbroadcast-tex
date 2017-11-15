@@ -2,28 +2,13 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-% In this paper, we described a uniform reliable causal broadcast that removes the
-% need for messages to carry any control information. To handle dynamic networks,
-% our approach only requires the help of buffers the size of which can be bounded
-% easily. \TODO{Meow meow meow.}
-
-
 In this paper, we described a uniform reliable causal broadcast protocol that
-breaks scalability barriers for large and dynamic networks. Its space complexity
-remains small and can be bounded easily. It does not overload messages with any
-control information. This result means that large and dynamic systems can
-finally afford causal broadcast.
-
-% This makes our causal broadcast suitable for large scale networks subject to
-% churn.
-
-% Applications and protocols such as distributed data stores, distributed
-% collaborative editors that need to track causal relationships between operations
-% can now rely on our causal broadcast.
-
-%% \TODO{Push-pull is easy, three-phase broadcast is default.} ---> In fact,
-%% it's already push-pull and three-phase broadcast if we consider TCP for fifo
-%% links.
+breaks scalability barriers for large and dynamic networks. It extends
+preventive causal broadcast complexity to dynamic networks. Among others,
+message overhead and message delivery time remain constant.
+% Its space complexity remains small and can be bounded easily. 
+This result means that causal broadcast finally becomes affordable and efficient
+in large and dynamic systems.
 
 As future work, we plan to investigate on reducing the space complexity of
 reliable broadcast. Section~\ref{subsec:complexity} reviews structures with
@@ -35,21 +20,16 @@ investigate on a way to prune the structure in such settings. This would make
 causal broadcast fully scalable as well on generated traffic as on space
 consumption.
 
-\TODO{Retrieve partial order of events.}
-
-% As future work, we plan to investigate on the problem of duplicated message
-% detection. Although it only impacts local space complexity, this is the last and
-% only remaining linear complexity.
-
-% A possible way of improvement lies in the fact that, in static network, each
-% process knows how many duplicates of each message it will receive. We could use
-% this information to prune the structure of already received
-% messages. Unfortunately, it does not hold in dynamic networks.
-
-
-%% It is awesome.
-
-
+We also plan to investigate on retrieving partial order of
+events. Section~\ref{sec:relatedwork} states that vector-based approaches allows
+to compare an event with any other event. They can decide on whether one
+precedes the other, or they are concurrent. They can build the partial order of
+event using this knowledge. Preventive approaches cannot by default. However, in
+extreme settings where the overlay network is fully connected, we can assign a
+vector to each received message using local knowledge only, and without message
+overhead. We would like to investigate on a way to build these vectors locally
+in more realistic network settings where processes have partial knowledge of the
+membership. We would like to analyze its minimal cost.
 
 %%% Local Variables:
 %%% mode: latex
