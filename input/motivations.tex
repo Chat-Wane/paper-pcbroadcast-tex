@@ -208,9 +208,17 @@ process, causal delivery may be violated.
 
 \begin{figure*}
   \begin{center}
-    \subfloat[Part 1][\label{fig:preventiveproblemA}Process~A broadcasts $a$.]{\input{input/figpreventiveproblemA.tex}}\hspace{20pt}
-    \subfloat[Part 2][\label{fig:preventiveproblemB}Process~A creates a link to $D$ and broadcasts $a'$.]{\input{input/figpreventiveproblemB.tex}}\hspace{20pt}
-    \subfloat[Part 3][\label{fig:preventiveproblemC}Process~D receives and delivers $a'$ before $a$ violating causal order.]{\input{input/figpreventiveproblemC.tex}}
+    \subfloat[Part 1][\label{fig:preventiveproblemA}Process~A broadcasts $a$.]
+    {\input{input/figpreventiveproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[Part 1][\label{fig:preventiveproblemA2}Process~A adds a link to Process~D.]
+    {\input{input/figpreventiveproblemA2.tex}}
+    \hspace{20pt}
+    \subfloat[Part 2][\label{fig:preventiveproblemB}Process~A broadcasts $a'$.]
+    {\input{input/figpreventiveproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[Part 3][\label{fig:preventiveproblemC}Process~D receives and delivers $a'$ before $a$. This violates causal order.]
+    {\input{input/figpreventiveproblemC.tex}}
     \caption{\label{fig:preventiveproblem}Preventive causal broadcast may
       violate causal order in dynamic settings.}
   \end{center}
