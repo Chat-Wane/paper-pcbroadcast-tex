@@ -14,7 +14,7 @@ messages are immediately delivered on receipt without risk of causality
 violations. This difference not only removes most of control information
 piggybacked in broadcast messages, but also leads to constant delivery
 time. Protocols and applications can finally afford causal broadcast in large
-and dynamic networks. \TODO{They are more efficient too.}
+and dynamic networks without loss of efficiency.
 
 % This section states  the definitions. It describes our algorithm. It proves that
 % it handles both static and dynamic networks. It analyses its complexity.
@@ -173,25 +173,58 @@ To order messages broadcast by every processes, we define causal order.
 
 \subsection{Operation}
 
-Reliable broadcast (see Algorithm~\ref{algo:reliablebroadcast}) along with FIFO
-links allows causal delivery of broadcast messages at no
-cost~\cite{friedman2004causal}. Broadcast does not overload messages with any
-control information. However, this does not hold in dynamic networks.
+\begin{algorithm}[h]
+  \input{./input/algobufferbroadcast.tex}
+  \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
+\end{algorithm}
 
-In dynamic networks, processes can leave the network or join it at any time.
-They also can remove or add links to other processes. For causal broadcast,
-leaving the network is equivalent to link removals; joining the network is
-equivalent to link additions. It simply removes or adds potential diffusion
-paths.
+Algorithm~\ref{algo:bufferbroadcast} shows the instructions of our preventive
+causal broadcast. Its two operations broadcast and deliver rely on reliable
+broadcast (see Algorithm~\ref{algo:reliablebroadcast}). In fact, without
+additions nor removals of links, our protocol only executes instructions of
+reliable broadcast (see Line~\ref{line:rbroadcast},~\ref{line:rdeliver}).
 
-Link removals are not an issue as long as it does not partition the network: the
-order of message deliveries remains unchanged. However, link additions are
-problematic.  The issue is that new links may act as shortcut for
-messages. First messages that travel through new links may arrive before
-preceding messages that took longer paths. New links create additional diffusion
-paths that potentially disorder messages. 
+\begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
+  \CBROADCAST is a causal broadcast in static networks.
+\end{theorem}
 
-Solving this issue requires that even new links convey all messages in the right
+\begin{proof}
+  In static networks, \CBROADCAST only executes the instructions of reliable
+  broadcast. Reliable broadcast along with FIFO links ensures causal broadcast.
+  The proof can be found in Paper~\cite{friedman2004causal}.
+\end{proof}
+
+
+The removal of links and the departure of processes are not an issue, for it
+does not reorder messages traveling through the links\footnote{It may create
+  partitions infringing the uniform agreement property. Network partitioning
+  constitutes an orthogonal problem that we do not address in this
+  paper.}. Algorithm~\ref{algo:bufferbroadcast} does not provide specific
+instructions for such cases.
+% However, it may create partitions. It is an orthogonal problem
+
+\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
+  removals\label{lem:removals}]
+  \CBROADCAST is a causal broadcast in dynamic networks where processes can
+  leave the network or links can be removed.
+\end{lemma}
+
+\begin{proof}
+  Removing a process from the network and removing all the incoming and outgoing
+  links of this process is equivalent. We assume that removals do not create
+  network partitions.  Removing a link does not change the delivery order of
+  causally related messages. Identically to the proof of
+  Theorem~\ref{theo:static}, our causal broadcast only executes instructions of
+  reliable broadcast in such cases. The proof is identical to that of
+  Paper~\cite{friedman2004causal}.
+\end{proof}
+
+Our causal broadcast becomes more sophisticated when the process adds links.
+Figure~\ref{fig:preventiveproblem} shows the issue with link additions.  New
+links may act as shortcut for messages. First messages that travel through new
+links may arrive before preceding messages that took longer paths. New links
+create additional diffusion paths that potentially disorder messages.  Solving
+this issue requires that even new links convey all messages in the right
 order. Sending all broadcast messages since the beginning would be too
 costly. Instead, a process $p$ creating a link to a process $q$ needs to know
 the messages received by $q$ to send potentially missing messages in the right
@@ -200,24 +233,9 @@ general settings, using already created FIFO links keeps it cheap. Once missing
 messages have been sent through this new link, $p$ starts to use it
 normally. New links do not create diffusion paths that could break causal order.
 
-% Keeping the algorithm preventive allows to broadcast messages without
-% overloading them.
-% The idea is to use already established FIFO links to acknowledge the receipt of
-% messages at a marginal cost. The process knows the potentially missing
-% messages. It sends them in the right order using the new FIFO link, then it
-% starts using it normally. Consequently, new links do not create diffusion paths
-% breaking causal order.
-
-\begin{algorithm}[h]
-  \input{./input/algobufferbroadcast.tex}
-  \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
-\end{algorithm}
-
-Algorithm~\ref{algo:bufferbroadcast} shows the instructions of \CBROADCAST. 
-% It solves the dynamic network issues in 3 steps.  
-Compared to Algorithm~\ref{algo:reliablebroadcast}, it adds a structure
-associating each opening link with a buffer of messages.  When a process $p$
-wants to use a link to a process $q$ for causal broadcast,
+Compared to reliable broadcast, Algorithm~\ref{algo:bufferbroadcast} adds a
+structure associating each new link with a buffer of messages.  When a process
+$p$ wants to use a link to a process $q$ for causal broadcast,
 \begin{enumerate}[(i)]
 \item it must use the FIFO links already in use to transmit a message to $q$
   and wait for its acknowledgment (see Line~\ref{line:sendlocked}). We leave
@@ -233,135 +251,6 @@ wants to use a link to a process $q$ for causal broadcast,
   from $p$ to $q$ to send its buffered messages (see
   Line~\ref{line:emptybuffer}). Afterwards, $p$ uses the new link normally.
 \end{enumerate}
-
-\begin{figure}
-  \begin{center}
-    \input{./input/figsolved.tex}
-    \caption{\label{fig:solved}\CBROADCAST in dynamic networks. $m'$ cannot
-      precede $m$. $p_2$'s deliveries remain hidden for the sake of clarity.}
-  \end{center}
-\end{figure}
-
-\EXAMPLE{Example without buffer.}{Figure~\ref{fig:solved} shows how our
-algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
-a FIFO channel links $p_1$ to $p_2$; another links $p_2$ to $p_3$; none links
-$p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
-to $p_3$. It sends a message to $p_3$ using its FIFO links. Thus, $m$ precedes
-this message at $p_3$. When $p_3$ acknowledges this message to $p_1$ using any
-communication way, the later knows that it $p_3$ received and delivered at least
-$m$. Hence, all subsequent broadcast from $p_1$ can use the new communication
-link safely. When $p_1$ broadcasts $m'$, there exist no path where $m'$ arrives
-before $m$.}
-
-\begin{figure}
-  \begin{center}
-    \input{./input/figbuffer.tex}
-    \caption{\label{fig:buffer}Role of the buffer in \CBROADCAST during link
-      addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden for
-      the sake of clarity.}
-  \end{center}
-\end{figure}
-
-\EXAMPLE{Example with buffer.}{The previous example does not depict the
-buffer usage. The buffer becomes useful when a process broadcasts or forwards a
-message between the opening of a link and the receipt of the corresponding
-acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
-buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
-$p_3$. Between the departure of the $locked$ message and the arrival of the
-acknowledgment, $p_1$ broadcasts a message $m'$. Network conditions
-delay the arrival of this message from $p_2$ to $p_3$ such that when Process
-$p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
-$p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
-Process $p_3$ receives and delivers $m'$ before $m''$.}
-
-
-\begin{algorithm}
-  \input{input/algoboundingbuffer.tex}
-  \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
-    network failures.}
-\end{algorithm}
-
-While Algorithm~\ref{algo:bufferbroadcast} ensures causal order of message
-deliveries, buffers consume unbounded space. For instance, if the message
-acknowledging the locked message fails to reach its destination, the
-corresponding buffer continues to grow over broadcast and forwarded messages. 
-
-Algorithm~\ref{algo:boundingbuffer} aims to bound the size of buffers and handle
-network failures, i.e., crashed processes or lost messages. Now, our causal
-broadcast can reset the buffer of a new link. Resets happen when either the
-buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
-acknowledgment message took too long to come back (see
-Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
-a link. When a process receives an acknowledgment, it knows if it expired due to
-a timeout. We only keep the buffer corresponding to the latest locked
-message. We bound the number of retries so the protocol does not stay stuck in a
-loop of retries.
-
-\TODO{Example of failure management? (Will not look nice).}
-
-% \begin{algorithm}
-%   \input{input/algosendfunctions.tex}
-%   \caption{\label{algo:sendfunctions}Implementation of sending functions in
-%     neighbor-to-neighbor peer-sampling protocols.}
-% \end{algorithm}
-
-\begin{figure*}
-  \begin{center}
-    \subfloat[Part A][Process~A broadcasts $a$.]
-    {\input{./input/figpreventivesolveA.tex}}
-    \hspace{20pt}
-    \subfloat[Part B][Process~A wants to add a link to Process~D. 
-    It sends a locked message $\ell$ to Process~D using one of its FIFO links.]
-    {\input{./input/figpreventivesolveB.tex}}
-    \hspace{20pt}
-    \subfloat[Part C][Process~A broadcasts $a'$.
-    It does not send it through the new link but buffers it.]
-    {\input{./input/figpreventivesolveC.tex}}
-    \hspace{20pt}
-    \subfloat[Part D][Process~D receives $\ell$ and acknowledges it to $A$.
-    The acknowledgement message $\alpha$ can travel by any communication
-    mean.]
-    {\input{./input/figpreventivesolveD.tex}}
-    \hspace{20pt}
-    \subfloat[Part E][Process~A receives Process~D's acknowledgment. 
-    The former safely empties its buffer to Process~D. 
-    Using the new link cannot cause causal order violation anymore.]
-    {\input{./input/figpreventivesolveE.tex}}
-    \caption{\label{fig:preventivesolve}Preventive causal broadcast does not violate
-      causal order in dynamic networks anymore.}
-  \end{center}
-\end{figure*}
-
-
-\subsection{Proofs}
-
-This section provides the proofs that our approach work in both static and
-dynamic networks.
-
-\begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
-  \CBROADCAST is a causal broadcast in static networks.
-\end{theorem}
-
-\begin{proof}
-  In static network settings, \CBROADCAST does not use any buffer. Its
-  instructions are those of reliable broadcast from
-  Algorithm~\ref{algo:reliablebroadcast}. The proof can be found in
-  Paper~\cite{friedman2004causal}.
-\end{proof}
-
-\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to removals\label{lem:removals}]
-  \CBROADCAST is a causal broadcast in dynamic networks where processes can
-  leave the network or links can be removed.
-\end{lemma}
-
-\begin{proof}
-  Removing a process from the network is equivalent to removing all the links
-  going to and out this process. We assume that removals do not create network
-  partitions.  Removing a link does not change the delivery order of causally
-  related messages. Identically to the proof of Theorem~\ref{theo:static}, our
-  causal broadcast does not use buffers in such settings. The proof is identical
-  to that of Paper~\cite{friedman2004causal}.
-\end{proof}
 
 \begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
   additions\label{lem:additions}]
@@ -462,6 +351,138 @@ dynamic networks.
   For static networks, it comes from Theorem~\ref{theo:static}. For dynamic
   networks, it comes from Lemmas~\ref{lem:removals}~and~\ref{lem:additions}.
 \end{proof}
+
+% Broadcast does not overload messages with any control information. However, this
+% does not hold in dynamic networks.
+
+% In dynamic networks, processes can leave the network or join it at any time.
+% They also can remove or add links to other processes. For causal broadcast,
+% leaving the network is equivalent to link removals; joining the network is
+% equivalent to link additions. It simply removes or adds potential diffusion
+% paths.
+
+% Link removals are not an issue as long as it does not partition the network: the
+% order of message deliveries remains unchanged. However, link additions are
+% problematic.  The issue is that 
+
+
+
+% Keeping the algorithm preventive allows to broadcast messages without
+% overloading them.
+% The idea is to use already established FIFO links to acknowledge the receipt of
+% messages at a marginal cost. The process knows the potentially missing
+% messages. It sends them in the right order using the new FIFO link, then it
+% starts using it normally. Consequently, new links do not create diffusion paths
+% breaking causal order.
+
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figsolved.tex}
+%     \caption{\label{fig:solved}\CBROADCAST in dynamic networks. $m'$ cannot
+%       precede $m$. $p_2$'s deliveries remain hidden for the sake of clarity.}
+%   \end{center}
+% \end{figure}
+
+% \EXAMPLE{Example without buffer.}{Figure~\ref{fig:solved} shows how our
+% algorithm solves causal order violations. Similarly to Figure~\ref{fig:problem},
+% a FIFO channel links $p_1$ to $p_2$; another links $p_2$ to $p_3$; none links
+% $p_1$ to $p_3$. Process $p_1$ broadcasts $m$. Then $p_1$ wishes to create a link
+% to $p_3$. It sends a message to $p_3$ using its FIFO links. Thus, $m$ precedes
+% this message at $p_3$. When $p_3$ acknowledges this message to $p_1$ using any
+% communication way, the later knows that it $p_3$ received and delivered at least
+% $m$. Hence, all subsequent broadcast from $p_1$ can use the new communication
+% link safely. When $p_1$ broadcasts $m'$, there exist no path where $m'$ arrives
+% before $m$.}
+
+% \begin{figure}
+%   \begin{center}
+%     \input{./input/figbuffer.tex}
+%     \caption{\label{fig:buffer}Role of the buffer in \CBROADCAST during link
+%       addition. $m''$ cannot precede $m'$. $p_2$'s deliveries remain hidden for
+%       the sake of clarity.}
+%   \end{center}
+% \end{figure}
+
+% \EXAMPLE{Example with buffer.}{The previous example does not depict the
+% buffer usage. The buffer becomes useful when a process broadcasts or forwards a
+% message between the opening of a link and the receipt of the corresponding
+% acknowledgment. Figure~\ref{fig:buffer} shows an example where a process uses a
+% buffer to ensure causal delivery of messages. Process $p_1$ connects to Process
+% $p_3$. Between the departure of the $locked$ message and the arrival of the
+% acknowledgment, $p_1$ broadcasts a message $m'$. Network conditions
+% delay the arrival of this message from $p_2$ to $p_3$ such that when Process
+% $p_1$ broadcasts another message $m''$, $m'$ is not yet arrived via
+% $p_2$. Fortunately, since $p_1$ buffered $m'$ and sent it after acknowledgment,
+% Process $p_3$ receives and delivers $m'$ before $m''$.}
+
+\begin{figure*}
+  \begin{center}
+    \subfloat[Part A][Process~A broadcasts $a$.]
+    {\input{./input/figpreventivesolveA.tex}}
+    \hspace{20pt}
+    \subfloat[Part B][Process~A wants to add a link to Process~D. 
+    It sends a locked message $\ell$ to Process~D using one of its FIFO links.]
+    {\input{./input/figpreventivesolveB.tex}}
+    \hspace{20pt}
+    \subfloat[Part C][Process~A broadcasts $a'$.
+    It does not send it through the new link but buffers it.]
+    {\input{./input/figpreventivesolveC.tex}}
+    \hspace{20pt}
+    \subfloat[Part D][Process~D receives $\ell$ and acknowledges it to $A$.
+    The acknowledgment message $\alpha$ can travel by any communication
+    mean.]
+    {\input{./input/figpreventivesolveD.tex}}
+    \hspace{20pt}
+    \subfloat[Part E][Process~A receives Process~D's acknowledgment. 
+    The former safely empties its buffer to Process~D. 
+    Using the new link cannot cause causal order violation anymore.]
+    {\input{./input/figpreventivesolveE.tex}}
+    \caption{\label{fig:preventivesolve}Preventive causal broadcast does not violate
+      causal order in dynamic networks anymore.}
+  \end{center}
+\end{figure*}
+
+
+
+
+\begin{algorithm}
+  \input{input/algoboundingbuffer.tex}
+  \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
+    network failures.}
+\end{algorithm}
+
+While Algorithm~\ref{algo:bufferbroadcast} ensures causal order of message
+deliveries, buffers consume unbounded space. For instance, if the message
+acknowledging the locked message fails to reach its destination, the
+corresponding buffer continues to grow over broadcast and forwarded messages. 
+
+Algorithm~\ref{algo:boundingbuffer} aims to bound the size of buffers and handle
+network failures, i.e., crashed processes or lost messages. Now, our causal
+broadcast can reset the buffer of a new link. Resets happen when either the
+buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
+acknowledgment message took too long to come back (see
+Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
+a link. When a process receives an acknowledgment, it knows if it expired due to
+a timeout. We only keep the buffer corresponding to the latest locked
+message. We bound the number of retries so the protocol does not stay stuck in a
+loop of retries.
+
+\TODO{Example of failure management? (Will not look nice).}
+
+% \begin{algorithm}
+%   \input{input/algosendfunctions.tex}
+%   \caption{\label{algo:sendfunctions}Implementation of sending functions in
+%     neighbor-to-neighbor peer-sampling protocols.}
+% \end{algorithm}
+
+
+%% \subsection{Proofs}
+
+%% This section provides the proofs that our approach work in both static and
+%% dynamic networks.
+
+
 
 \subsection{Complexity}
 \label{subsec:complexity}
