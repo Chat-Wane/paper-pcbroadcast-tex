@@ -307,11 +307,26 @@ loop of retries.
 
 \begin{figure*}
   \begin{center}
-    \subfloat[Part A][Process A broadcasts a.]
+    \subfloat[Part A][Process~A broadcasts $a$.]
     {\input{./input/figpreventivesolveA.tex}}
     \hspace{20pt}
-    \subfloat[Part B][Meow]
+    \subfloat[Part B][Process~A wants to add a link to Process~D. 
+    It sends a locked message $\ell$ to Process~D using one of its FIFO links.]
     {\input{./input/figpreventivesolveB.tex}}
+    \hspace{20pt}
+    \subfloat[Part C][Process~A broadcasts $a'$.
+    It does not send it through the new link but buffers it.]
+    {\input{./input/figpreventivesolveC.tex}}
+    \hspace{20pt}
+    \subfloat[Part D][Process~D receives $\ell$ and acknowledges it to $A$.
+    The acknowledgement message $\alpha$ can travel by any communication
+    mean.]
+    {\input{./input/figpreventivesolveD.tex}}
+    \hspace{20pt}
+    \subfloat[Part E][Process~A receives Process~D's acknowledgment. 
+    The former knows it can safely empty the buffer to Process~D. 
+    Using the new link cannot cause causal order violation anymore.]
+    {\input{./input/figpreventivesolveE.tex}}
   \end{center}
 \end{figure*}
 
