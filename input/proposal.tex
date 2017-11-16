@@ -377,6 +377,21 @@ deliveries, buffers consume unbounded space. For instance, if the message
 acknowledging the locked message fails to reach its destination, the
 corresponding buffer continues to grow over broadcast and forwarded messages. 
 
+\begin{figure*}
+  \begin{center}
+    \subfloat[part A][Slow locked message $\ell$.]
+    {\input{input/figbufferproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[part B][Process~D crashes.]
+    {\input{input/figbufferproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[part C][Acknowledgment $\alpha$ fails.]
+    {\input{input/figbufferproblemC.tex}}
+    \caption{Buffers may grow unbounded due to network conditions.}
+  \end{center}
+\end{figure*}
+
+
 Algorithm~\ref{algo:boundingbuffer} aims to bound the size of buffers and handle
 network failures, i.e., crashed processes or lost messages. Now, our causal
 broadcast can reset the buffer of a new link. Resets happen when either the
