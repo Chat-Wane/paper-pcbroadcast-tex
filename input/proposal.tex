@@ -125,7 +125,7 @@ To order messages broadcast by different processes, we define local order.
 
 \begin{definition}[Local order]
   If a process broadcasts a message after having delivered another message
-  broadcast by another process, processes deliver the later before the former:\\
+  broadcast by another process, processes deliver the latter before the former:\\
   $\forall p,\,q,\,r,\, \in P,\,p\neq q,\,$\\$b_p(m) \wedge d_q(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
 \end{definition}
 
@@ -242,7 +242,7 @@ messages. Figure~\ref{fig:preventivesolve} shows how it solves causal order
 violations. In Figure~\ref{fig:preventivesolveA}, Process~A broadcasts $a$.  In
 Figure~\ref{fig:preventivesolveB}, it wants to add a link to Process~D. It sends
 a locked message $\ell$ to process~D (see Line~\ref{line:sendlocked}) and awaits
-for the later's acknowledgment.  We leave aside the implementation of this send
+for the latter's acknowledgment.  We leave aside the implementation of this send
 function (e.g. broadcast or routing). Although, using already established FIFO
 links constitutes a cheap way to achieve it. While awaiting, Process~A keeps its
 normal functioning and maintain a buffer of messages associated with the new
@@ -392,7 +392,7 @@ the sending of locked message and the receipt of its acknowledgment which is
 assumed short. However, network conditions may invalidate this
 assumption. Figure~\ref{fig:bufferproblem} depicts scenarios where buffers grow
 out of acceptable boundaries. In Figure~\ref{fig:bufferproblemA}, the issue
-comes from high transmission delay from Process~A to Process~B, and from
+comes from high transmission delays from Process~A to Process~B, and from
 Process~B to Process~D compared to the number of messages to broadcast and
 forward. The locked message $\ell$ did not reach Process~D yet that the buffer
 contains a lot of messages. In Figure~\ref{fig:bufferproblemB}, the issue comes
