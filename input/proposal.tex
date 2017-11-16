@@ -259,6 +259,23 @@ received and delivered at least $a$ and all preceding messages. It empties the
 buffer of messages to Process~D (see Line~\ref{line:emptybuffer}). Afterwards,
 Process~A uses the new link normally.
 
+\begin{figure*}
+  \begin{center}
+    \subfloat[part A][\label{fig:bufferproblemA}Slow locked message $\ell$.]
+    {\input{input/figbufferproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
+    {\input{input/figbufferproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[part C][\label{fig:bufferproblemC}Acknowledgment $\alpha$ fails.]
+    {\input{input/figbufferproblemC.tex}}
+    \caption{\label{fig:bufferproblem}Buffers may grow unbounded due to network
+      conditions.}
+  \end{center}
+\end{figure*}
+
+
+
 The acknowledgment phase ensures that Process~D received all messages preceding
 $a$ and $a$ itself. The buffering phase ensures that Process~D receives all
 messages between the sending of the locked message $\ell$ and the receipt of
@@ -366,58 +383,80 @@ transitively through Process~B.
   networks, it comes from Lemmas~\ref{lem:removals}~and~\ref{lem:additions}.
 \end{proof}
 
+Algorithm~\ref{algo:bufferbroadcast} ensures causal delivery of messages even
+with dynamic network settings. Compared to preventive causal broadcast for
+static networks, it uses an additional local structure: buffers of messages. It
+associates a buffer to each new links not yet acknowledged. We assumed that the
+size of these buffer stays small in general, for it depends of the time between
+the sending of locked message and the receipt of its acknowledgment which is
+assumed short. However, network conditions may invalidate this
+assumption. Figure~\ref{fig:bufferproblem} depicts scenarios where buffers grow
+out of acceptable boundaries. In Figure~\ref{fig:bufferproblemA}, the issue
+comes from high transmission delay from Process~A to Process~B, and from
+Process~B to Process~D compared to the number of messages to broadcast and
+forward. The locked message $\ell$ did not reach Process~D yet that the buffer
+contains a lot of messages. In Figure~\ref{fig:bufferproblemB}, the issue comes
+from the departure of Process~D. Depending on network settings, Process~A may
+not be able to detect Process~D's departure. The former will never receive the
+awaited acknowledgment and the buffer will grow forever. In
+Figure~\ref{fig:bufferproblemC}, the acknowledgment $\alpha$ itself fails to
+reach Process~A. For the recall, this message can travel to Process~A by any
+communication mean, including unreliable ones. If this fails, Process~A's buffer
+to Process~D will grow forever. %as long as Process~A receives or broadcasts
+%messages.
+
 \begin{algorithm}
   \input{input/algoboundingbuffer.tex}
   \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
     network failures.}
 \end{algorithm}
 
-While Algorithm~\ref{algo:bufferbroadcast} ensures causal order of message
-deliveries, buffers consume unbounded space. For instance, if the message
-acknowledging the locked message fails to reach its destination, the
-corresponding buffer continues to grow over broadcast and forwarded messages. 
+Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
+buffers. It solves the issue from the buffer owner's perspective. 
+\TODO{todo Here. todo drawbacks (too many retry, we forfeit) what does it imply?} 
 
 \begin{figure*}
   \begin{center}
-    \subfloat[part A][Slow locked message $\ell$.]
-    {\input{input/figbufferproblemA.tex}}
+    \subfloat[Part A][Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
-    \subfloat[part B][Process~D crashes.]
-    {\input{input/figbufferproblemB.tex}}
+    \subfloat[Part B][Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveB.tex}}
     \hspace{20pt}
-    \subfloat[part C][Acknowledgment $\alpha$ fails.]
-    {\input{input/figbufferproblemC.tex}}
-    \caption{Buffers may grow unbounded due to network conditions.}
+    \subfloat[Part C][Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveC.tex}}
+    \hspace{20pt}
+    \subfloat[Part D][Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveD.tex}}
+    \hspace{20pt}
+    \subfloat[Part E][Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveE.tex}}
+    \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
+      elements in each buffer.}
   \end{center}
 \end{figure*}
 
+% It aims to bound the size of buffers and handle
+% network failures, i.e., crashed processes or lost messages. Now, our causal
+% broadcast can reset the buffer of a new link. Resets happen when either the
+% buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
+% acknowledgment message took too long to come back (see
+% Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
+% a link. When a process receives an acknowledgment, it knows if it expired due to
+% a timeout. We only keep the buffer corresponding to the latest locked
+% message. We bound the number of retries so the protocol does not stay stuck in a
+% loop of retries.
 
-Algorithm~\ref{algo:boundingbuffer} aims to bound the size of buffers and handle
-network failures, i.e., crashed processes or lost messages. Now, our causal
-broadcast can reset the buffer of a new link. Resets happen when either the
-buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
-acknowledgment message took too long to come back (see
-Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
-a link. When a process receives an acknowledgment, it knows if it expired due to
-a timeout. We only keep the buffer corresponding to the latest locked
-message. We bound the number of retries so the protocol does not stay stuck in a
-loop of retries.
-
-\TODO{Example of failure management? (Will not look nice).}
-
-% \begin{algorithm}
-%   \input{input/algosendfunctions.tex}
-%   \caption{\label{algo:sendfunctions}Implementation of sending functions in
-%     neighbor-to-neighbor peer-sampling protocols.}
-% \end{algorithm}
-
-
-%% \subsection{Proofs}
-
-%% This section provides the proofs that our approach work in both static and
-%% dynamic networks.
-
-
+Other orthogonal improvements are possible. For instance, causal broadcast could
+use reliable communication means to acknowledge the receipt of the locked
+message. The time taken between the sending and the receipt of the
+acknowledgment would increase when failures occur. However, it would take less
+time than resetting the buffering phase.
 
 \subsection{Complexity}
 \label{subsec:complexity}
