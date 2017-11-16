@@ -421,20 +421,24 @@ buffers. It solves the issue from the buffer owner's perspective.
     broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
     {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
-    \subfloat[Part B][Process~A wanted to add a link to Process~D after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    \subfloat[Part B][Process~A broadcasts $a'''$. Since the buffer size would 
+    exceed the maximal boundary, it resets the buffer with a new counter and
+    sends a locked message with this counter. In the meantime, Process~D
+    receives $\ell_1$ and sends the corresponding acknowledgment $\alpha_1$.]
     {\input{input/figbuffersolveB.tex}}
     \hspace{20pt}
-    \subfloat[Part C][Process~A wanted to add a link to Process~D after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    \subfloat[Part C][Process~A forwards $y$ and buffers it. It also
+    receives $\alpha_1$ but no buffer exists with this counter. Process~A 
+    simply discards $\alpha_1$.]
     {\input{input/figbuffersolveC.tex}}
     \hspace{20pt}
-    \subfloat[Part D][Process~A wanted to add a link to Process~D after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    \subfloat[Part D][Process~D receives $\ell_2$ and sends the corresponding
+    acknowledgment $\alpha_2$.]
     {\input{input/figbuffersolveD.tex}}
     \hspace{20pt}
-    \subfloat[Part E][Process~A wanted to add a link to Process~D after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    \subfloat[Part E][Process~A receives $\alpha_2$. It empties the
+    buffer with the corresponding counter. Now,  the direct link
+    to Process~D is safe. Process~A uses it normally.]
     {\input{input/figbuffersolveE.tex}}
     \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
       elements in each buffer.}
