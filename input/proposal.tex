@@ -411,32 +411,33 @@ to Process~D will grow forever. %as long as Process~A receives or broadcasts
     network failures.}
 \end{algorithm}
 
-Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
-buffers. It solves the issue from the buffer owner's perspective. 
-\TODO{todo Here. todo drawbacks (too many retry, we forfeit) what does it imply?} 
-
 \begin{figure*}
   \begin{center}
-    \subfloat[Part A][Process~A wanted to add a link to Process~D after having
+    \subfloat[Part A][\label{fig:buffersolveA}
+    Process~A wanted to add a link to Process~D after having
     broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
     {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
-    \subfloat[Part B][Process~A broadcasts $a'''$. Since the buffer size would 
+    \subfloat[Part B][\label{fig:buffersolveB}
+    Process~A broadcasts $a'''$. Since the buffer size would 
     exceed the maximal boundary, it resets the buffer with a new counter and
     sends a locked message with this counter. In the meantime, Process~D
     receives $\ell_1$ and sends the corresponding acknowledgment $\alpha_1$.]
     {\input{input/figbuffersolveB.tex}}
     \hspace{20pt}
-    \subfloat[Part C][Process~A forwards $y$ and buffers it. It also
+    \subfloat[Part C][\label{fig:buffersolveC}
+    Process~A forwards $y$ and buffers it. It also
     receives $\alpha_1$ but no buffer exists with this counter. Process~A 
     simply discards $\alpha_1$.]
     {\input{input/figbuffersolveC.tex}}
     \hspace{20pt}
-    \subfloat[Part D][Process~D receives $\ell_2$ and sends the corresponding
+    \subfloat[Part D][\label{fig:buffersolveD}
+    Process~D receives $\ell_2$ and sends the corresponding
     acknowledgment $\alpha_2$.]
     {\input{input/figbuffersolveD.tex}}
     \hspace{20pt}
-    \subfloat[Part E][Process~A receives $\alpha_2$. It empties the
+    \subfloat[Part E][\label{fig:buffersolveE}
+    Process~A receives $\alpha_2$. It empties the
     buffer with the corresponding counter. Now,  the direct link
     to Process~D is safe. Process~A uses it normally.]
     {\input{input/figbuffersolveE.tex}}
@@ -445,16 +446,41 @@ buffers. It solves the issue from the buffer owner's perspective.
   \end{center}
 \end{figure*}
 
-% It aims to bound the size of buffers and handle
-% network failures, i.e., crashed processes or lost messages. Now, our causal
-% broadcast can reset the buffer of a new link. Resets happen when either the
-% buffer size is above a threshold (see Line~\ref{line:maxsize}), or the
-% acknowledgment message took too long to come back (see
-% Line~\ref{line:timeout}). Each locked message has an identifier corresponding to
-% a link. When a process receives an acknowledgment, it knows if it expired due to
-% a timeout. We only keep the buffer corresponding to the latest locked
-% message. We bound the number of retries so the protocol does not stay stuck in a
-% loop of retries.
+Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
+buffers. It solves the issue from the buffer owner's
+perspective. Figure~\ref{fig:buffersolve} shows how this algorithm bounds the
+size of buffers. In Figure~\ref{fig:buffersolveA}, Process~A broadcast $a$; then
+wanted to add a link to Process~D so it sent a locked message; then broadcast
+$a'$ and $a''$ so it buffered them. We see that the locked message $\ell_1$
+carries a counter. The new buffer is identified by the same counter. In
+Figure~\ref{fig:buffersolveB}, Process~A broadcasts another message $a'''$. Each
+message delivery increases the size of current buffers. The algorithm checks if
+the size of the buffer exceeds the configured bound (see
+Line~\ref{line:maxsize}). Adding $a'''$ to the buffer would exceed the bound of
+$2$ elements. It is first failure, so Process~A simply restarts the
+acknowledgment phase: it resets the buffer and sends another locked message
+$\ell_2$ (see Line~\ref{line:reset}). The counter of the reset buffer is the one
+of the new locked message. In the meantime, Process~D receives $\ell_1$ and
+sends the corresponding acknowledgment $\alpha_1$. In
+Figure~\ref{fig:buffersolveC}, Process~A receives a broadcast message $y$. It
+delivers it, checks if the buffer can admit it, adds the message to the buffer,
+and forwards it. Process~A also receives the first acknowledgment $\alpha_1$ but
+discards it, for no buffer has such counter. In Figure~\ref{fig:buffersolveD},
+Process~D receives $\ell_2$ and sends the corresponding acknowledgment
+$\alpha_2$ to Process~A. In Figure~\ref{fig:buffersolveE}, Process~A receives
+$\alpha_2$. Since the corresponding buffer exists, it empties it. The new link
+is now safe to use for causal broadcast.
+
+While it solves the issue of unbounded buffers, it also brings another
+issue. For instance, if the maximal size of buffers is too small, it could stuck
+the protocol in a loop of retries. We address this issue by bounding the number
+of retries. However, it means that the acknowledgment phase could fail
+entirely. Causal broadcast must not employ the new link. In extreme cases, it
+could cause partitions in the causal broadcast overlay network. It would violate
+the uniform agreement property of causal broadcast. Thus, we assume a
+sufficiently large maximal bound. It never creates partitions, for most links
+are safely acknowledged, and the failing ones are replaced over time thanks to
+network dynamicity.
 
 Other orthogonal improvements are possible. For instance, causal broadcast could
 use reliable communication means to acknowledge the receipt of the locked
@@ -466,21 +492,30 @@ time than resetting the buffering phase.
 \label{subsec:complexity}
 
 We review and discuss about the complexity of \CBROADCAST. We distinguish the
-complexity of causal ordering, the complexity of reliable broadcast, and the
-complexity brought by the overlay network.
+complexity brought by
+\begin{inparaenum}[(i)]
+\item causal ordering,
+\item reliable broadcast,
+\item and the overlay network.
+\end{inparaenum}
 
-\PAR{Causal ordering.}{Regarding traffic, broadcast messages do not need to
-  convey any control information. However, processes must send each message to
-  all their neighborhood exactly once. It creates as many copies as
-  neighbors. This number of copies may constitute an issue when the size of
-  messages is large. To solve this issue, processes can send identifiers instead
-  of large messages then send these messages on demand.  It introduces
-  additional delays in communications but greatly reduces generated traffic
-  (\REF).  Regarding local space consumption, our protocol maintains one buffer
-  per link during its acknowledgment time. We assume that this time is short so
-  the number of buffered messages stays small. Network conditions can make this
-  assumption false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size
-  of each buffer and handle network failures.}
+\PAR{Causal ordering.}{Regarding message overhead, broadcast messages convey two 
+  types of control information: data to ensure FIFO order links, and
+  data to globally identify the message. Thus, 
+  message overhead is constant. 
+  % Regarding traffic, broadcast messages do not need to convey any control
+  % information. 
+  Regarding number of messages, processes must send each message to all their
+  neighborhood exactly once. It creates as many copies as neighbors. This number
+  of copies may constitute an issue when the size of messages is large. To solve
+  this issue, processes can send identifiers instead of large messages then send
+  these messages on demand.  It introduces additional delays in communications
+  but greatly reduces generated traffic~\cite{frey:hal-01479885}.  Regarding
+  local space consumption, our protocol maintains one buffer per link during its
+  acknowledgment time. We assume that this time is short so the number of
+  buffered messages stays small. As shown in Section~\ref{sec:proposal}, network
+  conditions can make this assumption false. Algorithm~\ref{algo:boundingbuffer}
+  allows to bound the size of each buffer and handle network failures.}
 
 % While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
 % means that they can grow unbounded, we can easily bound them. For instance,
@@ -526,15 +561,14 @@ complexity brought by the overlay network.
   peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
   properties similar to those of random graphs~\cite{erdos1959random}. They
   provide each process with a random subset of neighbors the size of which is
-  considerably smaller than the network size. Since the neighborhood size is
-  logarithmic compared to the network size, the number of messages sent by each
-  process for each broadcast message is logarithmic.  Since random peer-sampling
-  protocols build topologies close to random graphs, messages take a logarithmic
-  number of hops to reach all processes. In addition, random peer-sampling
-  protocols such as \SPRAY~\cite{nedelec2017adaptive} or
+  logarithmically scaling with the network size. The number of messages sent by
+  each process for each broadcast message is logarithmic.  Since random
+  peer-sampling protocols build topologies close to random graphs, messages take
+  a logarithmic number of hops to reach all processes. In addition, random
+  peer-sampling protocols such as \SPRAY~\cite{nedelec2017adaptive} or
   \CYCLON~\cite{voulgaris2005cyclon} create links using only
   neighbor-to-neighbor interactions, i.e., they establish links only two hops
-  apart. It takes only 4 hops for a new link to get acknowledged.  The overhead
+  apart. It takes only 4 hops for new links to get acknowledged.  The overhead
   brought by these messages is negligible. The acknowledgment time of buffers,
   hence the size of buffers, remains small.}
 

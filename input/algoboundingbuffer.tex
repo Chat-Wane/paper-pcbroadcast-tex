@@ -61,7 +61,7 @@
     
     \If{$q \in R$} {
       $R[q] \leftarrow R[q]+ 1$ \;
-      \lIf{$R[q] \leq maxRetry$} {\textup{open}($q$)}
+      \lIf{$R[q] \leq maxRetry$} {\textup{open}($q$)\label{line:reset}}
       \lElse{\textup{close}($q$)}    
     }
   }
