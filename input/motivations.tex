@@ -49,10 +49,10 @@ causal order in message deliveries. % Process $p_1$ broadcasts and delivers
 % the delivery of $m$ should precede the delivery of $m'$.
 In this example, each process hosts the replica of a set. It starts
 empty. Process $p_1$ inserts the element $a$ in the set along with its unique
-identifier: $i_{1,\,1})$. It broadcasts the new element and its
+identifier: $ins(a_{1,\,1})$. It broadcasts the new element and its
 identifier. Process $p_2$ receives the operation and integrates $a_{1,\,1}$ to
 its own copy. Then, Process $p_2$ removes this element from its set and
-broadcast the operation: $r(a_{1,\,1})$. Process $p_3$ receives the message
+broadcast the operation: $rem(a_{1,\,1})$. Process $p_3$ receives the message
 stating that $a_{1,\,1}$ should be removed. Since its replica does not comprise
 this element, it executes the removal but the set remains unchanged. When
 Process $p_3$ finally receives the message stating that it should add
