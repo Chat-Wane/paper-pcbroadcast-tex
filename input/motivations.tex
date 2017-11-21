@@ -2,14 +2,30 @@
 \section{Background and motivations}
 \label{sec:motivations}
 
-\begin{figure}
+% \begin{figure}
+%   \begin{center}
+%   \input{./input/figgeneralproblem.tex}
+%   \caption{\label{fig:generalproblem}Broadcast without causal order enforcement
+%     causes causal order violation. It breaks eventual consistency, for replicas
+%     do not converge.}
+%   \end{center}
+% \end{figure}
+
+
+\begin{figure*}
   \begin{center}
-  \input{./input/figgeneralproblem.tex}
-  \caption{\label{fig:generalproblem}Broadcast without causal order enforcement
-    causes causal order violation. It breaks eventual consistency, for replicas
-    do not converge.}
+    \subfloat[Part A][Process~A broadcasts $a$.]
+    {\input{input/figgeneralproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[Part B][Process~B receives and delivers $a$ then broadcasts $b$.]
+    {\input{input/figgeneralproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[Part C][Process~C receives $b$ before $a$. The immediate delivery
+    of $b$ violates causal order.]
+    {\input{input/figgeneralproblemC.tex}}
+    \caption{Causal order violation in network without causal broadcast.}
   \end{center}
-\end{figure}
+\end{figure*}
 
 
 \begin{figure*}
