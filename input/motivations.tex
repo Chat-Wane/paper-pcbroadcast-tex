@@ -1,5 +1,5 @@
 
-\section{Issues and motivations}
+\section{Background and motivations}
 \label{sec:motivations}
 
 \begin{figure}
@@ -30,16 +30,19 @@
 
 Broadcast protocols ensure that all connected processes receive and deliver each
 broadcast message~\cite{hadzilacos1994modular}. Applications often require more
-guarantees on message delivery to ensure consistency criteria (\REF). For
-instance, conflict-free replicated data types~\cite{shapiro2011comprehensive}
-are replicated data structures ensuring eventual
-consistency~\cite{bailis2013eventual}. Replicas eventually converge to an
-identical state. CRDTs for sets~\cite{mukund2014optimized} and
-sequences~\cite{weiss2009logoot} are extensively used in distributed data stores
-such as Riak, Dynamo, or Cassandra (\REF) and distributed collaborative editors
-such as Crate, or Peerpad (\REF). They feature basic operations such as
-insertion and deletion that require causal order: the deletion of an element
-must follow its insertion.
+guarantees on message delivery to ensure consistency criteria (\REF).
+
+\TODO{Talk about overlay networks here. Later on, talk about dynamicity.}
+
+% For instance, conflict-free replicated data
+% types~\cite{shapiro2011comprehensive} are replicated data structures ensuring
+% eventual consistency~\cite{bailis2013eventual}. Replicas eventually converge to
+% an identical state. CRDTs for sets~\cite{mukund2014optimized} and
+% sequences~\cite{weiss2009logoot} are extensively used in distributed data stores
+% such as Riak, Dynamo, or Cassandra (\REF) and distributed collaborative editors
+% such as Crate, or Peerpad (\REF). They feature basic operations such as
+% insertion and deletion that require causal order: the deletion of an element
+% must follow its insertion.
 
 Figure~\ref{fig:generalproblem} illustrates the need of a mechanism ensuring
 causal order in message deliveries. % Process $p_1$ broadcasts and delivers
@@ -274,7 +277,7 @@ The causal broadcast presented in this paper achieve this.  Last row of
 Table~\ref{table:comparison} shows the complexity we achieve. Similarly to the
 preventive approach, complexity stays constant in terms of message overhead and
 message delivery time. The local space complexity is linear in terms of number
-of processes. \TODO{We suspect that bound to be minimal in dynamic settings.} In
+of processes. We conjecture that this bound is minimal in dynamic settings. In
 addition, our algorithm employs another local structure to ensure causal order
 but we show that we can bound it in Algorithm~\ref{algo:boundingbuffer}.
 

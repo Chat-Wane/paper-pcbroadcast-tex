@@ -5,10 +5,9 @@
 Broadcasting~\cite{hadzilacos1994modular} is a fundamental communication
 mechanism for numerous distributed
 protocols~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
-applications~\cite{nedelec2016crate}. They generally run in highly dynamic
-environments where processes can join and leave the network at any
-time~\cite{mostefaoui2005static}. Broadcast protocols ensure that all connected
-processes receive and deliver each broadcast message.
+applications~\cite{nedelec2016crate}.  
+Broadcast protocols ensure that all connected processes receive and deliver each
+broadcast message.
 % A dynamic network~\cite{mostefaoui2005static} comprises interconnected
 % processes. Processes can join or leave the network at any moment. Processes can
 % communicate with each other. Broadcasting is a communication mean where a
@@ -16,14 +15,19 @@ processes receive and deliver each broadcast message.
 In this paper, we focus on causal broadcast: the order of message delivery
 follows the happen before
 relationship~\cite{lamport1978time,schwarz1994detecting}. This alleviates
-systems from the burden of tracking causality between its operations.  For
-instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF) and
-collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
-conflict-free replicated data
-types~\cite{shapiro2011comprehensive,shapiro2011conflict}. They feature addition
-and deletion of elements. A deletion must follow the corresponding addition, for
-the sake of eventual consistency~\cite{bailis2013eventual}. Causal broadcast
-relieves these applications from continuously checking such constraints.
+systems from the burden of tracking causality between its operations.
+
+Systems generally run in highly dynamic environments where processes can join
+and leave at any time~\cite{mostefaoui2005static}. \TODO{More}
+
+% For instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF)
+% and collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
+% conflict-free replicated data
+% types~\cite{shapiro2011comprehensive,shapiro2011conflict}. They feature addition
+% and deletion of elements. A deletion must follow the corresponding addition, for
+% the sake of eventual consistency~\cite{bailis2013eventual}. Causal broadcast
+% relieves these applications from continuously checking such constraints.
+
 % For instance, distributed collaborative editors perform deletion immediately,
 % for causal broadcast already guaranteed that the message containing the
 % corresponding insertion was delivered beforehand.
@@ -60,10 +64,10 @@ messages is constant, for it only discards message duplicates. Nothing limits
 the scalability of the system.
 % It simply makes use of FIFO communication channels (e.g. TCP) and
 % deterministic overlay networks (\REF) to disseminate messages.
-However, it does not handle network membership changes. We would like a
+However, changes in network membership may lead to causal delivery violations. A
 preventive causal broadcast that generalizes these complexity to dynamic
-networks. Causal broadcast would finally become affordable and efficient in
-large and dynamic systems.
+networks would finally make causal broadcast \TODO{safe}, affordable and
+efficient in large and dynamic systems.
 
 In this paper, we break the scalability barrier of causal broadcast for large
 and dynamic networks. We propose a uniform reliable broadcast that outperforms

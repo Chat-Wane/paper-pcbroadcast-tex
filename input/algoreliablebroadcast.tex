@@ -9,18 +9,18 @@
 \LinesNumbered
 
 \Initially {} {
-  $Q$ \tcp*{$p$'s neighborhood}
-  $received \leftarrow \varnothing$ \tcp*{To detect double receipts}
+  $Q$ \tcp*{Set of processes, $p$'s neighborhood}
+  $received \leftarrow \varnothing$ \tcp*{Set of received messages}
 }
 
 \BlankLine
 
 \Dissemination{}{
   
-  \Function{\textup{R-broadcast}($m$) \tcp*[f]{$b_p(m)$}} { 
+  \Function{\textup{R-broadcast}($m$)} { %\tcp*[f]{$b_p(m)$}} { 
     $received \leftarrow received \cup m$ \;
     \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$)}
-    \textup{R-deliver}($m$) \tcp*{$d_p(m)$}
+    \textup{R-deliver}($m$) \; % \tcp*{$d_p(m)$}
   }
 
   \BlankLine
@@ -29,7 +29,7 @@
     \If {$m \not \in received$} {
       $received \leftarrow received \cup m$ \;
       \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$) \tcp*[f]{forward}}
-      \textup{R-deliver}($m$) \tcp*{$d_p(m)$}
+      \textup{R-deliver}($m$) \; % \tcp*{$d_p(m)$}
     }
   }
   

@@ -57,7 +57,7 @@
 
 \Dissemination {} {
 
-  \Function{\textup{FBC-broadcast}$^+$($m$) \tcp*[f]{$b_p(m)$}} {    
+  \Function{\textup{FBC-broadcast}$^+$($m$) } {% \tcp*[f]{$b_p(m)$}} {    
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferbroadcast} \tcp*[f]{Buffers}}
     $\textup{R-broadcast}(m)$ \label{line:rbroadcast}\;
@@ -68,7 +68,7 @@
   \Upon{\textup{R-deliver}($m$) \label{line:rdeliver}} {
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferforward} \tcp*[f]{Buffers}}
-    $\textup{FBC-deliver}^+(m)$ \tcp*{$d_p(m)$}
+    $\textup{FBC-deliver}^+(m)$  \; % \tcp*{$d_p(m)$}
   }
 
 }

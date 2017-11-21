@@ -21,9 +21,9 @@ and dynamic networks without loss of efficiency.
 
 \subsection{Model}
 
-Definitions and theorems come from~\cite{hadzilacos1994modular}. A network
-comprise processes. Processes can communicate with part of the network via
-messages. They may not have full knowledge of network membership, for
+% Definitions and theorems come from~\cite{hadzilacos1994modular}.
+A network comprise processes. Processes can communicate with part of the network
+via messages. They may not have full knowledge of network membership, for
 maintenance costs become too expansive in large and dynamic networks. Instead,
 processes build overlay networks with local partial view the size of which is
 generally much smaller than the actual network size.
@@ -57,37 +57,20 @@ For the rest of the paper, we only consider networks without partitions.
 
 %\TODO{Replace ``network'' by  ``distributed system'' ?}
 
-We define time in a logical sense using Lamport's
-definition~\cite{lamport1978time}.
-
-\begin{definition}[Happen before]
-  Happen before is a transitive, irreflexive, and antisymmetric relation that
-  defines a strict partial orders of events. At process $p$, Event $e$ happens
-  before -- or precedes -- Event $e'$ is noted $e_p \rightarrow e'_p$. The
-  sending of a message $s_p(m)$ always precedes its receipt $r_q(m)$: \\
-  $\forall p,\,q \in P, s_p(m) \rightarrow r_q(m)$.
-\end{definition}
-
 Processes communicate by sending messages to other processes. They can send
 messages to specific processes or all of them.
 
 \begin{definition}[Uniform reliable broadcast]
-  A process $p$ can broadcast a message $b_p(m)$, receive a message $r_p(m)$,
-  and deliver a message $d_p(m)$.  When a process $p$ broadcasts a message $m$
-  to all processes of the network, correct processes eventually receive it: 
-  $\forall p \in P,\, (b_p(m) \Leftrightarrow \forall q \in P,\, r_q(m))$. \\
+  A process can broadcast a message, receive a message, and deliver a message.
+  When a process broadcasts a message to all processes of the network, correct
+  processes eventually receive it. 
   Uniform reliable broadcast guarantees 3 properties: \\
   \textbf{Validity:} If a correct process broadcasts a message, then it
-  eventually
-  delivers it: $\forall p \in C,\, b_p(m) \rightarrow d_p(m)$. \\
+  eventually delivers it. \\
   \textbf{Uniform Agreement:} If a process -- correct or not -- delivers a
-  message,
-  then all correct processes eventually deliver it:\\
-  $\forall p \in P,\, (d_p(m) \implies \forall q \in C,\, d_q(m))$. \\
+  message, then all correct processes eventually deliver it. \\
   \textbf{Uniform Integrity:} A process delivers a message at most once, and
-  only if it was previously broadcast:\\
-  $\forall p \in P,\, \neg(d_p(m) \rightarrow d_p(m)) \wedge$\\$d_p(m) \implies
-  \exists q \in P,\, b_q(m) \rightarrow d_p(m)$.
+  only if it was previously broadcast.
 \end{definition}
 
 \begin{algorithm}[h]
@@ -109,41 +92,58 @@ receive the message directly from the broadcaster or transitively. Thus, all
 correct processes eventually deliver all messages exactly once. This algorithm
 ensures validity, uniform agreement, and uniform integrity.
 
-In addition to reliably conveying messages to all correct processes, broadcast
-protocols can ensure that messages are delivered in a specific order.
+At this point, processes receive and deliver each message exactly once. However,
+R-broadcast delivers messages in any order.  In addition to reliably conveying
+messages to all correct processes, broadcast protocols can ensure that messages
+are delivered in a specific order.
+
+To define a delivery order among messages, we define time in a logical sense
+using Lamport's definition~\cite{lamport1978time}.
+
+\begin{definition}[Happen before~\cite{lamport1978time}]
+  Happen before is a transitive, irreflexive, and antisymmetric relation that
+  defines a strict partial orders of events.  The sending of a message always
+  precedes its receipt.
+\end{definition}
 
 To order messages broadcast from one process, we define FIFO order.
 
 \begin{definition}[FIFO order]
   If a process broadcasts two messages, processes deliver the first before the
-  second:\\
-  $\forall p,\,q \in P,\,$\\$b_p(m) \rightarrow b_p(m') \implies d_q(m) \rightarrow
-  d_q(m')$.
+  second.
 \end{definition}
 
 To order messages broadcast by different processes, we define local order.
 
 \begin{definition}[Local order]
   If a process broadcasts a message after having delivered another message
-  broadcast by another process, processes deliver the latter before the former:\\
-  $\forall p,\,q,\,r,\, \in P,\,p\neq q,\,$\\$b_p(m) \wedge d_q(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+  broadcast by another process, processes deliver the latter before the former.
 \end{definition}
 
 To order messages broadcast by every processes, we define causal order.
 
 \begin{definition}[Causal order]
   The delivery order of messages follows the happen before relationships of the
-  corresponding broadcasts:\\ $\forall
-  p,\,q,\,r \in P,\,$\\$b_p(m) \rightarrow b_q(m') \implies d_r(m) \rightarrow d_r(m')$.
+  corresponding broadcasts.
 \end{definition}
 
-\begin{theorem}[\label{theo:causal}Causal order equivalence]
-  FIFO order and local order is equivalent to causal order.
+\begin{theorem}[\label{theo:causal}Causal order equivalence~\cite{hadzilacos1994modular}]
+  The conjunction of FIFO order and local order is equivalent to causal order.
 \end{theorem}
 
 \begin{definition}[Causal broadcast]
   Causal broadcast is a uniform reliable broadcast ensuring causal order.
 \end{definition}
+
+\begin{theorem}[Constraint flooding in deterministic overlay networks is
+  causal~\cite{friedman2004causal}]
+  In static networks, a broadcast protocol is causal if it uses FIFO links,
+  forwards all broadcast messages exactly once, and uses all its outgoing links.
+\end{theorem}
+
+\TODO{Transition with dynamic (Q varies).}
+
+
 
 \subsection{Operation}
 
