@@ -28,15 +28,33 @@
 \end{figure*}
 
 
+\begin{figure}
+  \begin{center}
+    \input{input/figgeneralsolveA.tex}
+    \caption{Upon receipt of $a$, Process~B forwards $a$ 
+    using FIFO links to all its neighbors. Process~C cannot receive $b$
+    without having received $a$ beforehand. It ensures causal delivery.}
+  \end{center}
+\end{figure}
+
 \begin{figure*}
   \begin{center}
+    % \subfloat[Small network][Upon receipt of $a$, Process~B forwards $a$ 
+    % using FIFO links to all its neighbors. Process~C cannot receive $b$
+    % without having received $a$ beforehand.]
+    % {\input{input/figgeneralsolveA.tex}}
+    % \hspace{20pt}
+%    \subfloat[Large network][It works in larger networks where processes
+%    have partial knowledge of the network membership.]
     \input{./input/figdisseminationtree.tex}
-    \caption{\label{fig:disseminationtree}Dissemination graph preserving causal
-      relationships. For simplicity sake, we hide incoming messages of A and
-      outgoing messages from F. Preventive causal broadcast preserves causal
-      order in static settings. All dissemination paths arriving to F carry $a$
-      before $a'$; and also $a'$ before $c$, $a$ before $b$, $a$ before $e$, $e$
-      before $e'$.}
+    \caption{The principle of preventive causal broadcast works in large
+      networks where processes have partial knowledge of the network membership.}
+    % \caption{\label{fig:disseminationtree}Dissemination graph preserving causal
+    %   relationships. For simplicity sake, we hide incoming messages of A and
+    %   outgoing messages from F. Preventive causal broadcast preserves causal
+    %   order in static settings. All dissemination paths arriving to F carry $a$
+    %   before $a'$; and also $a'$ before $c$, $a$ before $b$, $a$ before $e$, $e$
+    %   before $e'$.}
   \end{center}
 \end{figure*}
 
@@ -262,13 +280,13 @@ Figure~\ref{fig:preventiveproblemC} that $a'$ arrives at Process~D before
 $a$. Figure~\ref{fig:preventiveproblemD} shows that not only it violates causal
 delivery but also propagates the violation to all processes downstream.
 
-We would like a preventive causal broadcast that
+A preventive causal broadcast that
 \begin{inparaenum}[(i)]
 \item ensures causal delivery at marginal cost and that
-\item handles both static and dynamic networks.
+\item handles both static and dynamic networks,
 \end{inparaenum}
-Causal broadcast would finally become affordable and efficient in large and
-dynamic systems.
+would finally make causal broadcast \TODO{safe}, affordable and efficient in
+large and dynamic systems.
 
 % \begin{figure}
 %   \begin{center}
