@@ -79,15 +79,14 @@ number of messages delayed. Consequently,
 it eventually becomes expensive and inefficient.
 
 Instead of checking repeatedly if messages are ready to be delivered, a
-preventive approach~\cite{friedman2004} makes sure that messages arrive ready
-in the first place. Intuitively, the dissemination pattern automatically makes
-sure that no path from a process to any other process carries messages out of
-causal order. It uses FIFO links and systematically forwards received messages
-to all its direct neighbors. Figure~\ref{fig:generalsolveA} shows that when
-Process~B receives $a$, it forwards $a$ to Process~A and process~C. Then it
-broadcasts $b$. Whatever the communication link, message $b$ follows message
-$a$. Thus, Process~C always receives and delivers $a$ before
-$b$. 
+preventive approach~\cite{friedman2004causal} makes sure that messages arrive
+ready in the first place. Intuitively, the dissemination pattern automatically
+makes sure that no path from a process to any other process carries messages out
+of causal order. It uses FIFO links and systematically forwards delivered
+messages. Figure~\ref{fig:generalsolveA} shows that when Process~B receives and
+delivers $a$, it forwards $a$ to Process~A and process~C. Then it broadcasts
+$b$. Whatever the communication link, $b$ follows $a$. Thus, Process~C always
+receives and delivers $a$ before $b$.
 
 Figure~\ref{fig:disseminationtree} shows that preventive broadcast ensures
 causal order in larger networks. In large network, processes cannot afford to
@@ -122,50 +121,6 @@ approach~\cite{friedman2004causal}. It outperforms the reactive approach:
 message overhead is constant; it safely prunes its local structure; message
 delivery time is constant.
 
-However, the latter holds only in static networks where the membership does not
-change and no links are added nor removed~\cite{friedman2004causal}. These are
-not practical assumptions.  In practice, processes may join and leave the
-network at any time; and processes may reconfigure their neighborhood at any
-time.
-
-
-
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figstatic.tex}
-%     \caption{\label{fig:static}Preventive broadcast in static networks.}
-%   \end{center}
-% \end{figure}
-
-% \EXAMPLE{Example of preventive broadcast in static
-%   network.}{Figure~\ref{fig:static} shows a broadcast protocol that ensures
-%   causal delivery by using FIFO channels.  The network is static and comprises 3
-%   processes $p_1$, $p_2$, $p_3$ linked to each other. The figure does not show
-%   messages forwarded by $p_3$ for the sake of clarity.  The processes receive
-%   $m$ and $m'$ multiple times but there exists no link in the paths from $p_2$
-%   to $p_3$ that carries $m'$ without having carried $m$ beforehand. Hence, the
-%   delivery of $m$ always precedes the delivery of $m'$ at any process.}
-
-
-% However, ensuring causal delivery using FIFO links only holds for static
-% networks where membership remains unchanged, and processes cannot add nor remove
-% communication links. As soon as a process adds a communication link to another
-% process, causal delivery may be violated.
-
-% \PAR{Message overhead.}{This approach relies on FIFO links. Each message must
-%   convey only 1 scalar to implement FIFO. Since processes must deliver each
-%   message exactly once, each message also convey a unique identifier, e.g.,
-%   $\langle process\_id,\, increasing\_counter\rangle$. Hence, $O(1)$.}
-
-% \PAR{Local space.}{Since the network is static, each process knows the number of
-%   copies it must receive. It can prune its local structure when it receives the
-%   expected number of copies. We cannot achieve better local space complexity.}
-
-% \PAR{Delivery time.}{Received messages are ready when they arrive. Processes
-%   only check if the received message is a copy of an already delivered
-%   message. It achieves this in constant time.}
-
 
 \begin{figure*}
   \begin{center}
@@ -191,8 +146,13 @@ time.
   \end{center}
 \end{figure*}
 
-Figure~\ref{fig:preventiveproblem} shows an example of message dissemination in
-dynamic settings where causal delivery is violated. In
+
+However, the latter holds only in static networks where the membership does not
+change and no links are added nor removed~\cite{friedman2004causal}. These are
+not practical assumptions.  In practice, processes may join and leave the
+network at any time; and processes may reconfigure their neighborhood at any
+time.  Figure~\ref{fig:preventiveproblem} shows an example of message
+dissemination in dynamic settings where causal delivery is violated. In
 Figure~\ref{fig:preventiveproblemA}, Process~A broadcasts $a$. It sends $a$ to
 all its neighbors. Here, it sends $a$ to Process~B only.  Afterwards, in
 Figure~\ref{fig:preventiveproblemA2}, Process~A adds a link to
@@ -204,13 +164,11 @@ Figure~\ref{fig:preventiveproblemC} that $a'$ arrives at Process~D before
 $a$. Figure~\ref{fig:preventiveproblemD} shows that not only it violates causal
 delivery but also propagates the violation to all processes downstream.
 
-A preventive causal broadcast that
-\begin{inparaenum}[(i)]
-\item ensures causal delivery at marginal cost and that
-\item handles both static and dynamic networks,
-\end{inparaenum}
-would finally make causal broadcast \TODO{safe}, affordable and efficient in
-large and dynamic systems.
+% A preventive causal broadcast ensuring causal delivery at marginal cost and that
+% \item handles both static and dynamic networks,
+% \end{inparaenum}
+% would finally make causal broadcast \TODO{safe}, affordable and efficient in
+% large and dynamic systems.
 
 % \begin{figure}
 %   \begin{center}
@@ -231,13 +189,15 @@ large and dynamic systems.
 %   and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
 % }
 
-The causal broadcast presented in this paper achieve this.
-Table~\ref{table:comparison} shows its complexity. Similarly to the preventive
-approach, complexity stays constant in terms of message overhead and message
-delivery time. The local space complexity is linear in terms of number of
-processes. We conjecture that this bound is minimal in dynamic settings. In
-addition, our algorithm employs another local structure to ensure causal order
-but we show that we can bound it in Algorithm~\ref{algo:boundingbuffer}.
+The causal broadcast presented in this paper is preventive and solves the causal
+order violation issue of dynamic networks.  Table~\ref{table:comparison} shows
+its complexity. Similarly to the preventive approach, complexity stays constant
+in terms of message overhead and message delivery time. The local space
+complexity is linear in terms of number of processes. We conjecture that this
+bound is minimal in dynamic settings. In addition, our algorithm employs another
+local structure to ensure causal order but we show that we can bound it in
+Algorithm~\ref{algo:boundingbuffer}. This makes causal broadcast affordable and
+efficient even in large and dynamic networks.
 
 Next section describes our preventive causal broadcast for large and dynamic
 networks. It details its operation, provides the proofs that it works in both
