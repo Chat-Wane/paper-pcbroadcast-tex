@@ -21,13 +21,39 @@ close to random graphs using \SPRAY~\cite{nedelec2017adaptive}. Networks
 comprises 1k processes. The network is dynamic. Each process' neighborhood $Q$
 changes at least once every 60 seconds. Each exchange involve two processes that
 both add and remove half of their partial view.  Links are FIFO, bidirectional,
-and have transmission delays.\\
+and have transmission delays. The delay increases over time, i.e., the delay for 
+a link to be acknowledged increases during the experiment.\\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the time taken by broadcast messages before being
-delivered by processes. 
+delivered by processes.
 
-\noindent \textbf{Results:} 
+\begin{figure*}
+  \begin{center}
+    \includegraphics[width=1.4\columnwidth]{./img/delay.eps}
+    \caption{\label{fig:delay}Delay in message delivery introduced by \CBROADCAST.}
+  \end{center}
+\end{figure*}
 
+\noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
+experiment. The y-axis depicts the delay set on message transmission for each
+link. The top part of the figure shows the average minimal path length. The
+bottom part of the figure shows the corresponding cardinality of
+buffers. \\
+Figure~\ref{fig:delay} shows that both R-broadcast and \CBROADCAST deliver
+message quickly to all processes. The overlay network guarantee that paths stay
+short and logarithmically scaling with the number of random neighbors in partial
+views. \\
+The top part of Figure~\ref{fig:delay} shows that measurements made on
+\CBROADCAST increases while measurements made on R-broadcast stay
+constant. R-broadcast uses all neighbors provided by \SPRAY while \CBROADCAST
+excludes links still in buffering phase. The more latency on transmission, the
+longer the buffering phase. The bottom part of Figure~\ref{fig:delay} shows that
+the number of elements in the buffers increases accordingly. \\
+Figure~\ref{fig:delay} shows that the growth of path length stays small even
+when transmission delays become high. The number of elements in buffers stays
+small because the buffering phase takes a constant number of hops to complete:
+at most 3 hops. The path length grows even slower, for removing 3 among 17 links
+has restricted impact on overlay networks close to random graphs.
 
 %%% Local Variables:
 %%% mode: latex
