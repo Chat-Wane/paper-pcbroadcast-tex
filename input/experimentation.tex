@@ -2,9 +2,31 @@
 \section{Experimentation}
 \label{sec:experimentation}
 
-\TODO{Define what we want.} We measure the time between the broadcast of a
-message and its delivery by all processes in the network. We expect that our
-measurements slowly increase as the network becomes more dynamic.
+% \TODO{Define what we want.} We measure the time between the broadcast of a
+% message and its delivery by all processes in the network. We expect that our
+% measurements slowly increase as the network becomes more dynamic.
+
+In this section, we evaluate the impact of \CBROADCAST on the message
+delivery. The experiments run on the \PEERSIM
+simulator~\cite{montresor2009peersim} that allows simulations to reach high
+scale in terms of number of processes. Our implementation is available on the
+Github platform\footnote{\url{http://github.com/chat-wane/peersim-pcbroadcast}}.
+
+
+\noindent \textbf{Objective:} To observe the delay introduced by \CBROADCAST on
+message delivery. We expect the delay to increase as the latency increase.
+
+\noindent \textbf{Description:} We build an overlay network with a topology
+close to random graphs using \SPRAY~\cite{nedelec2017adaptive}. Networks
+comprises 1k processes. The network is dynamic. Each process' neighborhood $Q$
+changes at least once every 60 seconds. Each exchange involve two processes that
+both add and remove half of their partial view.  Links are FIFO, bidirectional,
+and have transmission delays.\\
+We measure the shortest path length from a random set of processes to all other
+processes. It represents the time taken by broadcast messages before being
+delivered by processes. 
+
+\noindent \textbf{Results:} 
 
 
 %%% Local Variables:
