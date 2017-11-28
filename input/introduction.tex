@@ -2,16 +2,19 @@
 \section{Introduction}
 
 
-Broadcasting~\cite{hadzilacos1994modular} is a fundamental communication
-mechanism for numerous distributed
-protocols~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
-applications~\cite{nedelec2016crate}.  Broadcast protocols ensure that all
-connected processes receive and deliver each broadcast message exactly once. In
-large scale networks, gossiping constitutes an efficient way to broadcast
-messages (\REF): processes build an overlay network by maintaining small local
-view of the network membership (\REF) and each broadcast message reach all
-processes either directly or transitively via forwarding. These views change
-constantly for systems generally run in highly dynamic environments where
+Causal broadcast~\cite{hadzilacos1994modular} is a fundamental communication
+mechanism for numerous distributed protocols and applications (\REF).
+% ~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
+% ~\cite{nedelec2016crate}.
+It ensure that all connected processes deliver each broadcast message exactly
+once following the happen before
+relationship~\cite{lamport1978time,schwarz1994detecting}.
+
+In large scale networks, gossiping constitutes the most efficient mean to
+broadcast messages (\REF): processes build an overlay network by maintaining
+small local view of the network membership (\REF) and each broadcast message
+reach all processes either directly or transitively via forwarding. These views
+change constantly for systems generally run in highly dynamic environments where
 processes can join, leave, or self-reconfigure at any
 time~\cite{mostefaoui2005static}.
 
@@ -19,10 +22,12 @@ time~\cite{mostefaoui2005static}.
 % processes. Processes can join or leave the network at any moment. Processes can
 % communicate with each other. Broadcasting is a communication mean where a
 % message sent by a process will reach all other processes of the network.
-In this paper, we focus on causal broadcast. The order of message delivery
-follows the happen before
-relationship~\cite{lamport1978time,schwarz1994detecting}. This alleviates
-systems from the burden of tracking causality between its operations.
+
+% In this paper, we focus on causal broadcast. The order of message delivery
+% follows the happen before
+% relationship~\. This alleviates
+% systems from the burden of tracking causality between its operations.
+
 % For instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF)
 % and collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
 % conflict-free replicated data
@@ -33,48 +38,79 @@ systems from the burden of tracking causality between its operations.
 % For instance, distributed collaborative editors perform deletion immediately,
 % for causal broadcast already guaranteed that the message containing the
 % corresponding insertion was delivered beforehand.
-Unfortunately, accurate causality tracking has proven expensive especially in
-large and dynamic networks~\cite{charronbost1991concerning}. Most approaches are
-reactive: they check if preceding messages are missing at each receipt and
-deliver or delay the message accordingly. They either
-\begin{inparaenum}[(i)]
-\item piggyback preceding messages in new broadcast
-  messages~\cite{birman1987reliable,hadzilacos1993fault},
-\item or maintain and send vector clocks along with new broadcast
-  messages~\cite{fidge1988timestamps,mattern1989virtual}.
-\end{inparaenum}
-Approaches reduce the size of vectors either by
-\begin{inparaenum}[(a)]
-\item maintaining local structures to send the least amount of changing
-  data~\cite{singhal1992efficient}, or by
-% \item relaxing the causal order using probabilistic
-%   structures~\cite{mostefaoui2017probabilistic}, or by
-\item constraining the network topology (\REF).
-\end{inparaenum}
-None of these approaches scales in large and dynamic networks, for
-% they overload each message with linearly increasing data
-% structures. % that depend of the number of processes or the number of messages.
-generated traffic and delivery time of messages increase linearly with the
-number of processes.
 
-Causal broadcast can be preventive~\cite{friedman2004causal}: processes receive
-messages that are immediately ready for causal delivery. It overloads messages
-with constant size control information, for it uses FIFO communication
-links. Delivery time of messages is constant, for it only discards message
-duplicates. Nothing limits the scalability of the system.  However, these highly
-desirable properties only hold in static environments where processes cannot
-join nor leave nor self-reconfigure. Any change in network membership may lead
-to causal delivery violations. A preventive causal broadcast that generalizes
-these complexity to dynamic networks would finally make causal broadcast
-\TODO{safe}, affordable and efficient in large and dynamic systems.
+
+\begin{table}
+  \caption{\label{table:comparison} Space and time complexity of causal
+    broadcast protocols. 
+    $N$ is the number of processes. 
+    $W$ is the number of messages received but waiting to be delivered.
+    $P$ is the number of messages that are not yet purged.
+    $B$ is the size of a set of temporary buffers.}
+  \input{input/tableoverlayvstimestamp.tex}
+\end{table}
+
+Unfortunately, causal broadcast has proven expensive in this
+context~\cite{charronbost1991concerning}. Table~\ref{table:comparison} shows
+that state-of-the-art protocols (\REF) for causal broadcast in dynamic systems
+are reactive and induce linear overhead on messages, linear local space
+consumption, and linear execution time on delivery. They eventually become
+costly and inefficient in large and dynamic networks.
+
+% \begin{inparaenum}[(i)]
+% \item piggyback preceding messages in new broadcast
+%   messages~\cite{birman1987reliable,hadzilacos1993fault},
+% \item or maintain and send vector clocks along with new broadcast
+%   messages~\cite{fidge1988timestamps,mattern1989virtual}.
+% \end{inparaenum}
+% Approaches reduce the size of vectors either by
+% \begin{inparaenum}[(a)]
+% \item maintaining local structures to send the least amount of changing
+%   data~\cite{singhal1992efficient}, or by
+% % \item relaxing the causal order using probabilistic
+% %   structures~\cite{mostefaoui2017probabilistic}, or by
+% \item constraining the network topology (\REF).
+% \end{inparaenum}
+% None of these approaches scales in large and dynamic networks, for
+% % they overload each message with linearly increasing data
+% % structures. % that depend of the number of processes or the number of messages.
+% generated traffic and delivery time of messages increase linearly with the
+% number of processes.
+
+% Causal broadcast can be preventive~\cite{friedman2004causal}: processes receive
+% messages that are immediately ready for causal delivery. It overloads messages
+% with constant size control information, for it uses FIFO communication
+% links. Delivery time of messages is constant, for it only discards message
+% duplicates. Nothing limits the scalability of the system.  However, these highly
+% desirable properties only hold in static environments where processes cannot
+% join nor leave nor self-reconfigure. Any change in network membership may lead
+% to causal delivery violations. A preventive causal broadcast that generalizes
+% these complexity to dynamic networks would finally make causal broadcast
+% \TODO{safe}, affordable and efficient in large and dynamic systems.
 
 In this paper, we break the scalability barriers of causal broadcast for large
-and dynamic networks. We propose a uniform reliable broadcast that outperforms
-state-of-the-art in size of broadcast messages, execution time complexity, and
-local space complexity. Our approach belongs to preventive causal
-broadcast. Message overhead is constant. Message delivery time is
-constant. Local space complexity is that of reliable broadcast plus buffers of
-messages the size of which can be bounded.
+and dynamic networks. Table~\ref{table:comparison} shows that instead of being
+reactive, protocols can be preventive. Instead of checking at each receipt if
+the message is ready to be delivered, messages arrive ready by design. % This
+% removes the need for broadcast messages to convey control information.  
+Instead of linear complexity in message overhead and delivery execution time, it
+has constant complexity in the corresponding fields. However, this holds for
+static networks only where no process joins or leaves or self-reconfigures over
+time. 
+
+We extend the preventive protocol to work on dynamic settings. We prove that it
+ensures causal order
+
+
+
+
+% We propose a uniform reliable broadcast that outperforms state-of-the-art in
+% size of broadcast messages, execution time complexity, and local space
+% complexity. Our approach belongs to preventive causal broadcast. Message
+% overhead is constant. Message delivery time is constant. Local space complexity
+% is that of reliable broadcast plus buffers of messages the size of which can be
+% bounded.
+
 %% ensures causal delivery without any message overhead.
 % To provide causal order, most state-of-the-art approaches are
 % reactive~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient},
@@ -82,8 +118,8 @@ messages the size of which can be bounded.
 % violations. On the opposite our approach is
 % preventive~\cite{birman1987reliable,friedman2004causal}, for messages are
 % immediately delivered on receipt without risk of causality violations.
-We prove that our causal broadcast protocol handles both static and dynamic
-networks. \TODO{Experiment.}
+% We prove that our causal broadcast protocol handles both static and dynamic
+% networks. \TODO{Experiment.}
 % relies on lightweight assumptions but contrarily to the former, we prove that it
 % handles both static and dynamic networks.
 
