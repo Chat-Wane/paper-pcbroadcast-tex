@@ -2,38 +2,56 @@
 \section{Background and motivations}
 \label{sec:motivations}
 
-Broadcast protocols ensure that all connected processes receive and deliver each
-broadcast message~\cite{hadzilacos1994modular}. Applications often require more
-guarantees on message delivery to ensure consistency criteria (\REF). We focus
-on guaranteeing causal order on message delivery: messages must be delivered
-following the happen before relationship~\cite{lamport1978time}.
+Causal broadcast ensures that all connected processes deliver each broadcast
+message exactly once~\cite{hadzilacos1994modular} following the happen before
+relationship~\cite{lamport1978time}.
+
+% \begin{figure*}
+%   \begin{center}
+%     \subfloat[Part A][\label{fig:generalproblemA}Process~A broadcasts $a$.]
+%     {\input{input/figgeneralproblemA.tex}}
+%     \hspace{20pt}
+%     \subfloat[Part B][\label{fig:generalproblemB}Process~B receives and
+%     delivers $a$ then broadcasts $b$.]
+%     {\input{input/figgeneralproblemB.tex}}
+%     \hspace{20pt}
+%     \subfloat[Part C][\label{fig:generalproblemC}Process~C receives $b$
+%     before $a$. The immediate delivery of $b$ violates causal order.]
+%     {\input{input/figgeneralproblemC.tex}}
+%     \caption{\label{fig:generalproblem}Causal order violation in network
+%       without causal broadcast.}
+%   \end{center}
+% \end{figure*}
+
 
 \begin{figure*}
   \begin{center}
-    \subfloat[Part A][\label{fig:generalproblemA}Process~A broadcasts $a$.]
+    \subfloat[Part A][\label{fig:generalsolveA}Process~A broadcasts $b$.]
     {\input{input/figgeneralproblemA.tex}}
     \hspace{20pt}
-    \subfloat[Part B][\label{fig:generalproblemB}Process~B receives and
-    delivers $a$ then broadcasts $b$.]
-    {\input{input/figgeneralproblemB.tex}}
+    \subfloat[Part B][\label{fig:generalsolveB}Process~B receives and 
+    delivers $a$. Process~B forwards $a$ using FIFO links.]
+    {\input{input/figgeneralsolveA.tex}}
     \hspace{20pt}
-    \subfloat[Part C][\label{fig:generalproblemC}Process~C receives $b$
-    before $a$. The immediate delivery of $b$ violates causal order.]
-    {\input{input/figgeneralproblemC.tex}}
-    \caption{\label{fig:generalproblem}Causal order violation in network
-      without causal broadcast.}
+    \subfloat[Part C][\label{fig:generalsolveC}Process~C cannot receive $b$
+    without having received $a$ beforehand. It ensures causal delivery.]
+    {\input{input/figgeneralsolveB.tex}}
+    \hspace{20pt}
+    \subfloat[Part D][\label{fig:generalsolveD}meow.]
+    {\input{input/figgeneralsolveC.tex}}
+    \caption{\label{fig:generalsolve}Preventive broadcast principle ensures
+      causal order.}
   \end{center}
 \end{figure*}
 
-
-\begin{figure}
-  \begin{center}
-    \input{input/figgeneralsolveA.tex}
-    \caption{\label{fig:generalsolveA} Upon receipt of $a$, Process~B forwards
-      $a$ using FIFO links to all its neighbors. Process~C cannot receive $b$
-      without having received $a$ beforehand. It ensures causal delivery.}
-  \end{center}
-\end{figure}
+% \begin{figure}
+%   \begin{center}
+%     \input{input/figgeneralsolveA.tex}
+%     \caption{\label{fig:generalsolveA} Upon receipt of $a$, Process~B forwards
+%       $a$ using FIFO links to all its neighbors. Process~C cannot receive $b$
+%       without having received $a$ beforehand. It ensures causal delivery.}
+%   \end{center}
+% \end{figure}
 
 \begin{figure*}
   \begin{center}
@@ -44,47 +62,46 @@ following the happen before relationship~\cite{lamport1978time}.
   \end{center}
 \end{figure*}
 
-Figure~\ref{fig:generalproblem} illustrates the need of an additional mechanism
-to ensure causal delivery of messages. It depicts a network comprising 3
-processes connected to each other. In Figure~\ref{fig:generalproblemA},
-Process~A broadcasts a message $a$, hence sends it to both Process~B and
-Process~C.  In Figure~\ref{fig:generalproblemB}, Process~B receives and delivers
-$a$ then broadcasts $b$. Causal order states that all processes of the network
-must deliver $a$ before $b$. However, in Figure~\ref{fig:generalproblemC}, we
-see that Process~C receives $b$ while $a$ is still traveling. Consequently, to
-ensure causal order Process~C must know on receipt of $b$ that it depends of
-another message $a$, an delay the delivery of $b$ until the receipt and delivery
-of $a$.
+% Figure~\ref{fig:generalproblem} illustrates the need of an additional mechanism
+% to ensure causal delivery of messages. It depicts a network comprising 3
+% processes connected to each other. In Figure~\ref{fig:generalproblemA},
+% Process~A broadcasts a message $a$, hence sends it to both Process~B and
+% Process~C.  In Figure~\ref{fig:generalproblemB}, Process~B receives and delivers
+% $a$ then broadcasts $b$. Causal order states that all processes of the network
+% must deliver $a$ before $b$. However, in Figure~\ref{fig:generalproblemC}, we
+% see that Process~C receives $b$ while $a$ is still traveling. Consequently, to
+% ensure causal order Process~C must know on receipt of $b$ that it depends of
+% another message $a$, an delay the delivery of $b$ until the receipt and delivery
+% of $a$.
 
-\begin{table}
-  \caption{\label{table:comparison} Space and time complexity of causal
-    broadcast protocols. 
-    $N$ is the number of processes. 
-    $W$ is the number of messages received but waiting to be delivered.
-    $P$ is the number of messages that are not yet purged.
-    $B$ is the size of a set of temporary buffers.}
-  \input{input/tableoverlayvstimestamp.tex}
-\end{table}
-
-This is the principle of reactive
-approaches~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}.
-Table~\ref{table:comparison} shows the complexity of a vector clock-based
-representative~\cite{schwarz1994detecting}.  Each broadcast message conveys
-control information the size of which increases linearly with the number of
-processes. Each process must check at each receipt if the message is ready for
-causal delivery which takes linear time in terms of number of processes and
-number of messages delayed. Consequently, 
-% even if its operation works in dynamic
-%networks where membership changes over time, 
-it eventually becomes expensive and inefficient.
+% This is the principle of reactive
+% approaches~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}.
+% Table~\ref{table:comparison} shows the complexity of a vector clock-based
+% representative~\cite{schwarz1994detecting}.  Each broadcast message conveys
+% control information the size of which increases linearly with the number of
+% processes. Each process must check at each receipt if the message is ready for
+% causal delivery which takes linear time in terms of number of processes and
+% number of messages delayed. Consequently, 
+% % even if its operation works in dynamic
+% %networks where membership changes over time, 
+% it eventually becomes expensive and inefficient.
 
 Instead of checking repeatedly if messages are ready to be delivered, a
 preventive approach~\cite{friedman2004causal} makes sure that messages arrive
-ready in the first place. Intuitively, the dissemination pattern automatically
-makes sure that no path from a process to any other process carries messages out
-of causal order. It uses FIFO links and systematically forwards delivered
-messages. Figure~\ref{fig:generalsolveA} shows that when Process~B receives and
-delivers $a$, it forwards $a$ to Process~A and process~C. Then it broadcasts
+ready in the first place.  It uses FIFO links and systematically forwards
+delivered messages.  Intuitively, the dissemination pattern automatically makes
+sure that no path from a process to any other process carries messages out of
+causal order.
+
+Figure~\ref{fig:generalsolve} depicts the principle of the original preventive
+approach. The network comprises 3 processes connected to each other with FIFO
+links.  In Figure~\ref{fig:generalsolveA}, Process~A broadcasts $b$. It sends
+$a$ to Process~B and Process~C. In Figure~\ref{fig:generalsolveB}, Process~B
+receives and delivers $a$, forwards $a$ to Process~A and Process~C. Then, it
+broadcasts $b$. It sends $b$ to Process~A and Process~C. 
+
+Figure~\ref{fig:generalsolveA} shows that when Process~B receives and delivers
+$a$, it forwards $a$ to Process~A and process~C. Then it broadcasts
 $b$. Whatever the communication link, $b$ follows $a$. Thus, Process~C always
 receives and delivers $a$ before $b$.
 
