@@ -10,52 +10,18 @@ It ensure that all connected processes deliver each broadcast message exactly
 once following the happen before
 relationship~\cite{lamport1978time,schwarz1994detecting}.
 
-In large scale networks, gossiping constitutes the most efficient mean to
-broadcast messages (\REF): processes build an overlay network by maintaining
-small local view of the network membership (\REF) and each broadcast message
-reach all processes either directly or transitively via forwarding. These views
-change constantly for systems generally run in highly dynamic environments where
-processes can join, leave, or self-reconfigure at any
-time~\cite{mostefaoui2005static}.
+% In large scale and dynamic networks, gossiping constitutes the most efficient mean to
+% broadcast messages (\REF): processes build an overlay network by maintaining
+% small local view of the network membership (\REF) and each broadcast message
+% reach all processes either directly or transitively via forwarding. 
 
-% A dynamic network~\cite{mostefaoui2005static} comprises interconnected
-% processes. Processes can join or leave the network at any moment. Processes can
-% communicate with each other. Broadcasting is a communication mean where a
-% message sent by a process will reach all other processes of the network.
-
-% In this paper, we focus on causal broadcast. The order of message delivery
-% follows the happen before
-% relationship~\. This alleviates
-% systems from the burden of tracking causality between its operations.
-
-% For instance, distributed data stores such as Riak, Dynamo, or Cassandra (\REF)
-% and collaborative editors such as Crate, or Peerpad (\REF) make extensive use of
-% conflict-free replicated data
-% types~\cite{shapiro2011comprehensive,shapiro2011conflict}. They feature addition
-% and deletion of elements. A deletion must follow the corresponding addition, for
-% the sake of eventual consistency~\cite{bailis2013eventual}. Causal broadcast
-% relieves these applications from continuously checking such constraints.
-% For instance, distributed collaborative editors perform deletion immediately,
-% for causal broadcast already guaranteed that the message containing the
-% corresponding insertion was delivered beforehand.
-
-
-\begin{table}
-  \caption{\label{table:comparison} Space and time complexity of causal
-    broadcast protocols. 
-    $N$ is the number of processes. 
-    $W$ is the number of messages received but waiting to be delivered.
-    $P$ is the number of messages that are not yet purged.
-    $B$ is the size of a set of temporary buffers.}
-  \input{input/tableoverlayvstimestamp.tex}
-\end{table}
-
-Unfortunately, causal broadcast has proven expensive in this
-context~\cite{charronbost1991concerning}. Table~\ref{table:comparison} shows
-that state-of-the-art protocols (\REF) for causal broadcast in dynamic systems
-are reactive and induce linear overhead on messages, linear local space
-consumption, and linear execution time on delivery. They eventually become
-costly and inefficient in large and dynamic networks.
+Unfortunately, causal broadcast has proven expensive in in large and dynamic
+environments where processes can join, leave, or self-reconfigure at any
+time~\cite{charronbost1991concerning}. Table~\ref{table:comparison} shows that
+state-of-the-art protocols (\REF) for causal broadcast in dynamic systems are
+reactive and induce linear overhead on messages, linear local space consumption,
+and linear execution time on delivery. They eventually become overcostly and
+inefficient.
 
 % \begin{inparaenum}[(i)]
 % \item piggyback preceding messages in new broadcast
@@ -90,19 +56,36 @@ costly and inefficient in large and dynamic networks.
 
 In this paper, we break the scalability barriers of causal broadcast for large
 and dynamic networks. Table~\ref{table:comparison} shows that instead of being
-reactive, protocols can be preventive. Instead of checking at each receipt if
-the message is ready to be delivered, messages arrive ready by design. % This
-% removes the need for broadcast messages to convey control information.  
-Instead of linear complexity in message overhead and delivery execution time, it
-has constant complexity in the corresponding fields. However, this holds for
-static networks only where no process joins or leaves or self-reconfigures over
-time. 
-
-We extend the preventive protocol to work on dynamic settings. We prove that it
-ensures causal order
-
-
-
+reactive, protocols can be preventive: instead of checking at each receipt if
+the message is ready to be delivered, messages arrive ready by design.
+% This removes the need for broadcast messages to convey control information.
+This difference reduces the complexity of message overhead and delivery
+execution time from linear to constant.
+% Instead of linear complexity in message overhead and delivery execution time,
+% it has constant complexity in the corresponding fields.
+However, this preventive approach does not ensure causal order for dynamic
+networks.
+% only for static networks where no process joins or leaves or self-reconfigures
+% over time.
+Our contribution is fourfold:
+\begin{itemize}
+\item We extend the preventive protocol to dynamic settings. Compared to the
+  original protocol, it only makes use of temporary buffers of messages to
+  ensure that new communication means cannot infringe causal order.
+\item We provide the formal proof that our broadcast protocol ensures causal
+  order for static and dynamic networks.
+\item We provide the complexity analysis of our broadcast
+  protocol. Table~\ref{table:comparison} shows that, like the original
+  preventive approach, it has constant size overhead on messages, and constant
+  delivery execution time.
+\item We provide an experimentation highlighting the negative impact of our
+  protocol on transmission delays before delivery. It shows that even under bad
+  network conditions and high dynamicity, the negative impact remains
+  negligible.
+\end{itemize}
+Consequently, causal broadcast finally becomes an affordable and efficient
+middleware for distributed protocols and applications in large and dynamic
+networks.
 
 % We propose a uniform reliable broadcast that outperforms state-of-the-art in
 % size of broadcast messages, execution time complexity, and local space
@@ -129,6 +112,16 @@ ensures causal order
 % trade-offs such as the number of messages sent by each process, or the number of
 % hops before a broadcast message reach all processes, are independent of our
 % protocol and only depends of the peer-sampling protocol.
+
+\begin{table}
+  \caption{\label{table:comparison} Space and time complexity of causal
+    broadcast protocols. 
+    $N$ is the number of processes. 
+    $W$ is the number of messages received but waiting to be delivered.
+    $P$ is the number of messages that are not yet purged.
+    $B$ is the size of a set of temporary buffers.}
+  \input{input/tableoverlayvstimestamp.tex}
+\end{table}
 
 The rest of this paper is organized as follows: Section~\ref{sec:motivations}
 shows the background and motivations of our
