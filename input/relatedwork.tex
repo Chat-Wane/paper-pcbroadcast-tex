@@ -36,7 +36,7 @@ vector approaches and their following compaction approaches.
   \textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
   linearly in terms of number of processes that ever broadcast a message.
   Paper~\cite{almeida2008interval} reduces this complexity to depend of the
-  actual number of processes in the network. Still, these approaches do not
+  actual number of processes in the network.  Still, these approaches do not
   scale, particularly in dynamic networks subject to churn and
   failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
   sacrifices on causality tracking accuracy: messages may be delivered out of
@@ -44,34 +44,34 @@ vector approaches and their following compaction approaches.
   depends of the desired boundary. In comparison to these vector-based
   approaches, our broadcast cannot compare any pair of messages. Nevertheless,
   accurate causal delivery is a feature provided by default by the propagation
-  scheme. It frees up messages from the need to piggyback any control
+  scheme. It alleviates messages from the need to piggyback heavy control
   information~\cite{friedman2004causal}.}
 
-\PAR{Topological approaches.}{A trivial way to ensure causal delivery of
-messages without message overhead consists in building an overlay network shaped
-as a ring: each broadcast message loops once in FIFO order (\REF).
-Unfortunately, maintaining a specific topology can prove costly in dynamic
-networks subject to churn. Our approach relies on a peer-sampling protocol
-\TODO{(Relies on R-broadcast that relies on such psp)} but we make no assumption
-on the built topology. One can choose the most suitable topology depending on
-network settings. For instance, random peer-sampling
-protocols~\cite{jelasity2007gossip} have a low upkeep and guarantee a connected
-network even in dynamic settings.}
+% \PAR{Topological approaches.}{A trivial way to ensure causal delivery of
+% messages without message overhead consists in building an overlay network shaped
+% as a ring: each broadcast message loops once in FIFO order (\REF).
+% Unfortunately, maintaining a specific topology can prove costly in dynamic
+% networks subject to churn. Our approach relies on a peer-sampling protocol
+% \TODO{(Relies on R-broadcast that relies on such psp)} but we make no assumption
+% on the built topology. One can choose the most suitable topology depending on
+% network settings. For instance, random peer-sampling
+% protocols~\cite{jelasity2007gossip} have a low upkeep and guarantee a connected
+% network even in dynamic settings.}
 
-\TODO{Explain super-peer approaches.}
+% \TODO{Explain super-peer approaches.}
 
-\TODO{Inter-group broadcast is a kind of topological approach.}
+% \TODO{Inter-group broadcast is a kind of topological approach.}
 
-\PAR{Inter-group
-  broadcast~\cite{johnson1998scalable,johnson1999intergroup}.}{Inter-group
-broadcast allows processes to broadcast messages to members of several
-inter-connected networks. Paper~\cite{johnson1999intergroup} states that
-inter-group causal broadcast is ensured when groups that internally ensure
-causal broadcast are linked together by communication channels that ensure FIFO
-ordering of messages. One can employ these approaches to cluster the network in
-subsystems. Control information in messages depends of the size of each small
-subsystem. Our approach is an extreme case where each process is a
-subsystem.}
+% \PAR{Inter-group
+%   broadcast~\cite{johnson1998scalable,johnson1999intergroup}.}{Inter-group
+% broadcast allows processes to broadcast messages to members of several
+% inter-connected networks. Paper~\cite{johnson1999intergroup} states that
+% inter-group causal broadcast is ensured when groups that internally ensure
+% causal broadcast are linked together by communication channels that ensure FIFO
+% ordering of messages. One can employ these approaches to cluster the network in
+% subsystems. Control information in messages depends of the size of each small
+% subsystem. Our approach is an extreme case where each process is a
+% subsystem.}
 
 %% The union of paths taken by broadcast messages builds a diffusion tree, i.e.,
 %% a directed acyclic graph, that may change at each broadcast.

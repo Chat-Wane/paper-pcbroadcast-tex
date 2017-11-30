@@ -19,11 +19,12 @@ platform\footnote{\url{http://github.com/chat-wane/peersim-pcbroadcast}}.
 increase.
 
 \noindent \textbf{Description:} We build an overlay network with a topology
-close to random graphs using \SPRAY~\cite{nedelec2017adaptive}. Networks
-comprises 1k processes. The network is dynamic. Each process' neighborhood $Q$
-changes at least once every 60 seconds. Each exchange involve two processes that
-both add and remove half of their partial view.  Links are FIFO, bidirectional,
-and have transmission delays. The delay increases over time, i.e., the delay for 
+close to random graphs using \SPRAY~\cite{nedelec2017adaptive}. The overlay
+networks comprises 1k, and 10k processes. Networks are dynamic. Each process'
+neighborhood $Q$ changes at least once every 60 seconds. Each exchange involve
+two processes that both add and remove half of their partial view.  Links are
+FIFO, bidirectional, and have transmission delays. The delay increases over
+time, i.e., the delay for
 a link to be acknowledged increases during the experiment.\\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the time taken by broadcast messages before being
@@ -77,9 +78,8 @@ size of which scale linearly with the network size (e.g. each message convey a
 vector clock of 10k entries when the network comprises 10k processes).  Larger
 packets induces larger transmission time. \TODO{Move this to related work?}
 
-\TODO{Transition.}
-% The next section reviews state-of-the-art techniques designed to maintain causal
-% order among messages.
+The next section reviews state-of-the-art techniques designed to maintain causal
+order among messages.
 
 %%% Local Variables:
 %%% mode: latex
