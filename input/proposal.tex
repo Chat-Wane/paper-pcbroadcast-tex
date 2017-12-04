@@ -200,7 +200,7 @@ Line~\ref{line:rbroadcast},~\ref{line:rdeliver}).
 \begin{proof}
   In static networks, \CBROADCAST only executes the instructions of reliable
   broadcast. Reliable broadcast along with FIFO links ensures causal broadcast.
-  The proof can be found in Paper~\cite{friedman2004causal}.
+  The proof can be found in~\cite{friedman2004causal}.
 \end{proof}
 
 The removal of links and the departure of processes are not an issue, for it
@@ -223,16 +223,21 @@ instructions for such cases.
   network partitions.  Removing a link does not change the delivery order of
   causally related messages. Identically to the proof of
   Theorem~\ref{theo:static}, our causal broadcast only executes instructions of
-  reliable broadcast in such cases. The proof can be found in
-  Paper~\cite{friedman2004causal}.
+  reliable broadcast in such cases. The proof can be found
+  in~\cite{friedman2004causal}.
 \end{proof}
 
 Our causal broadcast becomes more sophisticated when the process adds links.
 Figure~\ref{fig:preventiveproblem} shows the issue with link additions.  New
 links may act as shortcut for messages. First messages that travel through new
 links may arrive before preceding messages that took longer paths. New links
-create additional diffusion paths that potentially disorder messages.  Solving
-this issue requires that even new links convey all messages in the right
+create additional diffusion paths that potentially disorder messages. 
+
+A link is safe to use when it cannot send message that would violate causal
+order. A new link becomes safe to use once it conveyed all broadcast messages in
+causal order.
+
+Solving this issue requires that even new links convey all messages in the right
 order. Sending all broadcast messages since the beginning would be too
 costly. Instead, a process $p$ creating a link to a process $q$ needs to know
 the messages received by $q$ to send potentially missing messages in the right
@@ -298,13 +303,15 @@ transitively through Process~B.
   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
   validity, uniform agreement, uniform integrity, and causal order -- that is
   FIFO order and local order. \\
-  \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST is an
-  R-broadcast. \\
-  \textbf{FIFO:} Suppose a process $p$ broadcasts $m$ before $m'$. Consider that
-  a correct process $q$ delivers $m'$. We must show that $q$ delivers $m$ before
-  $m'$.  Since adding a FIFO link from a Process $r$ to any other Process $s$ is
-  like adding potential FIFO paths from $p$ to $q$, we summarize this as a link
-  from $p$ to $q$ with arbitrary settings but still FIFO.  \TODO{Should this be
+  \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST extends
+  R-broadcast. Consequently, it ensures all 3 properties. \\
+  \textbf{FIFO order:} Suppose a process $p$ broadcasts $m$ before
+  $m'$. Consider that a correct process $q$ delivers $m'$. We must show that $q$
+  delivers $m$ before $m'$. \\
+  Since adding a FIFO link from a process $r$ to any
+  other process $s$ is like adding potential FIFO paths from $p$ to $q$, we
+  summarize this as a link from $p$ to $q$ with arbitrary settings but still
+  FIFO.  \TODO{Should this be
     a proof?  Maybe a proof of equivalent model if kept}. \\
   Since Process $q$ delivers $m'$ it either received $m'$ from already well
   established links, or from the new one. In the former case, the proof is
@@ -367,16 +374,16 @@ transitively through Process~B.
   % $m'$ after acknowledgement. It corresponds to the static network (see proof of
   % Theorem~\ref{theo:static}).
   % In any case, process $q$ delivers $m$ before $m'$. \\
-  \textbf{Local:} Since broadcast and forward have identical instructions, the
-  proof is identical to that of FIFO order. \\
+  \textbf{Local order:} Since broadcast and forward have identical instructions,
+  the proof is identical to that of FIFO order. \\
   % Suppose a process $p$ delivers $m$ before broadcasting $m'$. Consider a
   % correct process $q$ that delivers $m'$. We must show that $q$ delivers $m$
   % before $m'$. Just as the proof for Theorem~\ref{theo:static}, the difference
   % in our Algorithm compared to FIFO order demonstration is that Process $q$ may
   % have already received -- or is the origin of the broadcast of --
   % $m$. \TODO{Not over}  
-  \textbf{Causal:} From Theorem~\ref{theo:causal}, since \CBROADCAST ensures
-  both FIFO order and local order, it ensures causal order.
+  \textbf{Causal order:} From Theorem~\ref{theo:causal}, since \CBROADCAST
+  ensures both FIFO order and local order, it ensures causal order.
 \end{proof}
 
 \begin{theorem}[\CBROADCAST is a causal broadcast]
