@@ -26,7 +26,7 @@
 
 \Buffer {} {
 
-  \Upon{\textup{sendLocked}($from,\, to,\, id$)}{
+  \Upon{\textup{ping}($from,\, to,\, id$)}{
     \lIf{$q \not\in R$} {$R[q] \leftarrow 0$}
     $I[id] \leftarrow to$ \;
   }

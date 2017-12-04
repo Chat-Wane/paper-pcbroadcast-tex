@@ -32,16 +32,16 @@ delivered by processes.
 
 \begin{figure*}
   \begin{center}
-    \includegraphics[width=1.4\columnwidth]{./img/delay.eps}
+    \includegraphics[width=1.5\columnwidth]{./img/delay.eps}
     \caption{\label{fig:delay}Delay in message delivery introduced by \CBROADCAST.}
   \end{center}
 \end{figure*}
 
 \noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
 experiment. The y-axis depicts the delay set on message transmission for each
-link. The top part of the figure shows the average minimal path length. The
-bottom part of the figure shows the number of unsafe links that cannot be used 
-for causal broadcast yet.
+link. The top part of the figure shows the average shortest path length. The
+bottom part of the figure shows the average number of unsafe links per process
+that cannot be used for causal broadcast yet.
 \begin{itemize}[leftmargin=*]
 \item Figure~\ref{fig:delay} shows that both R-broadcast and \CBROADCAST deliver
   message quickly to all processes. The overlay network guarantee that paths

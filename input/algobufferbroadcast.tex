@@ -23,26 +23,26 @@
   \Upon{\textup{open}($q$)} {
     \If{$|Q|>1$} {
       $counter \leftarrow counter+1$ \;
-      $Q \leftarrow Q \setminus q$ \;
+      $Q \leftarrow Q \setminus q$ \tcp*{is unsafe}
       $B[q] \leftarrow \varnothing$ \;
-      $\textup{sendLocked}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
+      $\textup{ping}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
     }
   }
   
   \BlankLine
   
-  \Upon{\textup{receiveLocked}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
-    $\textup{sendAck}(from,\, to,\, id)$ \label{line:sendack} \;
+  \Upon{\textup{receivePing}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
+    $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \;
   }
   
   \BlankLine
   
-  \Upon{\textup{receiveAck}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
+  \Upon{\textup{receivePong}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
     \If {$to \in B$} {
       \lForEach {$m \in B[to]$} {$\textup{sendTo}(to,\, m)$
         \label{line:emptybuffer}}
       $B \leftarrow B \setminus to$ \;
-      $Q \leftarrow Q \cup to$ \;
+      $Q \leftarrow Q \cup to$ \tcp*{now safe}
     }
   }
   
