@@ -25,14 +25,14 @@
       $counter \leftarrow counter+1$ \;
       $Q \leftarrow Q \setminus q$ \tcp*{is unsafe}
       $B[q] \leftarrow \varnothing$ \;
-      $\textup{ping}(p,\, q,\, counter)$ \label{line:sendlocked} \; 
+      $\textup{ping}(p,\, q,\, counter)$ \label{line:sendlocked} \tcp*{$\pi$} 
     }
   }
   
   \BlankLine
   
   \Upon{\textup{receivePing}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
-    $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \;
+    $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \tcp*{$\rho$}
   }
   
   \BlankLine
@@ -59,7 +59,7 @@
 
   \Function{\CBROADCAST($m$) } {% \tcp*[f]{$b_p(m)$}} {    
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
-      \label{line:bufferbroadcast} \tcp*[f]{Buffers}}
+      \label{line:bufferbroadcast} \tcp*[f]{buffers}}
     $\textup{R-broadcast}(m)$ \label{line:rbroadcast}\;
   }
   
@@ -67,7 +67,7 @@
   
   \Upon{\textup{R-deliver}($m$) \label{line:rdeliver}} {
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
-      \label{line:bufferforward} \tcp*[f]{Buffers}}
+      \label{line:bufferforward} \tcp*[f]{buffers}}
     $\textup{PC-deliver}(m)$  \; % \tcp*{$d_p(m)$}
   }
 

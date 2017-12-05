@@ -21,11 +21,12 @@ increase.
 \noindent \textbf{Description:} We build an overlay network with a topology
 close to random graphs using \SPRAY~\cite{nedelec2017adaptive}. The overlay
 networks comprises 1k, and 10k processes. Networks are dynamic. Each process'
-neighborhood $Q$ changes at least once every 60 seconds. Each exchange involve
-two processes that both add and remove half of their partial view.  Links are
-FIFO, bidirectional, and have transmission delays. The delay increases over
-time, i.e., the delay for
-a link to be acknowledged increases during the experiment.\\
+neighborhood $Q$ changes at least once every 60 seconds; and in average twice
+every 60 seconds. Each exchange involve two processes that both add and remove
+half of their partial view.  Links are FIFO, bidirectional, and have
+transmission delays. The delay increases over time up to 5 seconds.
+Consequently, the duration of ping-pong phases increases during the experiment.
+Links become safe slower. \\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the time taken by broadcast messages before being
 delivered by processes.
@@ -33,7 +34,8 @@ delivered by processes.
 \begin{figure*}
   \begin{center}
     \includegraphics[width=1.5\columnwidth]{./img/delay.eps}
-    \caption{\label{fig:delay}Delay in message delivery introduced by \CBROADCAST.}
+    \caption{\label{fig:delay}Impact of \CBROADCAST on the underlying overlay
+      network.}
   \end{center}
 \end{figure*}
 
