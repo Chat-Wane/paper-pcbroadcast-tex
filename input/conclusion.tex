@@ -3,9 +3,9 @@
 \label{sec:conclusion}
 
 In this paper, we described a uniform reliable causal broadcast protocol that
-breaks scalability barriers for large and dynamic networks. It extends
-preventive causal broadcast complexity to dynamic networks. Among others,
-message overhead and message delivery time remain constant.
+breaks scalability barriers for large and dynamic systems. It extends preventive
+causal broadcast complexity to dynamic systems. Among others, message overhead
+and delivery execution time remain constant.
 % Its space complexity remains small and can be bounded easily. 
 This result means that causal broadcast finally becomes affordable and efficient
 in large and dynamic systems.
@@ -13,9 +13,9 @@ in large and dynamic systems.
 As future work, we plan to investigate on reducing the space complexity of
 reliable broadcast. Section~\ref{subsec:complexity} reviews structures with
 linearly increasing space consumption. We can reduce this complexity in static
-networks. We can prune the structure from already received messages, for we know
+systems. We can prune the structure from already received messages, for we know
 that the number of duplicates is equal to the number of incoming
-links. Unfortunately, this does not hold in dynamic networks. We would like to
+links. Unfortunately, this does not hold in dynamic systems. We would like to
 investigate on a way to prune the structure in such settings. This would make
 causal broadcast scalable as well on generated traffic as on space consumption.
 
@@ -27,7 +27,7 @@ event using this knowledge. Preventive approaches cannot by default. However, in
 extreme settings where the overlay network is fully connected, we can assign a
 vector to each received message using local knowledge only, and without message
 overhead. We would like to investigate on a way to build these vectors locally
-in more realistic network settings where processes have partial knowledge of the
+in more realistic settings where processes have partial knowledge of the
 membership. We would like to analyze its minimal cost.
 
 %%% Local Variables:

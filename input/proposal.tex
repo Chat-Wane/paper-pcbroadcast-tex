@@ -1,10 +1,10 @@
 
-\section{Causal broadcast for large and dynamic networks}
+\section{Causal broadcast for large and dynamic systems}
 \label{sec:proposal}
 
 In this section, we introduce \CBROADCAST (stands for Preventive Causal
 broadcast), a causal broadcast protocol that breaks scalability barriers for
-large and dynamic networks.
+large and dynamic systems.
 % It does not overload
 % messages with any control information. 
 To provide causal order, most
@@ -14,7 +14,7 @@ to avoid causality violations. Our approach is preventive, for messages are
 immediately delivered on receipt without risk of causality violations. This
 difference not only removes most of control information piggybacked in broadcast
 messages, but also leads to constant delivery time. Protocols and applications
-can finally afford causal broadcast in large and dynamic networks without loss
+can finally afford causal broadcast in large and dynamic systems without loss
 of efficiency.
 
 % This section states  the definitions. It describes our algorithm. It proves that
@@ -23,25 +23,25 @@ of efficiency.
 \subsection{Model}
 
 % Definitions and theorems come from~\cite{hadzilacos1994modular}.
-A network comprise processes. Processes can communicate with part of the network
-via messages. They may not have full knowledge of network membership, for
-maintenance costs become too expansive in large and dynamic networks. Instead,
-processes build overlay networks with local partial view the size of which is
-generally much smaller than the actual network size.
+A distributed system comprise processes. Processes can communicate using
+messages. They may not have full knowledge of the membership, for maintenance
+costs become too expansive in large and dynamic systems. Instead, processes
+build overlay networks with local partial view the size of which is generally
+much smaller than the actual size of the system.
 
 \begin{definition}[Overlay network]
-  Just as a network, an overlay network $N$ comprises a set of processes
-  $P$. Each Process runs a
+  An overlay network $N$ comprises a set of processes $P$. Each Process runs a
   set of instructions sequentially. \\
   An overlay network $N$ also comprises a set of links $E: P \times P$. $p$'s
   neighborhood $Q$ is the set of links departing from $p$. Processes can
   communicate with their neighbors using messages. \\
-  Processes are faulty if they crash, otherwise they are correct. The set of
-  correct processes is $C$. There are no byzantine processes.
+  Processes are faulty if they crash, otherwise they are correct. % The set of
+  % correct processes is $C$. 
+  There are no byzantine processes.
 \end{definition}
 
-For the rest of this paper, we will speak of networks and overlay networks
-indifferently.
+For the rest of this paper, we will speak of distributed systems, overlay
+networks, or networks indifferently.
 
 \begin{definition}[Static and dynamic networks]
   A network is static if both its set of processes and its set of edges are

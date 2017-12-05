@@ -55,7 +55,7 @@ inefficient.
 % \TODO{safe}, affordable and efficient in large and dynamic systems.
 
 In this paper, we break the scalability barriers of causal broadcast for large
-and dynamic networks. Table~\ref{table:comparison} shows that instead of being
+and dynamic systems. Table~\ref{table:comparison} shows that instead of being
 reactive, protocols can be preventive: instead of checking at each receipt if
 the message is ready to be delivered, messages arrive ready by design.
 % This removes the need for broadcast messages to convey control information.
@@ -64,7 +64,7 @@ execution time from linear to constant.
 % Instead of linear complexity in message overhead and delivery execution time,
 % it has constant complexity in the corresponding fields.
 However, this preventive approach does not ensure causal order for dynamic
-networks.
+systems.
 % only for static networks where no process joins or leaves or self-reconfigures
 % over time.
 Our contribution is fourfold:
@@ -73,7 +73,7 @@ Our contribution is fourfold:
   original protocol, it only makes use of temporary buffers of messages to
   ensure that new communication means cannot infringe causal order.
 \item We provide the formal proof that our broadcast protocol ensures causal
-  order for static and dynamic networks.
+  order for static and dynamic systems.
 \item We provide the complexity analysis of our broadcast
   protocol. Table~\ref{table:comparison} shows that, like the original
   preventive approach, it has constant size overhead on messages, and constant
