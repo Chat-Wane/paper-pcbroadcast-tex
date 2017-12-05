@@ -17,11 +17,11 @@ relationship~\cite{lamport1978time,schwarz1994detecting}.
 
 Unfortunately, causal broadcast has proven expensive in in large and dynamic
 environments where processes can join, leave, or self-reconfigure at any
-time~\cite{charronbost1991concerning}. Table~\ref{table:comparison} shows that
-state-of-the-art protocols (\REF) for causal broadcast in dynamic systems are
-reactive and induce linear overhead on messages, linear local space consumption,
-and linear execution time on delivery. They eventually become overcostly and
-inefficient.
+time~\cite{charronbost1991concerning}. \TODO{More details here.}
+Table~\ref{table:comparison} shows that state-of-the-art protocols (\REF) for
+causal broadcast in dynamic systems are reactive and induce linear overhead on
+messages, linear local space consumption, and linear execution time on
+delivery. They eventually become overcostly and inefficient.
 
 % \begin{inparaenum}[(i)]
 % \item piggyback preceding messages in new broadcast
@@ -68,7 +68,7 @@ systems.
 % only for static networks where no process joins or leaves or self-reconfigures
 % over time.
 Our contribution is fourfold:
-\begin{itemize}
+\begin{itemize}[leftmargin=*]
 \item We extend the preventive protocol to dynamic settings. Compared to the
   original protocol, it only makes use of temporary buffers of messages to
   ensure that new communication means cannot infringe causal order.
@@ -85,7 +85,7 @@ Our contribution is fourfold:
 \end{itemize}
 Consequently, causal broadcast finally becomes an affordable and efficient
 middleware for distributed protocols and applications in large and dynamic
-networks.
+systems.
 
 % We propose a uniform reliable broadcast that outperforms state-of-the-art in
 % size of broadcast messages, execution time complexity, and local space
