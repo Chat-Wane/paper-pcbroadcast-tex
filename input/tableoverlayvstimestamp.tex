@@ -5,7 +5,7 @@
 
 \begin{tabularx}{0.98\columnwidth}{@{}Xcccc@{}}
 %  \toprule
-  & dynamic & message overhead & local space &  delivery time \\ \cmidrule{2-5}
+  & dynamic & \makecell{message\\overhead} & \makecell{local space\\consumption} &  \makecell{delivery\\execution time} \\ \cmidrule{2-5}
   reactive~\cite{schwarz1994detecting} & \cmark & $O(N)$ & $O(N+W.N)$ & $O(W.N)$ \\
   preventive~\cite{friedman2004causal} & \xmark & $O(1)$ & $O(P)$ & $O(1)$ \\ \hline\hline
 %  objective & \cmark & $?<O(N)$ & $O(N)\leq \, ?$ & $? \leq O(W.N)$ \\ \hline\hline

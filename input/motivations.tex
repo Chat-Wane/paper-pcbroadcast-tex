@@ -221,12 +221,12 @@ violation to all processes downstream.
 The causal broadcast presented in this paper is preventive and solves the causal
 order violation issue of dynamic systems.  Table~\ref{table:comparison} shows
 its complexity. Similarly to the preventive approach, complexity stays constant
-in terms of message overhead and message delivery time. The local space
-complexity is linear in terms of number of processes. We conjecture that this
-bound is minimal in dynamic settings. In addition, our algorithm employs another
-local structure to ensure causal order but we show that we can bound it in
-Algorithm~\ref{algo:boundingbuffer}. This makes causal broadcast affordable and
-efficient even in large and dynamic systems.
+in terms of message overhead and delivery execution time of messages. The local
+space complexity is linear in terms of number of processes. We conjecture that
+this bound is minimal in dynamic settings. In addition, our algorithm employs
+another local structure to ensure causal order but we show that we can bound it
+in Algorithm~\ref{algo:boundingbuffer}. This makes causal broadcast affordable
+and efficient even in large and dynamic systems.
 
 Next section describes our preventive causal broadcast for large and dynamic
 systems. It details its operation, provides the proofs that it works in both

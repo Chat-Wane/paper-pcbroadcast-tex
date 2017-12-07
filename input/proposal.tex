@@ -9,13 +9,13 @@ large and dynamic systems.
 % messages with any control information. 
 To provide causal order, most
 state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}
-approaches are reactive, for they check if message deliveries should be delayed
-to avoid causality violations. Our approach is preventive, for messages are
-immediately delivered on receipt without risk of causality violations. This
-difference not only removes most of control information piggybacked in broadcast
-messages, but also leads to constant delivery time. Protocols and applications
-can finally afford causal broadcast in large and dynamic systems without loss
-of efficiency.
+approaches are reactive. They check if message deliveries should be delayed to
+avoid causality violations. Our approach is preventive. Messages are immediately
+delivered on receipt without risk of causality violations. This difference not
+only removes most of control information piggybacked in broadcast messages, but
+also leads to constant delivery execution time. Protocols and applications can
+finally afford causal broadcast in large and dynamic systems without loss of
+efficiency.
 
 % This section states  the definitions. It describes our algorithm. It proves that
 % it handles both static and dynamic networks. It analyses its complexity.
@@ -90,14 +90,16 @@ order to deliver them at most once.
 Since processes may not have full membership knowledge, processes must forward
 broadcast messages. Since the network does not have partitions, processes either
 receive the message directly from the broadcaster or transitively. Thus, all
-correct processes eventually deliver all messages exactly once. This algorithm
+correct processes eventually deliver all messages exactly once. R-broadcast
 ensures validity, uniform agreement, and uniform integrity.
 
-At this point, processes receive and deliver each message exactly once. However,
-R-broadcast delivers messages in any order.  In addition to reliably conveying
-messages to all correct processes, broadcast protocols can ensure that messages
-are delivered in a specific order.
+% At this point, processes receive and deliver each message exactly once. However,
+% R-broadcast delivers messages in any order.  In addition to reliably conveying
+% messages to all correct processes. 
 
+Broadcast protocols can also ensure a specific ordering among message
+deliveries.
+%that messages are delivered in a specific order.
 To define a delivery order among messages, we define time in a logical sense
 using Lamport's definition~\cite{lamport1978time}.
 
@@ -110,8 +112,8 @@ using Lamport's definition~\cite{lamport1978time}.
 To order messages broadcast from one process, we define FIFO order.
 
 \begin{definition}[FIFO order]
-  If a process broadcasts two messages, processes deliver the first before the
-  second.
+  If a process broadcasts a first message then broadcasts a second message,
+  processes deliver the first message before the second message.
 \end{definition}
 
 To order messages broadcast by different processes, we define local order.
@@ -144,10 +146,10 @@ To order messages broadcast by every processes, we define causal order.
 
 From Theorem~\ref{theo:flooding}, reliable broadcast from
 Algorithm~\ref{algo:reliablebroadcast} is causal if communication links employed
-to communicate with processes of $Q$ are FIFO. This holds only for static
-networks where $Q$ is immutable. In practice, processes add and removes elements
-from $Q$ at any time. Next section describes a preventive causal broadcast that
-handles such dynamicity.
+to communicate with neighbors in $Q$ are FIFO. This holds only for static
+networks where $Q$ is immutable. In practice, processes add and remove links to
+neighbors from $Q$ at any time. Next section describes a preventive causal
+broadcast that handles such dynamicity.
 
 
 \subsection{Operation}
@@ -227,16 +229,28 @@ instructions for such cases.
   in~\cite{friedman2004causal}.
 \end{proof}
 
-Our causal broadcast becomes more sophisticated when the process adds links.
-Figure~\ref{fig:preventiveproblem} shows the issue with link additions.  New
-links may act as shortcut for messages. First messages that travel through new
-links may arrive before preceding messages that took longer paths.
+% Our causal broadcast becomes more sophisticated when the process adds links.
+Unfortunately, adding links may infringe the causal order property of causal
+broadcast.  Figure~\ref{fig:preventiveproblem} shows the issue with link
+additions.  New links may act as shortcut for messages. First messages that
+travel through new links may arrive before preceding messages that took longer
+paths.
 % New links create additional diffusion paths that potentially disorder
 % messages.
 
 To solve this issue, we mark new links as \emph{unsafe}, for it may lead to
 causal order violations. A link becomes \emph{safe} once it conveyed all
 broadcast messages in causal order.
+
+\begin{definition}[Safe link]
+  % A link is safe if it cannot cause causal order violation.  
+  A link from Process A to Process B is safe if messages delivered by Process A
+  are delivered by B, or guaranteed to be delivered by B before the receipt by B
+  of any upcoming delivered message of A:  \\
+  $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
+  d_B(m) \rightarrow r_{AB}(m')$
+\end{definition}
+
 % Solving this issue requires that even new links convey all messages in the right
 %order.
 Sending all broadcast messages since the beginning of the system would be too
@@ -415,7 +429,7 @@ to Process~D will grow forever. %as long as Process~A receives or broadcasts
     {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
     \subfloat[Part B][\label{fig:buffersolveB}
-    Process~A broadcasts $a'''$. Since the buffer size would 
+    Process~A receives, delivers, and forwards $x$. Since the buffer size would 
     exceed the maximal boundary, it resets the buffer with a new counter and
     sends a ping message with this counter. In the meantime, Process~D
     receives $\pi_1$ and sends the corresponding reply $\rho_1$.]
@@ -446,26 +460,25 @@ Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
 buffers. It solves the issue from the buffer owner's
 perspective. Figure~\ref{fig:buffersolve} shows how this algorithm bounds the
 size of buffers. In Figure~\ref{fig:buffersolveA}, Process~A broadcast $a$; then
-wanted to add a link to Process~D so it sent a ping message; then broadcast
-$a'$ and $a''$ so it buffered them. We see that the ping message $\pi_1$
-carries a counter. The new buffer is identified by the same counter. In
-Figure~\ref{fig:buffersolveB}, Process~A broadcasts another message $a'''$. Each
-message delivery increases the size of current buffers. The algorithm checks if
-the size of the buffer exceeds the configured bound (see
-Line~\ref{line:maxsize}). Adding $a'''$ to the buffer would exceed the bound of
-$2$ elements. It is first failure, so Process~A simply restarts the
-ping-pong phase: it resets the buffer and sends another ping message
-$\pi_2$ (see Line~\ref{line:reset}). The counter of the reset buffer is the one
-of the new ping message. In the meantime, Process~D receives $\pi_1$ and
-sends the corresponding reply $\rho_1$. In
-Figure~\ref{fig:buffersolveC}, Process~A receives a broadcast message $y$. It
-delivers it, checks if the buffer can admit it, adds the message to the buffer,
-and forwards it. Process~A also receives the first reply $\rho_1$ but
-discards it, for no buffer has such counter. In Figure~\ref{fig:buffersolveD},
-Process~D receives $\pi_2$ and sends the corresponding reply
-$\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE}, Process~A receives
-$\rho_2$. Since the corresponding buffer exists, it empties it. The new link
-is now safe to use for causal broadcast.
+wanted to add a link to Process~D so it sent a ping message; then broadcast $a'$
+and $a''$ so it buffered them. We see that the ping message $\pi_1$ carries a
+counter. The new buffer is identified by the same counter. In
+Figure~\ref{fig:buffersolveB}, Process~A receives, delivers, and forwards the
+message $x$. Each message delivery increases the size of current buffers. The
+algorithm checks if the size of the buffer exceeds the configured bound (see
+Line~\ref{line:maxsize}). Adding $x$ to the buffer would exceed the bound of
+$2$ elements. It is first failure, so Process~A simply restarts the ping-pong
+phase: it resets the buffer and sends another ping message $\pi_2$ (see
+Line~\ref{line:reset}). The counter of the reset buffer is the one of the new
+ping message. In the meantime, Process~D receives $\pi_1$ and sends the
+corresponding reply $\rho_1$. In Figure~\ref{fig:buffersolveC}, Process~A
+receives a broadcast message $y$. It delivers it, checks if the buffer can admit
+it, adds the message to the buffer, and forwards it. Process~A also receives the
+first reply $\rho_1$ but discards it, for no buffer has such counter. In
+Figure~\ref{fig:buffersolveD}, Process~D receives $\pi_2$ and sends the
+corresponding reply $\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE},
+Process~A receives $\rho_2$. Since the corresponding buffer exists, it empties
+it. The new link is now safe to use for causal broadcast.
 
 While it solves the issue of unbounded buffers, it also brings another
 issue. For instance, if the maximal size of buffers is too small, it could stuck
