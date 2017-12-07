@@ -248,7 +248,7 @@ broadcast messages in causal order.
   are delivered by B, or guaranteed to be delivered by B before the receipt by B
   of any upcoming delivered message of A:  \\
   $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
-  d_B(m) \rightarrow r_{AB}(m')$
+  d_B(m) \rightarrow r_B(m')$
 \end{definition}
 
 % Solving this issue requires that even new links convey all messages in the right
