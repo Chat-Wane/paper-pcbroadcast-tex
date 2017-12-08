@@ -247,33 +247,41 @@ only safe links to disseminate messages.
 
 \begin{definition}[Safe link]
   % A link is safe if it cannot cause causal order violation.  
-  A link from Process~A to Process~B is safe if A delivered messages that
-  \begin{itemize}
-  \item B delivered, or
-  \item B will deliver
-  \end{itemize} 
-  before B receives any message that A will deliver: \\
+  A link from Process~A to Process~B is safe if and only if Process~B delivered
+  or will deliver all messages delivered by Process~A before receiving any
+  message that Process~A will deliver.
+  % A delivered messages that
+  % \begin{itemize}
+  % \item B delivered, or
+  % \item B will deliver
+  % \end{itemize} 
+  % before B receives any message that A will deliver: \\
   $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
   d_B(m) \rightarrow r_{AB}(m')$
 \end{definition}
 
-Added links start unsafe. The challenge is to make them safe using local
-knowledge only. A straightforward mean for Process~A to achieve this consists in
-sending all its delivered messages to Process~B using this unsafe link. This
-guarantees that any message delivered by A will be delivered by B before A starts
-using the new -- now safe -- link for causal broadcast. However, this is costly
-both in local space and generated traffic. 
+Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
+the link to broadcast $a'$ while it is unsafe: Process~B did not deliver $a$
+yet, and there was no guaranty that Process~B would deliver $a$ before receiving
+$a'$ from the new link. In this example, the worst happens and Process~B
+receives then delivers $a'$ before $a$ which violates causal order.
+
+The challenge is to make unsafe links safe using local knowledge only. A
+straightforward mean for Process~A to achieve this consists in sending all its
+delivered messages to Process~B using this unsafe link. This guarantees that any
+message delivered by A will be delivered by B before A starts using the new --
+now safe -- link for causal broadcast. However, this is costly both in local
+space and generated traffic.
 
 Instead of sending all its delivered messages, Process~A builds an array of
 messages to send. It makes sure that all messages it delivered that are not in
 the array are already delivered by Process~B. Using safe links, Process~A sends
 a signal to Process~B and awaits for a reply. While awaiting, Process~A records
 all messages it delivers in the array to send. Once Process~A gets the reply, it
-knows that all messages it delivered before it sent the signal are delivered by
-Process~B; then it guarantees the receipt by B of messages it delivered later by
-sending the array of messages using the unsafe link. The link is safe. 
-
-
+knows that all messages it delivered before the signal are delivered by
+Process~B. Then, Process~A guarantees the receipt by B of messages it delivered
+later by sending the array of messages using the unsafe link. The link becomes
+safe.
 
 % % Solving this issue requires that even new links convey all messages in the right
 % %order.
