@@ -238,36 +238,60 @@ paths.
 % New links create additional diffusion paths that potentially disorder
 % messages.
 
-To solve this issue, we mark new links as \emph{unsafe}, for it may lead to
-causal order violations. A link becomes \emph{safe} once it conveyed all
-broadcast messages in causal order.
+To solve this issue, we define the safety of a link. \CBROADCAST uses all and
+only safe links to disseminate messages.
+
+% To solve this issue, we mark new links as \emph{unsafe}, for it may lead to
+% causal order violations. A link becomes \emph{safe} once it conveyed all
+% broadcast messages in causal order.
 
 \begin{definition}[Safe link]
   % A link is safe if it cannot cause causal order violation.  
-  A link from Process A to Process B is safe if messages delivered by Process A
-  are delivered by B, or guaranteed to be delivered by B before the receipt by B
-  of any upcoming delivered message of A:  \\
+  A link from Process~A to Process~B is safe if A delivered messages that
+  \begin{itemize}
+  \item B delivered, or
+  \item B will deliver
+  \end{itemize} 
+  before B receives any message that A will deliver: \\
   $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
-  d_B(m) \rightarrow r_B(m')$
+  d_B(m) \rightarrow r_{AB}(m')$
 \end{definition}
 
-% Solving this issue requires that even new links convey all messages in the right
-%order.
-Sending all broadcast messages since the beginning of the system would be too
-expensive. Instead, Process~A creating a link to Process~B needs to know the
-messages received by Process~B. These are all messages that the new link does
-not need to convey.
-%to send potentially missing messages in causal order using this link.
-Using a reactive approach, obtaining Process~B's missing messages would require
-the transmission of messages the size of which is linear with the number of
-processes in the network. Using a preventive approach, it only requires to ping
-Process~B using already safe links. Once Process~A receives Process~B's reply,
-it knows that Process~B received all its broadcast and forwarded messages prior
-to the ping. Most importantly, Process~A knows that Process~B potentially misses
-messages broadcast or forwarded after this ping.  To avoid any causal order
-violation, Process~A sends the potentially missing messages to Process~B using
-the new link. The link becomes safe, for it cannot break causal order
-anymore. Process~A starts to use it normally for causal broadcast.
+Added links start unsafe. The challenge is to make them safe using local
+knowledge only. A straightforward mean for Process~A to achieve this consists in
+sending all its delivered messages to Process~B using this unsafe link. This
+guarantees that any message delivered by A will be delivered by B before A starts
+using the new -- now safe -- link for causal broadcast. However, this is costly
+both in local space and generated traffic. 
+
+Instead of sending all its delivered messages, Process~A builds an array of
+messages to send. It makes sure that all messages it delivered that are not in
+the array are already delivered by Process~B. Using safe links, Process~A sends
+a signal to Process~B and awaits for a reply. While awaiting, Process~A records
+all messages it delivers in the array to send. Once Process~A gets the reply, it
+knows that all messages it delivered before it sent the signal are delivered by
+Process~B; then it guarantees the receipt by B of messages it delivered later by
+sending the array of messages using the unsafe link. The link is safe. 
+
+
+
+% % Solving this issue requires that even new links convey all messages in the right
+% %order.
+% Sending all broadcast messages since the beginning of the system would be too
+% expensive. Instead, Process~A creating a link to Process~B needs to know the
+% messages received by Process~B. These are all messages that the new link does
+% not need to convey.
+% %to send potentially missing messages in causal order using this link.
+% Using a reactive approach, obtaining Process~B's missing messages would require
+% the transmission of messages the size of which is linear with the number of
+% processes in the network. Using a preventive approach, it only requires to ping
+% Process~B using already safe links. Once Process~A receives Process~B's reply,
+% it knows that Process~B received all its broadcast and forwarded messages prior
+% to the ping. Most importantly, Process~A knows that Process~B potentially misses
+% messages broadcast or forwarded after this ping.  To avoid any causal order
+% violation, Process~A sends the potentially missing messages to Process~B using
+% the new link. The link becomes safe, for it cannot break causal order
+% anymore. Process~A starts to use it normally for causal broadcast.
 
 
 % would be costly in general settings, using already created FIFO links keeps it
