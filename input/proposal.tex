@@ -247,29 +247,37 @@ only safe links to disseminate messages.
 
 \begin{definition}[Safe link]
   % A link is safe if it cannot cause causal order violation.  
-  A link from Process~A to Process~B is safe if and only if Process~B delivered
-  or will deliver all messages delivered by Process~A before receiving any
-  message that Process~A will deliver.
+  A link from Process~A to Process~B is safe if and only if Process~B received
+  or will receive all messages delivered by Process~A before receiving any
+  message that Process~A will deliver. \\
   % A delivered messages that
   % \begin{itemize}
   % \item B delivered, or
   % \item B will deliver
   % \end{itemize} 
   % before B receives any message that A will deliver: \\
-  $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
-  d_B(m) \rightarrow r_{AB}(m')$
+  \TODO{$safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
+  r_B(m) \rightarrow r_{AB}(m')$}
+
+  % \TODO{More general:
+  %   $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
+  %   r_B(m) \rightarrow r_{B}(m')$}
+
+  %   \TODO{Should they be only received by B instead of delivered ? Less
+  %   restrictive and we find FIFO links:
+  %   $\implies r_B{m} \rightarrow r_AB(m')$.}
 \end{definition}
 
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
-the link to broadcast $a'$ while it is unsafe: Process~B did not deliver $a$
-yet, and there was no guaranty that Process~B would deliver $a$ before receiving
+the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
+yet, and there was no guaranty that Process~B would receive $a$ before receiving
 $a'$ from the new link. In this example, the worst happens and Process~B
 receives then delivers $a'$ before $a$ which violates causal order.
 
 The challenge is to make unsafe links safe using local knowledge only. A
 straightforward mean for Process~A to achieve this consists in sending all its
 delivered messages to Process~B using this unsafe link. This guarantees that any
-message delivered by A will be delivered by B before A starts using the new --
+message delivered by A will be received by B before A starts using the new --
 now safe -- link for causal broadcast. However, this is costly both in local
 space and generated traffic.
 
@@ -278,34 +286,61 @@ messages to send. It makes sure that all messages it delivered that are not in
 the array are already delivered by Process~B. Using safe links, Process~A sends
 a signal to Process~B and awaits for a reply. While awaiting, Process~A records
 all messages it delivers in the array to send. Once Process~A gets the reply, it
-knows that all messages it delivered before the signal are delivered by
+knows that all messages it delivered before the signal are received by
 Process~B. Then, Process~A guarantees the receipt by B of messages it delivered
 later by sending the array of messages using the unsafe link. The link becomes
 safe.
 
-% % Solving this issue requires that even new links convey all messages in the right
-% %order.
-% Sending all broadcast messages since the beginning of the system would be too
-% expensive. Instead, Process~A creating a link to Process~B needs to know the
-% messages received by Process~B. These are all messages that the new link does
-% not need to convey.
-% %to send potentially missing messages in causal order using this link.
-% Using a reactive approach, obtaining Process~B's missing messages would require
-% the transmission of messages the size of which is linear with the number of
-% processes in the network. Using a preventive approach, it only requires to ping
-% Process~B using already safe links. Once Process~A receives Process~B's reply,
-% it knows that Process~B received all its broadcast and forwarded messages prior
-% to the ping. Most importantly, Process~A knows that Process~B potentially misses
-% messages broadcast or forwarded after this ping.  To avoid any causal order
-% violation, Process~A sends the potentially missing messages to Process~B using
-% the new link. The link becomes safe, for it cannot break causal order
-% anymore. Process~A starts to use it normally for causal broadcast.
+\begin{lemma}[Ping and buffering makes safe links]
+  Process~A makes an unsafe link to Process~B safe by sending a signal to B via
+  safe links while buffering its delivered messages. A link is safe once
+  Process~A sent buffered messages after receiving B's acknowledgement of the
+  signal. \\
+  \TODO{$\forall i,\, m_i \rightarrow m_{i+1},\,
+    ack(m_i) \rightarrow \forall j>i,\, s_{AB}(m_j) \rightarrow s_{AB}(m_{j+1}) \implies safe(AB)$}
+\end{lemma}
 
 
-% would be costly in general settings, using already created FIFO links keeps it
-% cheap. Once missing messages have been sent through this new link, $p$ starts to
-% use it normally. New links do not create diffusion paths that could break causal
-% order.
+\begin{proof}
+  Suppose a network of safe links without partitions. Suppose an unsafe link
+  from a process A to a process B. \\
+  We must show that if Process~B receives a message $m'$ from the new link,
+  there exist no messages $m$ delivered by Process~A that it did not receive. \\
+  % We must show that once Process~A sent its buffer using the new link, the
+  % latter becomes safe. \\
+  Process~B starts receiving messages from the new link when Process~A sends its
+  buffer. Either $m'$ comes from this buffer or it is a message delivered by
+  Process~A afterward. \\
+  Process~A starts sending buffered messages once it received the reply to its
+  ping, hence, after Process~B received this ping. Since this ping travels via
+  safe FIFO links, and since the network does not have partitions, Process~B
+  eventually receives this ping after all messages delivered by Process~A when
+  it sent this ping. Consequently, there exist no messages $m$ that Process~B
+  did not receive before receiving the messages from the buffer. \\
+  Since Process~A buffered all delivered messages between the sending of the
+  ping and the receipt of the reply, there exist no messages $m$ that Process~B
+  did not receive before Process~A starts using the new link for
+  broadcast. \\
+  Afterward, Process~A sends all its delivered messages using this link.
+  % Before sending the buffer, 
+  % If $m'$ comes from the buffer, $m$ 
+  % Process~A delivers $m_1 \ldots m_i$ then
+  % pings Process~B using safe links. Since the network does not have partitions,
+  % Process~B receives $m_1 \ldots m_i$ and the ping. Since links are FIFO,
+  % Process~B receives $m_1 \ldots m_i$ before the ping. Process~B replies to
+  % Process~A. In the meantime, Process~A delivers and buffers $m_j \ldots
+  % m_k$.
+  % Process~A receives Process~B's reply after delivering $m_k$ and before
+  % delivering $m_\ell$. Process~A receives Process~B's reply after Process~B
+  % received $m_1 \ldots m_i$.  
+  %  Process~A sends $m_j \ldots m_k$ using the unsafe
+  % link. \\
+  % Suppose Process~A delivers $m_\ell \ldots m_m$ and sends $m_\ell \ldots m_m$
+  % using the new link. If the link is unsafe   
+  % Process~B already received $m_1 \ldots m_i$ and since
+  % links are FIFO, Process~B will receive $m_j \ldots m_k$ before receiving
+  % $m_\ell \ldots m_m$.
+\end{proof}
 
 Compared to reliable broadcast, Algorithm~\ref{algo:bufferbroadcast} adds a
 structure associating each new unsafe link with a buffer of
@@ -346,14 +381,23 @@ safe. Process~A uses the new link normally.
   \end{center}
 \end{figure*}
 
-
-
 The ping-pong phase ensures that Process~D received all messages preceding
 $a$ and $a$ itself. The buffering phase ensures that Process~D receives all
 messages between the sending of the ping message $\pi$ and the receipt of
 Process~D's reply $\rho$. Afterwards, Process~D will receive
 Process~A's broadcast or forwarded messages from this new direct link or
 transitively through Process~B.
+
+% \begin{lemma}[Safe links stay safe]
+%   Once a link is safe, it stays safe until its removal.
+% \end{lemma}
+
+% \begin{proof}
+%   Links are FIFO. Using such links, processes receive messages in the order they
+%   were sent. This guarantees that a message $a$ sent before a message $a'$ will
+%   be delivered before $a'$
+% \end{proof}
+
 
 \begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
   additions\label{lem:additions}]
@@ -469,7 +513,7 @@ to Process~D will grow forever. %as long as Process~A receives or broadcasts
     \hspace{20pt}
     \subfloat[Part C][\label{fig:buffersolveC}
     Process~A forwards $y$ and buffers it. It also
-    receives $\rho_1$ but no buffer exists with this counter. Process~A 
+    receives $\rho_1$ but no buffers exist with this counter. Process~A 
     simply discards $\rho_1$.]
     {\input{input/figbuffersolveC.tex}}
     \hspace{20pt}
@@ -506,7 +550,7 @@ ping message. In the meantime, Process~D receives $\pi_1$ and sends the
 corresponding reply $\rho_1$. In Figure~\ref{fig:buffersolveC}, Process~A
 receives a broadcast message $y$. It delivers it, checks if the buffer can admit
 it, adds the message to the buffer, and forwards it. Process~A also receives the
-first reply $\rho_1$ but discards it, for no buffer has such counter. In
+first reply $\rho_1$ but discards it, for no buffers have such counter. In
 Figure~\ref{fig:buffersolveD}, Process~D receives $\pi_2$ and sends the
 corresponding reply $\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE},
 Process~A receives $\rho_2$. Since the corresponding buffer exists, it empties
