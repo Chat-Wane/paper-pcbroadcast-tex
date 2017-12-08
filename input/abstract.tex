@@ -1,5 +1,19 @@
 
 \begin{abstract}
+  Designing applications over a message-passing system goes through the
+  definition and the implementation of appropriate communication primitives such
+  as reliable broadcast , causal broadcast and atomic broadcast. This paper
+  presents a new uniform reliable causal broadcast protocol. This is not one
+  more protocol as the searching for an effective protocol is still an open
+  problem especially in large and dynamic networks. The proposed protocol
+  outperforms state-of-the-art approaches in size of messages, execution time
+  complexity, and local space complexity. Most importantly, the control
+  information piggybacked on messages is of constant size. We prove that for
+  both static and dynamic networks. Consequently, large and dynamic systems can
+  finally afford causal broadcast.
+
+----------------
+
   Many distributed protocols and applications rely on causal broadcast to ensure
   consistency criteria.
   %% However, tracking causality while scaling remains an open
@@ -19,6 +33,9 @@
   systems.  Consequently, large and dynamic systems can finally afford causal
   broadcast.
 \end{abstract}
+
+
+
 
 %\keywords{Uniform, reliable, causal, broadcast.}
 
