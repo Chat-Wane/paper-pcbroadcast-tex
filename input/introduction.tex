@@ -1,88 +1,85 @@
 
 \section{Introduction}
 
-Several communication primitives have been proposed to deal with different facets of a distributed system. These communication primitives allow to reduce the noise introduced by the asynchrony and by the process and network failures. This leaves to the designer only the aspects related to the problem to be solved. In this paper we focus on broadcast primitives. A message is sent to all the processes of a group using an operation that is not necessarily atomic in the sense that if the sender fails during the sending operation some process will get the message and others not. Reliable broadcast is a communication primitive that allows to hide this aspect. It ensures that all the processes that do not crash will eventually deliver the same set of messages that includes all the message sent by process that have not crashed~\cite{hadzilacos1994modular}. Atomic broadcast ensures this same property plus an ordering one. The processes deliver the same sequence of messages and no more a set. 
-Causal broadcast~\cite{birman1987reliable} ensures and ordering property but not as strong as the latter. Its ordering property is based on the happened before relation introduced by Lamport ~\cite{lamport1978time,schwarz1994detecting}. This relation models the causality dependence (potentila cause-effect relation) between events. A causal broadcast extends the causal relation that exists between the sending events of any pair of messages to their delivery events. If the sending of a message $m$ precedes the sending of a message $m'$ than all processes that deliver these two messages need to deliver $m$ before $m'$. Otherwise they can deliver them in any order.
+% Several communication primitives have been proposed to deal with different
+% facets of a distributed system. These communication primitives allow to reduce
+% the noise introduced by the asynchrony and by the process and network
+% failures. This leaves to the designer only the aspects related to the problem to
+% be solved. In this paper we focus on broadcast primitives. A message is sent to
+% all the processes of a group using an operation that is not necessarily atomic
+% in the sense that if the sender fails during the sending operation some process
+% will get the message and others not. Reliable broadcast is a communication
+% primitive that allows to hide this aspect. It ensures that all the processes
+% that do not crash will eventually deliver the same set of messages that includes
+% all the message sent by process that have not
+% crashed~\cite{hadzilacos1994modular}. Atomic broadcast ensures this same
+% property plus an ordering one. The processes deliver the same sequence of
+% messages and no more a set.  Causal broadcast~\cite{birman1987reliable} ensures
+% and ordering property but not as strong as the latter. Its ordering property is
+% based on the happened before relation introduced by Lamport
+% ~\cite{lamport1978time,schwarz1994detecting}. This relation models the causality
+% dependence (potentila cause-effect relation) between events. A causal broadcast
+% extends the causal relation that exists between the sending events of any pair
+% of messages to their delivery events. If the sending of a message $m$ precedes
+% the sending of a message $m'$ than all processes that deliver these two messages
+% need to deliver $m$ before $m'$. Otherwise they can deliver them in any order.
 
-% In large scale and dynamic networks, gossiping constitutes the most efficient mean to
-% broadcast messages (\REF): processes build an overlay network by maintaining
-% small local view of the network membership (\REF) and each broadcast message
-% reach all processes either directly or transitively via forwarding. 
+% Unfortunately, causal broadcast has been proven to be expensive to implement
+% especially in large and dynamic environments where processes can join, leave, or
+% self-reconfigure at any time~\cite{charronbost1991concerning}. Existing
+% solutions need to piggyback on application messages a control information the
+% size of which is linear in $N$ the number of processes or need to increase by a
+% factor $N$ either the total number of exchanged messages (use of control
+% messages) or the transmission delay. At one extreme each message carries a
+% control information of size $N$ and no control messages are
+% used~\cite{birman1987reliable} and at the other extreme application messages
+% transport no control information (if communication channels are FIFO) but each
+% messages is relayed by all processes and then each message broadcast entails the
+% sending of $n^2$ messages over over the network. This last strategy is used
+% by~\cite{friedman2004causal} in the case where the communication network is not
+% complete and thus the number of messages in linear with the number of active
+% communication channels but the transit time is also linear with the length of
+% shortest paths between processes. This approach is interesting for large scale
+% networks where each message is relayed a number of time greater than $N$,
+% however, it does not allows dynamicity as the communication network needs to be
+% static. Another approach relies on a logical structure over processes
+% (e.g. star, ring, tree) that is out of the scope of this paper as it does not
+% tolerate process failures.
 
-Unfortunately, causal broadcast has been proven to be expensive to implement especially in large and dynamic environments where processes can join, leave, or self-reconfigure at any
-time~\cite{charronbost1991concerning}. Existing solutions need to piggyback on application messages a control information the size of which is linear in $N$ the number of processes or need to increase by a factor $N$  either the total number of exchanged messages (use of control messages) or the transmission delay. At one extreme each message carries a control information of size $N$ and no control messages are used~\cite{birman1987reliable} and at the other extreme application messages transport no control information (if communication channels are FIFO) but each messages is relayed by all processes and then each message broadcast entails the sending of  $n^2$ messages over over the network. This last strategy is used by~\cite{friedman2004causal} in the case where the communication network is not complete and thus the number of messages in linear with the number of active communication channels but the transit time is also linear with the length of shortest paths between processes. This approach is interesting for large scale networks where each message is relayed a number of time greater than $N$, however, it does not allows dynamicity as the communication network needs to be static. Another approach relies on a logical structure over processes (e.g. star, ring, tree) that is out of the scope of this paper as it does not tolerate process failures. 
+% ---------------------------------
 
-% \begin{inparaenum}[(i)]
-% \item piggyback preceding messages in new broadcast
-%   messages~\cite{birman1987reliable,hadzilacos1993fault},
-% \item or maintain and send vector clocks along with new broadcast
-%   messages~\cite{fidge1988timestamps,mattern1989virtual}.
-% \end{inparaenum}
-% Approaches reduce the size of vectors either by
-% \begin{inparaenum}[(a)]
-% \item maintaining local structures to send the least amount of changing
-%   data~\cite{singhal1992efficient}, or by
-% % \item relaxing the causal order using probabilistic
-% %   structures~\cite{mostefaoui2017probabilistic}, or by
-% \item constraining the network topology (\REF).
-% \end{inparaenum}
-% None of these approaches scales in large and dynamic networks, for
-% % they overload each message with linearly increasing data
-% % structures. % that depend of the number of processes or the number of messages.
-% generated traffic and delivery time of messages increase linearly with the
-% number of processes.
-
-% Causal broadcast can be preventive~\cite{friedman2004causal}: processes receive
-% messages that are immediately ready for causal delivery. It overloads messages
-% with constant size control information, for it uses FIFO communication
-% links. Delivery time of messages is constant, for it only discards message
-% duplicates. Nothing limits the scalability of the system.  However, these highly
-% desirable properties only hold in static environments where processes cannot
-% join nor leave nor self-reconfigure. Any change in network membership may lead
-% to causal delivery violations. A preventive causal broadcast that generalizes
-% these complexity to dynamic networks would finally make causal broadcast
-% \TODO{safe}, affordable and efficient in large and dynamic systems.
-
-In this paper, we break the scalability barriers of causal broadcast for large
-and dynamic networks by proposing a protocol that extends the approach proposed in~\cite{friedman2004causal}. Our contribution is fourfold:
-
-\begin{itemize}
-\item We extend the protocol to dynamic settings. Compared to the
-  original protocol, it only makes use of temporary buffers of messages to
-  ensure that new communication means cannot infringe causal order. Then,
-  we provide the formal proof that our broadcast protocol ensures causal
-  order for static and dynamic networks.
-\item We provide the complexity analysis of our broadcast
-  protocol. Table~\ref{table:comparison} compares our protocol to two representative solutions and shows that, it has constant size overhead on messages, and constant
-  delivery execution time.
-\item Finally, we provide an experimentation highlighting the impact of our
-  protocol on transmission delays before delivery. Indeed, to tolerate dynamicity our protocol may temporarily disable some links. It shows that even under bad
-  network conditions and high dynamicity, our protocol hardly degrades the mean delivery time.
-\end{itemize}
-
----------------------------------
-
-
-Causal broadcast~\cite{hadzilacos1994modular} is a fundamental communication
-mechanism for numerous distributed protocols and applications (\REF).
+Designing distributed applications over a message-passing system goes through
+the definition and the implementation of appropriate communication primitives.
+In this paper, we focus on causal broadcast.
+%% such as reliable broadcast, causal broadcast, and atomic broadcast.
+%% Causal broadcast~\cite{hadzilacos1994modular} is a fundamental communication
+%% mechanism for numerous distributed protocols and applications (\REF).
 % ~\cite{nakamoto2009bitcoin,shapiro2011comprehensive} and
 % ~\cite{nedelec2016crate}.
-It ensure that all connected processes deliver each broadcast message exactly
-once following the happen before
-relationship~\cite{lamport1978time,schwarz1994detecting}.
+All connected processes deliver each broadcast message exactly once following
+the happen before relationship~\cite{lamport1978time,schwarz1994detecting}. If
+the sending of a message $m$ precedes the sending of a message $m'$ than all
+processes that deliver these two messages need to deliver $m$ before
+$m'$. Otherwise they can deliver them in any order.
+
 
 % In large scale and dynamic networks, gossiping constitutes the most efficient mean to
 % broadcast messages (\REF): processes build an overlay network by maintaining
 % small local view of the network membership (\REF) and each broadcast message
 % reach all processes either directly or transitively via forwarding. 
 
-Unfortunately, causal broadcast has proven expensive in in large and dynamic
-environments where processes can join, leave, or self-reconfigure at any
-time~\cite{charronbost1991concerning}. \TODO{More details here.}
-Table~\ref{table:comparison} shows that state-of-the-art protocols (\REF) for
-causal broadcast in dynamic systems are reactive and induce linear overhead on
-messages, linear local space consumption, and linear execution time on
-delivery. They eventually become overcostly and inefficient.
+Unfortunately, causal broadcast \TODO{has proven} expensive in dynamic
+environments where a large number of processes can join, leave, or
+self-reconfigure at any time~\cite{charronbost1991concerning}. While gossiping
+constitutes an efficient mean to disseminate messages to all processes (\REF),
+ensuring causal delivery of these messages remains overcostly.  Using
+state-of-the-art protocols, each message piggybacks a vector -- or a compressed
+vector -- of Lamport's clocks.  The message overhead increases monotonically,
+for entries cannot be reclaimed without consensus. The message overhead
+increases linearly with the number of processes $N$ that ever joined the system.
+In addition, checking if a message should be delivered takes linear time
+$O(N)$. Causal broadcast protocols based on vectors eventually become overcostly
+and inefficient.
 
 % \begin{inparaenum}[(i)]
 % \item piggyback preceding messages in new broadcast
@@ -115,34 +112,34 @@ delivery. They eventually become overcostly and inefficient.
 % these complexity to dynamic networks would finally make causal broadcast
 % \TODO{safe}, affordable and efficient in large and dynamic systems.
 
+To provide causal order, \cite{friedman2004causal} employs another
+strategy. Instead of piggybacking a vector in each message, processes forward
+all messages exactly once using FIFO communication means. Since gossip already
+comprises forwarding, this does not constitute an overhead of the
+approach. Since messages arrive ready, the causal broadcast protocol delivers
+them immediately. This approach is both lightweight and efficient. However, it
+does not support dynamicity. Adding communication means between processes may
+cause causal order violations.
+
+
 In this paper, we break the scalability barriers of causal broadcast for large
-and dynamic systems. Table~\ref{table:comparison} shows that instead of being
-reactive, protocols can be preventive: instead of checking at each receipt if
-the message is ready to be delivered, messages arrive ready by design.
-% This removes the need for broadcast messages to convey control information.
-This difference reduces the complexity of message overhead and delivery
-execution time from linear to constant.
-% Instead of linear complexity in message overhead and delivery execution time,
-% it has constant complexity in the corresponding fields.
-However, this preventive approach does not ensure causal order for dynamic
-systems.
-% only for static networks where no process joins or leaves or self-reconfigures
-% over time.
-Our contribution is fourfold:
+and dynamic systems by proposing a protocol that extends the approach proposed
+in~\cite{friedman2004causal}.  Our contribution is threefold:
 \begin{itemize}[leftmargin=*]
 \item We extend the preventive protocol to dynamic settings. Compared to the
   original protocol, it only makes use of temporary buffers of messages to
-  ensure that new communication means cannot infringe causal order.
-\item We provide the formal proof that our broadcast protocol ensures causal
-  order for static and dynamic systems.
+  ensure that new communication means cannot infringe causal order.  Then, we
+  provide the formal proof that our broadcast protocol ensures causal order for
+  static and dynamic systems.
 \item We provide the complexity analysis of our broadcast
-  protocol. Table~\ref{table:comparison} shows that, like the original
-  preventive approach, it has constant size overhead on messages, and constant
-  delivery execution time.
-\item We provide an experimentation highlighting the negative impact of our
-  protocol on transmission delays before delivery. It shows that even under bad
-  network conditions and high dynamicity, the negative impact remains
-  negligible.
+  protocol. Table~\ref{table:comparison} compares our protocol to two
+  representative solutions and show that it has constant size overhead on
+  messages, and constant delivery execution time.
+\item We provide an experimentation highlighting the impact of our protocol on
+  transmission delays before delivery. Indeed, to tolerate dynamicity our
+  protocol may temporarily disable some links.  It shows that even under bad
+  network conditions and high dynamicity, our protocol hardly degrades the mean
+  delivery time.
 \end{itemize}
 Consequently, causal broadcast finally becomes an affordable and efficient
 middleware for distributed protocols and applications in large and dynamic
