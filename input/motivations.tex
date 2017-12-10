@@ -2,28 +2,6 @@
 \section{Background and motivations}
 \label{sec:motivations}
 
-Causal broadcast ensures that all connected processes deliver each broadcast
-message exactly once~\cite{hadzilacos1994modular} following the happen before
-relationship~\cite{lamport1978time}.
-
-% \begin{figure*}
-%   \begin{center}
-%     \subfloat[Part A][\label{fig:generalproblemA}Process~A broadcasts $a$.]
-%     {\input{input/figgeneralproblemA.tex}}
-%     \hspace{20pt}
-%     \subfloat[Part B][\label{fig:generalproblemB}Process~B receives and
-%     delivers $a$ then broadcasts $b$.]
-%     {\input{input/figgeneralproblemB.tex}}
-%     \hspace{20pt}
-%     \subfloat[Part C][\label{fig:generalproblemC}Process~C receives $b$
-%     before $a$. The immediate delivery of $b$ violates causal order.]
-%     {\input{input/figgeneralproblemC.tex}}
-%     \caption{\label{fig:generalproblem}Causal order violation in network
-%       without causal broadcast.}
-%   \end{center}
-% \end{figure*}
-
-
 \begin{figure*}
   \begin{center}
     \subfloat[Part A][\label{fig:generalsolveA}Process~A broadcasts $a$.]
@@ -47,14 +25,6 @@ relationship~\cite{lamport1978time}.
   \end{center}
 \end{figure*}
 
-% \begin{figure}
-%   \begin{center}
-%     \input{input/figgeneralsolveA.tex}
-%     \caption{\label{fig:generalsolveA} Upon receipt of $a$, Process~B forwards
-%       $a$ using FIFO links to all its neighbors. Process~C cannot receive $b$
-%       without having received $a$ beforehand. It ensures causal delivery.}
-%   \end{center}
-% \end{figure}
 
 \begin{figure*}
   \begin{center}
@@ -65,29 +35,9 @@ relationship~\cite{lamport1978time}.
   \end{center}
 \end{figure*}
 
-% Figure~\ref{fig:generalproblem} illustrates the need of an additional mechanism
-% to ensure causal delivery of messages. It depicts a network comprising 3
-% processes connected to each other. In Figure~\ref{fig:generalproblemA},
-% Process~A broadcasts a message $a$, hence sends it to both Process~B and
-% Process~C.  In Figure~\ref{fig:generalproblemB}, Process~B receives and delivers
-% $a$ then broadcasts $b$. Causal order states that all processes of the network
-% must deliver $a$ before $b$. However, in Figure~\ref{fig:generalproblemC}, we
-% see that Process~C receives $b$ while $a$ is still traveling. Consequently, to
-% ensure causal order Process~C must know on receipt of $b$ that it depends of
-% another message $a$, an delay the delivery of $b$ until the receipt and delivery
-% of $a$.
-
-% This is the principle of reactive
-% approaches~\cite{almeida2008interval,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}.
-% Table~\ref{table:comparison} shows the complexity of a vector clock-based
-% representative~\cite{schwarz1994detecting}.  Each broadcast message conveys
-% control information the size of which increases linearly with the number of
-% processes. Each process must check at each receipt if the message is ready for
-% causal delivery which takes linear time in terms of number of processes and
-% number of messages delayed. Consequently, 
-% % even if its operation works in dynamic
-% %networks where membership changes over time, 
-% it eventually becomes expensive and inefficient.
+Causal broadcast ensures that all connected processes deliver each broadcast
+message exactly once~\cite{hadzilacos1994modular} following the happen before
+relationship~\cite{lamport1978time}.
 
 Instead of checking repeatedly if messages are ready to be delivered, a
 preventive approach~\cite{friedman2004causal} makes sure that messages arrive
@@ -126,29 +76,6 @@ the membership.  Process~A only knows about Process~C and Process~D.  Yet,
 Process~A's broadcast messages $a$ and $a'$ arrive to all other processes either
 directly or transitively. In addition, $a$ and $a'$ always arrive in causal
 order at all processes despite concurrency and whatever the dissemination path.
-
-% Figure~\ref{fig:disseminationtree} shows an example of message
-% dissemination. Process~A broadcasts $a$ then $a'$. All processes must receive
-% $a$ before $a'$. Process~A sends it to the network using all its
-% links. Process~B and Process~C necessarily receive $a$ before $a'$ for links are
-% FIFO. They forward these messages in FIFO order using all their links too.
-% Other processes necessarily receive $a$ before $a'$ for no subsequent path will
-% ever carry $a'$ before $a$.  We see that in spite of concurrent messages
-% broadcast at different time, Process~F always receives $a$ before
-% $a'$. Concurrent messages also have causal relationship to ensure.  Since
-% Process~B broadcasts $b$ right after it received $a$, all processes must receive
-% $a$ before $b$. Since Process~C broadcasts $c$ after the receipt of $a'$, all
-% processes must receive $c$ after $a'$, hence after $a$. However, there is no
-% constraint between message deliveries of $c$ and $b$. Process~F can receive them
-% in any order.
-
-
-%On the opposite, second row of 
-% Table~\ref{table:comparison} shows the complexity of a preventive
-% approach~\cite{friedman2004causal}. It outperforms the reactive approach:
-% message overhead is constant; it safely prunes its local structure; message
-% delivery time is constant.
-
 
 \begin{figure*}
   \begin{center}
@@ -193,31 +120,6 @@ that $a'$ arrives at Process~D before $a$. Figure~\ref{fig:preventiveproblemD}
 shows that not only it violates causal delivery but also propagates the
 violation to all processes downstream.
 
-% A preventive causal broadcast ensuring causal delivery at marginal cost and that
-% \item handles both static and dynamic networks,
-% \end{inparaenum}
-% would finally make causal broadcast \TODO{safe}, affordable and efficient in
-% large and dynamic systems.
-
-% \begin{figure}
-%   \begin{center}
-%     \input{./input/figproblem.tex}
-%     \caption{\label{fig:problem}Preventive broadcast in dynamic network.}
-%   \end{center}
-% \end{figure}
-
-% \EXAMPLE{Example of preventive approach in dynamic network.}{
-%   Figure~\ref{fig:problem} illustrates the issue with the establishment of new
-%   FIFO channels. In this example, a FIFO channel links $p_1$ to $p_2$; another
-%   links $p_2$ to $p_3$; none links $p_1$ to $p_3$. Other FIFO channels may exist
-%   but we do not show them for the sake of simplicity. Process $p_1$ broadcasts
-%   $m$ and delivers it. $p_3$ receives it by the intermediary of $p_2$. In the
-%   meantime, $p_1$ creates a FIFO channel to $p_3$, then broadcasts $m'$ to $p_2$
-%   and $p_3$. Since the path through $p_2$ is longer in terms of propagation time
-%   compared to the direct connections from $p_1$ to $p_3$, Process $p_3$ receives
-%   and delivers $m'$ before $m$. It violates causal order, for $m'$ precedes $m$.
-% }
-
 The causal broadcast presented in this paper is preventive and solves the causal
 order violation issue of dynamic systems.  Table~\ref{table:comparison} shows
 its complexity. Similarly to the preventive approach, complexity stays constant
@@ -231,8 +133,6 @@ and efficient even in large and dynamic systems.
 Next section describes our preventive causal broadcast for large and dynamic
 systems. It details its operation, provides the proofs that it works in both
 static and dynamic settings, and shows its complexity analysis.
-
-
 
 %%% Local Variables:
 %%% mode: latex
