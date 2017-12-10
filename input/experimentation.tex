@@ -6,6 +6,15 @@
 % message and its delivery by all processes in the network. We expect that our
 % measurements slowly increase as the network becomes more dynamic.
 
+\begin{figure*}
+  \begin{center}
+    \includegraphics[width=1.5\columnwidth]{./img/delay.eps}
+    \caption{\label{fig:delay}Impact of \CBROADCAST on the underlying overlay
+      network.}
+  \end{center}
+\end{figure*}
+
+
 In this section, we evaluate the impact of \CBROADCAST on the message delivery
 in a specific overlay network that corresponds to random graphs. The experiments
 run on the \PEERSIM simulator~\cite{montresor2009peersim} that allows
@@ -30,14 +39,6 @@ Links become safe slower. \\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the time taken by broadcast messages before being
 delivered by processes.
-
-\begin{figure*}
-  \begin{center}
-    \includegraphics[width=1.5\columnwidth]{./img/delay.eps}
-    \caption{\label{fig:delay}Impact of \CBROADCAST on the underlying overlay
-      network.}
-  \end{center}
-\end{figure*}
 
 \noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
 experiment. The y-axis depicts the delay set on message transmission for each
