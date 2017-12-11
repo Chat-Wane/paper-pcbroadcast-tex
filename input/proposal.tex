@@ -8,7 +8,7 @@ large and dynamic systems.
 % It does not overload
 % messages with any control information. 
 To provide causal order, most
-state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
+state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient},~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
 approaches are reactive. They check if message deliveries should be delayed to
 avoid causality violations. Our approach is preventive. Messages are immediately
 delivered on receipt without risk of causality violations. This difference not
@@ -283,15 +283,17 @@ Instead of sending all its delivered messages, Process~A initiates a ping phase
 to Process~B while recording all its upcoming message deliveries in an array.
 
 \begin{definition}[Ping phase]
-  Ping phase starts when Process~A pings Process~B. Ping messages travel using
-  safe links. When Process~B receives this ping, it replies to
-  Process~B. Replies travel using any communication mean. Ping phase ends when
-  Process~A receives the reply of Process~B.
+  Ping phase starts when Process~A pings Process~B. Ping messages $\pi$ travel
+  using safe links. When Process~B receives this ping, it replies to
+  Process~A. Replies $\rho$ travel using any communication mean. Ping phase ends
+  when Process~A receives the reply of Process~B.
 \end{definition}
 
 \begin{lemma}[\label{lemma:ping}Ping phases acknowledge broadcast receipts]
   A ping phase from Process~A to Process~B acknowledges the receipt by B of all
-  messages delivered by Process~A before this ping phase.
+  messages delivered by Process~A before this ping phase:
+  $\forall m,\, d_A(m) \rightarrow s_A(\pi_{AB}) \wedge r_A(\rho_{AB}) \implies
+  r_B(m)$
 \end{lemma}
 
 \begin{proof}
@@ -301,7 +303,7 @@ to Process~B while recording all its upcoming message deliveries in an array.
   either already forwarded them or will forward them in their receipt
   order. Since Process~A's ping travels using safe links after these messages,
   when Process~B receives the ping, it already received all messages delivered
-  by Process~A. Process~A receives Process~B replies after Process~B received
+  by Process~A. Process~A receives Process~B's reply after Process~B received
   the ping. Consequently, when Process~A receives Process~B's reply, Process~B
   received all messages delivered by Process~A before the start of this ping
   phase.
@@ -530,98 +532,158 @@ time than resetting the buffering phase.
 \label{subsec:complexity}
 
 We review and discuss about the complexity of \CBROADCAST. We distinguish the
-complexity brought by
+complexity brought by 
 \begin{inparaenum}[(i)]
-\item causal ordering,
+\item the overlay network,
 \item reliable broadcast,
-\item and the overlay network.
+\item and causal ordering.
 \end{inparaenum}
 
-\PAR{Causal ordering.}{Regarding message overhead, broadcast messages convey two 
-  types of control information: data to ensure FIFO order links, and
-  data to globally identify the message. Thus, 
-  message overhead is constant. 
-  % Regarding traffic, broadcast messages do not need to convey any control
-  % information. 
-  Regarding number of messages, processes must send each message to all their
-  neighborhood exactly once. It creates as many copies as neighbors. This number
-  of copies may constitute an issue when the size of messages is large. To solve
-  this issue, processes can send identifiers instead of large messages then send
-  these messages on demand.  It introduces additional delays in communications
-  but greatly reduces generated traffic~\cite{frey:hal-01479885}.  Regarding
-  local space consumption, our protocol maintains one buffer per link during its
-  ping phase time. We assume that this time is short so the number of
-  buffered messages stays small. As shown in Section~\ref{sec:proposal}, network
-  conditions can make this assumption false. Algorithm~\ref{algo:boundingbuffer}
-  allows to bound the size of each buffer and handle network failures.}
-
-% While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
-% means that they can grow unbounded, we can easily bound them. For instance,
-% above a threshold we clear the buffer and send another locked message, or we
-% remove the link altogether.
-
-\PAR{Reliable broadcast.}{Algorithm~\ref{algo:reliablebroadcast} shows the
-  instructions of reliable broadcast. Even in presence of message duplicates it
-  avoids multiple deliveries of a same message. To achieve this, the most
-  straightforward structure is a set saving all new received messages. However,
-  it increases linearly with the number of delivered messages. Assigning a
-  unique identifier $\langle p,\, counter \rangle$ to each message changes the
-  complexity. It becomes a vector that increases linearly with the number of
-  processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
-  interval tree clocks~\cite{almeida2008interval} slightly overloads messages
-  with identifiers but it improves the space complexity: the local structure
-  increases linearly with the number of processes that are currently involved in
-  broadcasting.}
+\noindent \textbf{Overlay network.} Processes cannot afford the upkeep of full
+membership in large and dynamic systems. Instead, each process builds a partial
+view the size of which is considerably smaller than the actual network size.  To
+maintain these partial views, each process runs a peer-sampling
+protocol~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}.  Some
+peer-sampling protocols provides partial views the size of which scales
+logarithmically with the actual network size~\cite{nedelec2017adaptive}.  The
+number of messages forwarded by each process for each broadcast remains small,
+for this number is equal to their view size: $O(Q)$ where $Q$ is the size of the
+partial view.
 
 
-% \TODO{Rework.} Represented in Algorithms~\ref{algo:fifobroadcast}
-% and~\ref{algo:bufferbroadcast} by Function $alreadyReceived$. Causal ordering
-% and detecting duplicated receipts are orthogonal problems. In this paper, we do
-% not provide an implementation for the later. The simplest approach consists in
-% saving all received messages (\REF). However, the size of this set linearly and
-% monotonically increases as the number of broadcast messages increases. One would
-% prefer an approach based on vectors where one entry corresponds to the number of
-% messages received by a particular process~\cite{fidge1988timestamps}. Such
-% approach do not require to piggyback additional data in the message. However, it
-% requires to store locally a vector the size of which increases linearly compared
-% to the number of processes that ever broadcast a message. Interval tree
-% clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
-% becomes linear in terms of number of processes that are currently involved in
-% broadcasting. Possible improvements could take advantage of the fact that the
-% number of duplicates is equal to the number of incoming links. However, it does
-% not hold in dynamic networks where additional links are established. Finding a
-% sublinear bound for detecting duplicated receipts remains an open problem.
+\noindent \textbf{Reliable broadcast.} Gossiping constitutes an efficient mean
+to disseminate messages to all
+processes~\cite{demers1987epidemic},~\cite{birman1999bimodal}.
+Algorithm~\ref{algo:reliablebroadcast} shows that it relies on a local structure
+to guarantee that messages are delivered exactly once. This structure grows
+linearly with the number of processes in the network: $O(N)$. In addition, each
+message piggybacks a pair $\langle process,\, counter \rangle$ that identifies
+it: $O(1)$. Checking if a message is a duplicate takes constant time: $O(1)$.
 
+\noindent \textbf{Causal ordering.} Causal ordering primarily uses FIFO links to
+broadcast messages which implies a constant size overhead on messages
+$O(1)$. Its local space complexity is $O(W + B)$ where $W$ is the number of
+messages awaiting on FIFO links, and $B$ is the size of the structure required
+to ensure link safety. \CBROADCAST maintains one buffer per unsafe link during
+its ping phase.  We assume that this time is short so the number of buffered
+messages stays small. As shown in Section~\ref{sec:proposal}, network conditions
+can make this assumption false. Algorithm~\ref{algo:boundingbuffer} allows to
+bound the size of each buffer and handle network failures.
 
-\PAR{Overlay network.}{Values such as the number of messages sent by each
-  process, or the number of hops for a message to reach all processes, are
-  interdependent values brought by the overlay network. For instance, random
-  peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
-  properties similar to those of random graphs~\cite{erdos1959random}. They
-  provide each process with a random subset of neighbors the size of which is
-  logarithmically scaling with the network size. The number of messages sent by
-  each process for each broadcast message is logarithmic.  Since random
-  peer-sampling protocols build topologies close to random graphs, messages take
-  a logarithmic number of hops to reach all processes. In addition, random
-  peer-sampling protocols such as \SPRAY~\cite{nedelec2017adaptive} or
-  \CYCLON~\cite{voulgaris2005cyclon} create links using only
-  neighbor-to-neighbor interactions, i.e., they establish links only two hops
-  apart. It takes only 4 hops for new links to become safe.  The overhead
-  brought by these messages is negligible. The ping phase duration,
-  hence the size of buffers, remains small.}
-
-Generated traffic remains the most important criterion for scalability. Overall,
-the traffic generated by \CBROADCAST for each broadcast only depends of the size
-of messages and the overlay network chosen to broadcast messages. The size of
-messages is an irreducible variable; and many protocols designed to build
-overlay networks achieve high scalability in terms of network size and
-dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
+\noindent \textbf{Overall.}  Generated traffic remains the most important
+criterion for scalability. The traffic generated by \CBROADCAST for each process
+and for each broadcast only depends of the size of messages and the overlay
+network chosen to broadcast messages. The size of messages is an irreducible
+variable; and many protocols designed to build overlay networks achieve high
+scalability in terms of network size and
+dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman},~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
 Consequently, \CBROADCAST achieve high scalability in both these terms
 too. \CBROADCAST is efficient, for the upper bound on the complexity of delivery
 execution time does not depend of any factor.
 
-The next section shows an experiment that highlights the influence of
-\CBROADCAST's way to ensure causal order on the underlying overlay network.
+However, to ensure causal order, \CBROADCAST may not use all outgoing links in
+dynamic settings, for some may be temporarily unsafe. This negatively impacts
+the overlay network properties. The next section shows an experiment that
+highlights the influence of \CBROADCAST's way to ensure causal order on the
+underlying overlay network. In particular, it shows that the number of hops
+required by a broadcast message to reach all processes increases when delays on
+transmission increase.
+
+
+
+
+% \PAR{Causal ordering.}{Regarding message overhead, broadcast messages convey two 
+%   types of control information: data to ensure FIFO order links, and
+%   data to globally identify the message. Thus, 
+%   message overhead is constant. 
+%   % Regarding traffic, broadcast messages do not need to convey any control
+%   % information. 
+%   Regarding number of messages, processes must send each message to all their
+%   neighborhood exactly once. It creates as many copies as neighbors. This number
+%   of copies may constitute an issue when the size of messages is large. To solve
+%   this issue, processes can send identifiers instead of large messages then send
+%   these messages on demand.  It introduces additional delays in communications
+%   but greatly reduces generated traffic~\cite{frey:hal-01479885}.  Regarding
+%   local space consumption, our protocol maintains one buffer per link during its
+%   ping phase time. We assume that this time is short so the number of
+%   buffered messages stays small. As shown in Section~\ref{sec:proposal}, network
+%   conditions can make this assumption false. Algorithm~\ref{algo:boundingbuffer}
+%   allows to bound the size of each buffer and handle network failures.}
+
+
+% % While Algorithm~\ref{algo:bufferbroadcast} shows no buffer management which
+% % means that they can grow unbounded, we can easily bound them. For instance,
+% % above a threshold we clear the buffer and send another locked message, or we
+% % remove the link altogether.
+
+% \PAR{Reliable broadcast.}{Algorithm~\ref{algo:reliablebroadcast} shows the
+%   instructions of reliable broadcast. Even in presence of message duplicates it
+%   avoids multiple deliveries of a same message. To achieve this, the most
+%   straightforward structure is a set saving all new received messages. However,
+%   it increases linearly with the number of delivered messages. Assigning a
+%   unique identifier $\langle p,\, counter \rangle$ to each message changes the
+%   complexity. It becomes a vector that increases linearly with the number of
+%   processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
+%   interval tree clocks~\cite{almeida2008interval} slightly overloads messages
+%   with identifiers but it improves the space complexity: the local structure
+%   increases linearly with the number of processes that are currently involved in
+%   broadcasting.}
+
+% \begin{table}[h]
+%   \begin{center}
+%     \begin{tabularx}{0.5\columnwidth}{@{}cc@{}}
+%       Message overhead & local space \\\hline
+%       $O(1)$ & $O(N)$
+%     \end{tabularx}
+%   \end{center}
+% \end{table}
+
+
+
+% % \TODO{Rework.} Represented in Algorithms~\ref{algo:fifobroadcast}
+% % and~\ref{algo:bufferbroadcast} by Function $alreadyReceived$. Causal ordering
+% % and detecting duplicated receipts are orthogonal problems. In this paper, we do
+% % not provide an implementation for the later. The simplest approach consists in
+% % saving all received messages (\REF). However, the size of this set linearly and
+% % monotonically increases as the number of broadcast messages increases. One would
+% % prefer an approach based on vectors where one entry corresponds to the number of
+% % messages received by a particular process~\cite{fidge1988timestamps}. Such
+% % approach do not require to piggyback additional data in the message. However, it
+% % requires to store locally a vector the size of which increases linearly compared
+% % to the number of processes that ever broadcast a message. Interval tree
+% % clocks~\cite{almeida2008interval} allow processes to reduce this complexity. It
+% % becomes linear in terms of number of processes that are currently involved in
+% % broadcasting. Possible improvements could take advantage of the fact that the
+% % number of duplicates is equal to the number of incoming links. However, it does
+% % not hold in dynamic networks where additional links are established. Finding a
+% % sublinear bound for detecting duplicated receipts remains an open problem.
+
+
+% \PAR{Overlay network.}{Values such as the number of messages sent by each
+%   process, or the number of hops for a message to reach all processes, are
+%   interdependent values brought by the overlay network. For instance, random
+%   peer-sampling protocols~\cite{jelasity2007gossip} build network overlays with
+%   properties similar to those of random graphs~\cite{erdos1959random}. They
+%   provide each process with a random subset of neighbors the size of which is
+%   logarithmically scaling with the network size. The number of messages sent by
+%   each process for each broadcast message is logarithmic.  Since random
+%   peer-sampling protocols build topologies close to random graphs, messages take
+%   a logarithmic number of hops to reach all processes. In addition, random
+%   peer-sampling protocols such as \SPRAY~\cite{nedelec2017adaptive} or
+%   \CYCLON~\cite{voulgaris2005cyclon} create links using only
+%   neighbor-to-neighbor interactions, i.e., they establish links only two hops
+%   apart. It takes only 4 hops for new links to become safe.  The overhead
+%   brought by these messages is negligible. The ping phase duration,
+%   hence the size of buffers, remains small.}
+
+% \begin{table}[h]
+%   \begin{center}
+%     \begin{tabularx}{0.5\columnwidth}{@{}Xcc@{}}
+%       overlay & number of messages & meow\\\hline
+%       $O(1)$ & $O(B)$ & \\
+%     \end{tabularx}
+%   \end{center}
+% \end{table}
 
 %%% Local Variables:
 %%% mode: latex

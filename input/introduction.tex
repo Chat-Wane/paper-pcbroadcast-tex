@@ -49,7 +49,7 @@
 % ---------------------------------
 
 Designing distributed
-applications~\cite{nakamoto2009bitcoin,nedelec2016crate,shapiro2011comprehensive}
+applications~\cite{demers1987epidemic,nakamoto2009bitcoin,nedelec2016crate,shapiro2011comprehensive}
 over a message-passing system goes through the definition and the implementation
 of appropriate communication primitives~\cite{hadzilacos1994modular}.  In this
 paper, we focus on causal broadcast.
@@ -74,9 +74,10 @@ Unfortunately, causal broadcast has proven expensive in dynamic environments
 where a large number of processes can join, leave, or self-reconfigure at any
 time~\cite{charronbost1991concerning}. While gossiping constitutes an efficient
 mean to disseminate messages to all
-processes~\cite{birman1999bimodal,demers1987epidemic}, ensuring causal delivery
-of these messages remains overcostly.  Using state-of-the-art protocols, each
-message piggybacks a vector -- or a compressed vector -- of Lamport's
+processes~\cite{demers1987epidemic},~\cite{birman1999bimodal}, ensuring causal
+delivery of these messages remains overcostly.  Using state-of-the-art
+protocols, each message piggybacks a vector -- or a compressed vector -- of
+Lamport's
 clocks~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}.
 The message overhead increases monotonically, for entries cannot be reclaimed
 without consensus. The message overhead increases linearly with the number of

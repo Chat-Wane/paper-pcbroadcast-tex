@@ -64,7 +64,7 @@ In large systems, processes cannot afford to maintain the full membership to
 communicate with. Instead, they have a much smaller view called
 neighborhood. Forwarding messages allows them to reach all members of the
 system, either directly or transitively in a gossip
-fashion~\cite{birman1999bimodal,demers1987epidemic}. Forwarding is mandatory for
+fashion~\cite{demers1987epidemic},~\cite{birman1999bimodal}. Forwarding is mandatory for
 large scale systems.  Whatever the broadcast protocol, processes pay the price
 of gossiping. They must create and send copies of the original broadcast
 message. Preventive broadcast operation requires forwarding but since gossiping
