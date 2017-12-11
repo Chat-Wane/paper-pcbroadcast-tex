@@ -5,17 +5,15 @@
 In this section, we introduce \CBROADCAST (stands for Preventive Causal
 broadcast), a causal broadcast protocol that breaks scalability barriers for
 large and dynamic systems.
-% It does not overload
-% messages with any control information. 
-To provide causal order, most
-state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient},~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
-approaches are reactive. They check if message deliveries should be delayed to
-avoid causality violations. Our approach is preventive. Messages are immediately
-delivered on receipt without risk of causality violations. This difference not
-only removes most of control information piggybacked in broadcast messages, but
-also leads to constant delivery execution time. Protocols and applications can
-finally afford causal broadcast in large and dynamic systems without loss of
-efficiency.
+% To provide causal order, most
+% state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient},~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
+% approaches are reactive. They check if message deliveries should be delayed to
+% avoid causality violations.
+Our approach is preventive. Messages are immediately delivered on receipt
+without risk of causality violations. This difference not only removes most of
+control information piggybacked in broadcast messages, but also leads to
+constant delivery execution time. Protocols and applications can finally afford
+causal broadcast in large and dynamic systems without loss of efficiency.
 
 % This section states  the definitions. It describes our algorithm. It proves that
 % it handles both static and dynamic networks. It analyses its complexity.
@@ -150,7 +148,7 @@ From Theorem~\ref{theo:flooding}, reliable broadcast from
 Algorithm~\ref{algo:reliablebroadcast} is causal if communication links employed
 to communicate with neighbors in $Q$ are FIFO. This holds only for static
 networks where $Q$ is immutable. In practice, processes add and remove links to
-neighbors from $Q$ at any time. Next section describes a preventive causal
+neighbors from $Q$ at any time. Next section describes \CBROADCAST, a causal
 broadcast that handles such dynamicity.
 
 
@@ -186,8 +184,8 @@ broadcast that handles such dynamicity.
     The former safely empties its buffer to Process~D. 
     Using the new link cannot cause causal order violation anymore.]
     {\input{./input/figpreventivesolveE.tex}}
-    \caption{\label{fig:preventivesolve}Preventive causal broadcast does not violate
-      causal order in dynamic networks anymore.}
+    \caption{\label{fig:preventivesolve}\CBROADCAST does not violate causal
+      order in dynamic settings.}
   \end{center}
 \end{figure*}
 
@@ -460,7 +458,7 @@ safe. Process~A uses the new link normally.
 \end{proof}
 
 Algorithm~\ref{algo:bufferbroadcast} ensures causal delivery of messages even in
-dynamic network settings. Compared to preventive causal broadcast for static
+dynamic network settings. Compared to the original causal broadcast for static
 networks~\cite{friedman2004causal}, it uses an additional local structure:
 buffers of messages. It associates a buffer to each new unsafe links. We assumed
 that the size of these buffer stays small in general, for it depends of the time

@@ -39,41 +39,42 @@ Causal broadcast ensures that all connected processes deliver each broadcast
 message exactly once~\cite{hadzilacos1994modular} following the happen before
 relationship~\cite{lamport1978time}.
 
-Instead of checking repeatedly if messages are ready to be delivered, a
-preventive approach~\cite{friedman2004causal} makes sure that messages arrive
-ready in the first place.  It uses FIFO links and systematically forwards
-delivered messages.  Intuitively, the dissemination pattern automatically makes
-sure that no paths from a process to another process carry messages out of
-causal order.
+Instead of encoding the logical time at broadcast regarding all other broadcasts
+and piggyback this control information in each broadcast message to ensure
+causal order, \cite{friedman2004causal}
+%  checking repeatedly if messages are ready to be delivered, a
+% preventive approach~\cite{friedman2004causal} makes sure that messages arrive
+%ready in the first place. % It
+uses FIFO links and systematically forwards delivered messages.  Intuitively,
+the dissemination pattern automatically makes sure that no paths from a process
+to another process carry messages out of causal order.
 
-Figure~\ref{fig:generalsolve} depicts the principle of the original preventive
-approach. The system comprises 3 processes connected to each other with FIFO
-links.  In Figure~\ref{fig:generalsolveA}, Process~A broadcasts $b$. It sends
-$a$ to Process~B and Process~C. In Figure~\ref{fig:generalsolveB}, Process~B
-receives, delivers, and forwards $a$. In Figure~\ref{fig:generalsolveC}, it
-broadcasts $b$. Consequently, all processes must deliver $a$ before delivering
-$b$. In Figure~\ref{fig:generalsolveD}, Process~A receives, delivers, and
-forwards $b$. Process~A fulfills the causal order constraint between $a$ and
-$b$. In Figure~\ref{fig:generalsolveE}, we see that either directly via
-Process~B or indirectly via Process~A, Process~C cannot receive $b$ before
-$a$. Thus, it eventually receives, delivers, and forwards the messages following
-causal order.
+Figure~\ref{fig:generalsolve} depicts this principle. The system comprises 3
+processes connected to each other with FIFO links.  In
+Figure~\ref{fig:generalsolveA}, Process~A broadcasts $b$. It sends $a$ to
+Process~B and Process~C. In Figure~\ref{fig:generalsolveB}, Process~B receives,
+delivers, and forwards $a$. In Figure~\ref{fig:generalsolveC}, it broadcasts
+$b$. Consequently, all processes must deliver $a$ before delivering $b$. In
+Figure~\ref{fig:generalsolveD}, Process~A receives, delivers, and forwards
+$b$. Process~A fulfills the causal order constraint between $a$ and $b$. In
+Figure~\ref{fig:generalsolveE}, we see that either directly via Process~B or
+indirectly via Process~A, Process~C cannot receive $b$ before $a$. Thus, it
+eventually receives, delivers, and forwards the messages following causal order.
 
 
 In large systems, processes cannot afford to maintain the full membership to
 communicate with. Instead, they have a much smaller view called
 neighborhood. Forwarding messages allows them to reach all members of the
 system, either directly or transitively in a gossip
-fashion~\cite{demers1987epidemic},~\cite{birman1999bimodal}. Forwarding is mandatory for
-large scale systems.  Whatever the broadcast protocol, processes pay the price
-of gossiping. They must create and send copies of the original broadcast
-message. Preventive broadcast operation requires forwarding but since gossiping
-already forwards messages, it does not constitute an additional overhead of the
-approach.
+fashion~\cite{demers1987epidemic},~\cite{birman1999bimodal}. Forwarding is
+mandatory for large scale systems.  Whatever the broadcast protocol, processes
+pay the price of gossiping. They must create and send copies of the original
+broadcast message. Since gossiping already encompasses forwarding of messages,
+it does not constitute an additional overhead of~\cite{friedman2004causal}.
 
-Figure~\ref{fig:disseminationtree} shows that preventive broadcast ensures
-causal order in larger systems where processes have limited knowledge of
-the membership.  Process~A only knows about Process~C and Process~D.  Yet,
+Figure~\ref{fig:disseminationtree} shows that such broadcast ensures causal
+order in larger systems where processes have limited knowledge of the
+membership.  Process~A only knows about Process~C and Process~D.  Yet,
 Process~A's broadcast messages $a$ and $a'$ arrive to all other processes either
 directly or transitively. In addition, $a$ and $a'$ always arrive in causal
 order at all processes despite concurrency and whatever the dissemination path.
@@ -97,22 +98,22 @@ order at all processes despite concurrency and whatever the dissemination path.
     \subfloat[Part 4][\label{fig:preventiveproblemD}Process~D propagates
     the causal order violation.]
     {\input{input/figpreventiveproblemD.tex}}
-    \caption{\label{fig:preventiveproblem}Preventive causal broadcast may
-      violate causal order in dynamic settings.}
+    \caption{\label{fig:preventiveproblem}Causal
+      broadcast~\cite{friedman2004causal} may violate causal order in dynamic
+      settings.}
   \end{center}
 \end{figure*}
 
 
-Unfortunately, the original preventive causal broadcast protocol ensures causal
-order only in static systems where the membership does not change and no links
-are added or removed~\cite{friedman2004causal}. These are not practical
-assumptions.  In practice, processes may join and leave the system at any time;
-and processes may reconfigure their neighborhood at any time.
-Figure~\ref{fig:preventiveproblem} shows an example of message dissemination in
-dynamic settings where causal delivery is violated. In
-Figure~\ref{fig:preventiveproblemA}, Process~A broadcasts $a$. It sends $a$ to
-all its neighbors. Here, it sends $a$ to Process~B only.  Afterwards, in
-Figure~\ref{fig:preventiveproblemA2}, Process~A adds a link to
+Unfortunately, \cite{friedman2004causal} ensures causal order only in static
+systems where the membership does not change and no links are added or
+removed. These are not practical assumptions.  In practice, processes may join
+and leave the system at any time; and processes may reconfigure their
+neighborhood at any time.  Figure~\ref{fig:preventiveproblem} shows an example
+of message dissemination in dynamic settings where causal delivery is
+violated. In Figure~\ref{fig:preventiveproblemA}, Process~A broadcasts $a$. It
+sends $a$ to all its neighbors. Here, it sends $a$ to Process~B only.
+Afterwards, in Figure~\ref{fig:preventiveproblemA2}, Process~A adds a link to
 Process~D. Message $a$ is still traveling. In particular, it did not reach
 Process~D yet. In Figure~\ref{fig:preventiveproblemB}, Process~A broadcasts
 $a'$. In this example, messages travel faster using the direct link from A to D
@@ -121,19 +122,20 @@ that $a'$ arrives at Process~D before $a$. Figure~\ref{fig:preventiveproblemD}
 shows that not only it violates causal delivery but also propagates the
 violation to all processes downstream.
 
-The causal broadcast presented in this paper is preventive and solves the causal
-order violation issue of dynamic systems.  Table~\ref{table:comparison} shows
-its complexity. Similarly to~\cite{friedman2004causal}, complexity stays
-constant in terms of message overhead and delivery execution time. The local
-space complexity is linear in terms of number of processes. We conjecture that
-this bound is minimal in dynamic settings. In addition, our algorithm employs
-another local structure to ensure causal order but we show that we can bound it
-in Algorithm~\ref{algo:boundingbuffer}. This makes causal broadcast affordable
-and efficient even in large and dynamic systems.
+The causal broadcast presented in this paper extends~\cite{friedman2004causal}
+and solves the causal order violation issue of dynamic systems.
+Table~\ref{table:comparison} shows its complexity. Similarly
+to~\cite{friedman2004causal}, complexity stays constant in terms of message
+overhead and delivery execution time. The local space complexity is linear in
+terms of number of processes and awaiting messages. We conjecture that this
+bound is minimal in dynamic settings. In addition, our algorithm employs another
+local structure to ensure causal order but we show that we can bound it in
+Algorithm~\ref{algo:boundingbuffer}. This makes causal broadcast affordable and
+efficient even in large and dynamic systems.
 
-Next section describes our preventive causal broadcast for large and dynamic
-systems. It details its operation, provides the proofs that it works in both
-static and dynamic settings, and shows its complexity analysis.
+The next section describes the proposed causal broadcast. It details its
+operation, provides the proofs that it works in both static and dynamic
+settings, and shows its complexity analysis.
 
 %%% Local Variables:
 %%% mode: latex

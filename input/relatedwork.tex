@@ -8,15 +8,13 @@ vector approaches and their following compaction approaches.
 \PAR{Piggybacking approaches~\cite{birman1987reliable,hadzilacos1993fault}.}{A
   trivial way to ensure causal ordering of messages is to piggyback all causally
   related messages since the last broadcast message along with the newly
-  broadcast message. Similarly to our approach, these broadcast protocols can
-  deliver messages as soon as they arrive.  However, even by piggybacking the
-  identifiers of messages instead of messages themselves, the broadcast message
-  size may increase quickly depending on the application. \CBROADCAST does not
-  piggyback all preceding messages in broadcast messages. However, an
-  accumulation of messages arises during buffering. However, as discussed in
-  Section~\ref{subsec:complexity}, we can assume that links quickly become safe
-  so the buffer size stays small, and we can easily set a threshold on the
-  buffer size (see Algorithm~\ref{algo:boundingbuffer}).}
+  broadcast message. Even by piggybacking the identifiers of messages instead of
+  messages themselves, the broadcast message size may increase quickly depending
+  on the application. \CBROADCAST does not piggyback all preceding messages in
+  broadcast messages. However, an accumulation of messages arises during
+  buffering. As discussed in Section~\ref{subsec:complexity}, we can assume that
+  links quickly become safe so the buffer size stays small, and we can easily
+  set a threshold on the buffer size (see Algorithm~\ref{algo:boundingbuffer}).}
 
 \PAR{Vector clock approaches~\cite{fidge1988timestamps,mattern1989virtual}.}{A
   vector clock is a vector of monotonically increasing counters.  It encodes the
@@ -24,8 +22,7 @@ vector approaches and their following compaction approaches.
   $VC(m) < VC(m') \implies m \rightarrow m'$.  Before delivering a message,
   processes using vector-based broadcast check if the vector of the message is
   ready regarding their local vector. If it detects any missing preceding
-  message, the process delays the delivery. These approaches are blocking while
-  our approach remains non-blocking.  In addition, to implement this
+  message, the process delays the delivery.   To implement this
   vector-based broadcast
   \begin{inparaenum}[(i)]
   \item each process must maintain a vector locally;
@@ -45,10 +42,12 @@ vector approaches and their following compaction approaches.
   depends of the desired boundary. \\
   In comparison to these vector-based approaches, our broadcast cannot compare
   any pair of messages; our broadcast cannot state if two messages are
-  concurrent or if one precedes the other. Nevertheless, accurate causal delivery
-  is a feature provided by default by the propagation scheme. It alleviates
-  messages from the need to piggyback heavy control
-  information~\cite{friedman2004causal}.}
+  concurrent or if one precedes the other. Nevertheless, accurate causal
+  delivery is a feature provided by default by the propagation scheme. It
+  alleviates messages from the need to piggyback heavy control
+  information~\cite{friedman2004causal}. Overall, our approach reduces the
+  generated traffic of causal broadcast by a factor of $N$ in the most common
+  context where processes have partial knowledge of the network membership.}
 
 % \PAR{Topological approaches.}{A trivial way to ensure causal delivery of
 % messages without message overhead consists in building an overlay network shaped
