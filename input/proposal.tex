@@ -8,7 +8,7 @@ large and dynamic systems.
 % It does not overload
 % messages with any control information. 
 To provide causal order, most
-state-of-the-art~\cite{almeida2008interval,birman1987reliable,fidge1988timestamps,hadzilacos1993fault,mattern1989virtual,mostefaoui2017probabilistic,singhal1992efficient}
+state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
 approaches are reactive. They check if message deliveries should be delayed to
 avoid causality violations. Our approach is preventive. Messages are immediately
 delivered on receipt without risk of causality violations. This difference not
@@ -27,7 +27,8 @@ A distributed system comprise processes. Processes can communicate using
 messages. They may not have full knowledge of the membership, for maintenance
 costs become too expansive in large and dynamic systems. Instead, processes
 build overlay networks with local partial view the size of which is generally
-much smaller than the actual size of the system.
+much smaller than the actual size of the
+system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}.
 
 \begin{definition}[Overlay network]
   An overlay network $N$ comprises a set of processes $P$. Each Process runs a
@@ -58,13 +59,14 @@ For the rest of the paper, we only consider networks without partitions.
 
 %\TODO{Replace ``network'' by  ``distributed system'' ?}
 
-Processes communicate by sending messages to other processes. They can send
-messages to specific processes or all of them.
+Processes communicate by sending messages to other processes.  A process A can
+send messages to another process B $s_{AB}(m)$; receive a message from another
+process B $r_{AB}(m)$; broadcast a message to all processes $b_A(m)$; receive a
+broadcast message $r_A(m)$; deliver a broadcast message $d_A(m)$.
 
 \begin{definition}[Uniform reliable broadcast]
-  A process can broadcast a message, receive a message, and deliver a message.
   When a process broadcasts a message to all processes of the network, correct
-  processes eventually receive it. 
+  processes eventually receive it.
   Uniform reliable broadcast guarantees 3 properties: \\
   \textbf{Validity:} If a correct process broadcasts a message, then it
   eventually delivers it. \\
@@ -241,10 +243,28 @@ only safe links to disseminate messages.
 \begin{definition}[Safe link]
   A link from Process~A to Process~B is safe if and only if Process~B received
   or will receive all messages delivered by Process~A before receiving any
-  message that Process~A will deliver. \\
-  % \TODO{$safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m')
-  % \implies r_B(m) \rightarrow r_{AB}(m')$}
+  message that Process~A will deliver:
+  $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
+  r_B(m) \rightarrow r_{AB}(m')$
 \end{definition}
+
+\begin{figure*}
+  \begin{center}
+    \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
+    {\input{input/figbufferproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
+    {\input{input/figbufferproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
+    {\input{input/figbufferproblemC.tex}}
+    \caption{\label{fig:bufferproblem}Buffers may grow unbounded due to network
+      conditions.}
+  \end{center}
+\end{figure*}
+
+
+
 
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
 the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
@@ -286,7 +306,6 @@ to Process~B while recording all its upcoming message deliveries in an array.
   received all messages delivered by Process~A before the start of this ping
   phase.
 \end{proof}
-
 
 Upon receipt of Process~B's reply, Process~A has the guaranty that Process~B
 received all its delivered messages preceding the ping phase. This is not
@@ -363,37 +382,40 @@ least $a$ and all preceding messages. It empties the buffer of messages to
 Process~D (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
 safe. Process~A uses the new link normally.
 
-% The ping phase ensures that Process~D received all messages preceding $a$ and
-% $a$ itself. The buffering phase ensures that Process~D receives all messages
-% between the sending of the ping message $\pi$ and the receipt of Process~D's
-% reply $\rho$. Afterwards, Process~D will receive Process~A's broadcast or
-% forwarded messages from this new direct link or transitively through Process~B.
-
 \begin{figure*}
   \begin{center}
-    \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
-    {\input{input/figbufferproblemA.tex}}
+    \subfloat[Part A][\label{fig:buffersolveA}
+    Process~A wanted to add a link to Process~D after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
-    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
-    {\input{input/figbufferproblemB.tex}}
+    \subfloat[Part B][\label{fig:buffersolveB}
+    Process~A receives, delivers, and forwards $x$. Since the buffer size would 
+    exceed the maximal boundary, it resets the buffer with a new counter and
+    sends a ping message with this counter. In the meantime, Process~D
+    receives $\pi_1$ and sends the corresponding reply $\rho_1$.]
+    {\input{input/figbuffersolveB.tex}}
     \hspace{20pt}
-    \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
-    {\input{input/figbufferproblemC.tex}}
-    \caption{\label{fig:bufferproblem}Buffers may grow unbounded due to network
-      conditions.}
+    \subfloat[Part C][\label{fig:buffersolveC}
+    Process~A forwards $y$ and buffers it. It also
+    receives $\rho_1$ but no buffers exist with this counter. Process~A 
+    simply discards $\rho_1$.]
+    {\input{input/figbuffersolveC.tex}}
+    \hspace{20pt}
+    \subfloat[Part D][\label{fig:buffersolveD}
+    Process~D receives $\pi_2$ and sends the corresponding
+    reply $\rho_2$.]
+    {\input{input/figbuffersolveD.tex}}
+    \hspace{20pt}
+    \subfloat[Part E][\label{fig:buffersolveE}
+    Process~A receives $\rho_2$. It empties the
+    buffer with the corresponding counter. Now,  the direct link
+    to Process~D is safe. Process~A uses it normally.]
+    {\input{input/figbuffersolveE.tex}}
+    \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
+      elements in each buffer.}
   \end{center}
 \end{figure*}
-
-
-% \begin{lemma}[Safe links stay safe]
-%   Once a link is safe, it stays safe until its removal.
-% \end{lemma}
-
-% \begin{proof}
-%   Links are FIFO. Using such links, processes receive messages in the order they
-%   were sent. This guarantees that a message $a$ sent before a message $a'$ will
-%   be delivered before $a'$
-% \end{proof}
 
 
 \begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
@@ -462,41 +484,6 @@ forever. %as long as Process~A receives or broadcasts
   \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
     network failures.}
 \end{algorithm}
-
-\begin{figure*}
-  \begin{center}
-    \subfloat[Part A][\label{fig:buffersolveA}
-    Process~A wanted to add a link to Process~D after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
-    {\input{input/figbuffersolveA.tex}}
-    \hspace{20pt}
-    \subfloat[Part B][\label{fig:buffersolveB}
-    Process~A receives, delivers, and forwards $x$. Since the buffer size would 
-    exceed the maximal boundary, it resets the buffer with a new counter and
-    sends a ping message with this counter. In the meantime, Process~D
-    receives $\pi_1$ and sends the corresponding reply $\rho_1$.]
-    {\input{input/figbuffersolveB.tex}}
-    \hspace{20pt}
-    \subfloat[Part C][\label{fig:buffersolveC}
-    Process~A forwards $y$ and buffers it. It also
-    receives $\rho_1$ but no buffers exist with this counter. Process~A 
-    simply discards $\rho_1$.]
-    {\input{input/figbuffersolveC.tex}}
-    \hspace{20pt}
-    \subfloat[Part D][\label{fig:buffersolveD}
-    Process~D receives $\pi_2$ and sends the corresponding
-    reply $\rho_2$.]
-    {\input{input/figbuffersolveD.tex}}
-    \hspace{20pt}
-    \subfloat[Part E][\label{fig:buffersolveE}
-    Process~A receives $\rho_2$. It empties the
-    buffer with the corresponding counter. Now,  the direct link
-    to Process~D is safe. Process~A uses it normally.]
-    {\input{input/figbuffersolveE.tex}}
-    \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
-      elements in each buffer.}
-  \end{center}
-\end{figure*}
 
 Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
 buffers. It solves the issue from the buffer owner's
@@ -577,8 +564,8 @@ complexity brought by
   instructions of reliable broadcast. Even in presence of message duplicates it
   avoids multiple deliveries of a same message. To achieve this, the most
   straightforward structure is a set saving all new received messages. However,
-  it increases linearly with the number of delivered messages (\REF). Assigning
-  a unique identifier $\langle p,\, counter \rangle$ to each message changes the
+  it increases linearly with the number of delivered messages. Assigning a
+  unique identifier $\langle p,\, counter \rangle$ to each message changes the
   complexity. It becomes a vector that increases linearly with the number of
   processes that ever broadcast a message~\cite{fidge1988timestamps}. Using
   interval tree clocks~\cite{almeida2008interval} slightly overloads messages
@@ -628,9 +615,10 @@ the traffic generated by \CBROADCAST for each broadcast only depends of the size
 of messages and the overlay network chosen to broadcast messages. The size of
 messages is an irreducible variable; and many protocols designed to build
 overlay networks achieve high scalability in terms of network size and
-dynamicity (\REF). Consequently, \CBROADCAST achieve high scalability in both
-these terms too. \CBROADCAST is efficient, for the upper bound on the complexity
-of delivery execution time does not depend of any factor.
+dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
+Consequently, \CBROADCAST achieve high scalability in both these terms
+too. \CBROADCAST is efficient, for the upper bound on the complexity of delivery
+execution time does not depend of any factor.
 
 The next section shows an experiment that highlights the influence of
 \CBROADCAST's way to ensure causal order on the underlying overlay network.

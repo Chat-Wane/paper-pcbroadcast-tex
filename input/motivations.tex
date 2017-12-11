@@ -43,7 +43,7 @@ Instead of checking repeatedly if messages are ready to be delivered, a
 preventive approach~\cite{friedman2004causal} makes sure that messages arrive
 ready in the first place.  It uses FIFO links and systematically forwards
 delivered messages.  Intuitively, the dissemination pattern automatically makes
-sure that no path from a process to any other process carries messages out of
+sure that no paths from a process to another process carry messages out of
 causal order.
 
 Figure~\ref{fig:generalsolve} depicts the principle of the original preventive
@@ -63,12 +63,13 @@ causal order.
 In large systems, processes cannot afford to maintain the full membership to
 communicate with. Instead, they have a much smaller view called
 neighborhood. Forwarding messages allows them to reach all members of the
-system, either directly or transitively in a gossip fashion (\REF). Forwarding
-is mandatory for large scale systems.  Whatever the broadcast protocol,
-processes pay the price of gossiping. They must create and send copies of the
-original broadcast message. Preventive broadcast operation requires forwarding
-but since gossiping already forwards messages, it does not constitute an
-additional overhead of the approach.
+system, either directly or transitively in a gossip
+fashion~\cite{demers1987epidemic,birman1999bimodal}. Forwarding is mandatory for
+large scale systems.  Whatever the broadcast protocol, processes pay the price
+of gossiping. They must create and send copies of the original broadcast
+message. Preventive broadcast operation requires forwarding but since gossiping
+already forwards messages, it does not constitute an additional overhead of the
+approach.
 
 Figure~\ref{fig:disseminationtree} shows that preventive broadcast ensures
 causal order in larger systems where processes have limited knowledge of
@@ -122,8 +123,8 @@ violation to all processes downstream.
 
 The causal broadcast presented in this paper is preventive and solves the causal
 order violation issue of dynamic systems.  Table~\ref{table:comparison} shows
-its complexity. Similarly to the preventive approach, complexity stays constant
-in terms of message overhead and delivery execution time of messages. The local
+its complexity. Similarly to~\cite{friedman2004causal}, complexity stays
+constant in terms of message overhead and delivery execution time. The local
 space complexity is linear in terms of number of processes. We conjecture that
 this bound is minimal in dynamic settings. In addition, our algorithm employs
 another local structure to ensure causal order but we show that we can bound it

@@ -34,7 +34,7 @@ neighborhood $Q$ changes at least once every 60 seconds; and in average twice
 every 60 seconds. Each exchange involve two processes that both add and remove
 half of their partial view.  Links are FIFO, bidirectional, and have
 transmission delays. The delay increases over time up to 5 seconds.
-Consequently, the duration of ping-pong phases increases during the experiment.
+Consequently, the duration of ping phases increases during the experiment.
 Links become safe slower. \\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the time taken by broadcast messages before being
@@ -73,13 +73,14 @@ less subject to neighborhood changes (e.g. exploiting user preferences, or
 geolocalisation). In such settings, we expect \CBROADCAST to have a negligible
 negative impact on the overlay network properties.
 
-It is worth noting that \CBROADCAST and reactive approaches (\REF) both
-introduce delays in message transmission. The former because it cannot use part
-of its links for a short time. This is the result highlighted by this experiment
-section.  The latter because it overloads messages with control information the
-size of which scale linearly with the network size (e.g. each message convey a
-vector clock of 10k entries when the network comprises 10k processes).  Larger
-packets induces larger transmission time. 
+It is worth noting that \CBROADCAST and reactive
+approaches~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
+both introduce delays in message transmission. The former because it cannot use
+part of its links for a short time. This is the result highlighted by this
+experiment section.  The latter because it overloads messages with control
+information the size of which scale linearly with the network size (e.g. each
+message convey a vector clock of 10k entries when the network comprises 10k
+processes).  Larger packets induces larger transmission time.
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
