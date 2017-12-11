@@ -37,8 +37,10 @@ transmission delays. The delay increases over time up to 5 seconds.
 Consequently, the duration of ping phases increases during the experiment.
 Links become safe slower. \\
 We measure the shortest path length from a random set of processes to all other
-processes. It represents the time taken by broadcast messages before being
-delivered by processes.
+processes. It represents the number of hops taken by broadcast messages before
+being received and delivered by processes. Multiplied by the transmission
+latency of links, it represents the transmission delay of broadcast messages
+before being received by all processes.
 
 \noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
 experiment. The y-axis depicts the delay set on message transmission for each
