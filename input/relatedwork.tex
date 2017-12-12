@@ -7,10 +7,10 @@ vector approaches and their following compaction approaches.
 
 \PAR{Piggybacking approaches~\cite{birman1987reliable,hadzilacos1993fault}.}{A
   trivial way to ensure causal ordering of messages is to piggyback all causally
-  related messages since the last broadcast message along with the newly
-  broadcast message. Even by piggybacking the identifiers of messages instead of
-  messages themselves, the broadcast message size may increase quickly depending
-  on the application. \CBROADCAST does not piggyback all preceding messages in
+  related messages since the last broadcast message along with the new broadcast
+  message. Even by piggybacking the identifiers of messages instead of messages
+  themselves, the broadcast message size may increase quickly depending on the
+  application. \CBROADCAST does not piggyback all preceding messages in
   broadcast messages. However, an accumulation of messages arises during
   buffering. As discussed in Section~\ref{subsec:complexity}, we can assume that
   links quickly become safe so the buffer size stays small, and we can easily
