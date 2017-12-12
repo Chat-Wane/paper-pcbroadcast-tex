@@ -3,29 +3,22 @@
 \label{sec:proposal}
 
 In this section, we introduce \CBROADCAST (stands for Preventive Causal
-broadcast), a causal broadcast protocol that breaks scalability barriers for
-large and dynamic systems.
-% To provide causal order, most
-% state-of-the-art~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient},~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
-% approaches are reactive. They check if message deliveries should be delayed to
-% avoid causality violations.
-Our approach is preventive. Messages are immediately delivered on receipt
-without risk of causality violations. This difference not only removes most of
-control information piggybacked in broadcast messages, but also leads to
-constant delivery execution time. Protocols and applications can finally afford
-causal broadcast in large and dynamic systems without loss of efficiency.
-
-% This section states  the definitions. It describes our algorithm. It proves that
-% it handles both static and dynamic networks. It analyses its complexity.
+broadcast), a causal broadcast protocol that breaks the scalability barrier for
+large and dynamic systems.  Our approach is preventive: instead of repairing
+causal order violations or reordering received messages, it simply makes sure
+that messages never arrive out of causal order. Processes can immediately
+deliver messages upon receipt. This not only removes most of control information
+piggybacked in broadcast messages, but also leads to constant delivery execution
+time. Protocols and applications can finally afford causal broadcast in large
+and dynamic systems without loss of efficiency.
 
 \subsection{Model}
 
-% Definitions and theorems come from~\cite{hadzilacos1994modular}.
 A distributed system comprise processes. Processes can communicate using
-messages. They may not have full knowledge of the membership, for maintenance
-costs become too expansive in large and dynamic systems. Instead, processes
-build overlay networks with local partial view the size of which is generally
-much smaller than the actual size of the
+messages. They may not have full knowledge of the membership, for maintenance is
+too costly in large and dynamic systems. Instead, processes build overlay
+networks with local partial view the size of which is generally much smaller
+than the actual size of the
 system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}.
 
 \begin{definition}[Overlay network]
@@ -55,8 +48,6 @@ For the rest of the paper, we only consider networks without partitions.
   processes only.
 \end{definition}
 
-%\TODO{Replace ``network'' by  ``distributed system'' ?}
-
 Processes communicate by sending messages to other processes.  A process A can
 send messages to another process B $s_{AB}(m)$; receive a message from another
 process B $r_{AB}(m)$; broadcast a message to all processes $b_A(m)$; receive a
@@ -81,27 +72,16 @@ broadcast message $r_A(m)$; deliver a broadcast message $d_A(m)$.
 
 Algorithm~\ref{algo:reliablebroadcast} shows the instructions of a uniform
 reliable broadcast. It uses a structure that keeps track of received messages in
-order to deliver them at most once. 
-%It uses a peer-sampling protocol that
-%provides neighbors to communicate with, i.e., a set of links. 
-%%Assuming a network without partitions meaning that there exists at least one
-%path from any process to any correct process, then all correct processes
-%eventually receive all messages at least once:
-Since processes may not have full membership knowledge, processes must forward
-broadcast messages. Since the network does not have partitions, processes either
-receive the message directly from the broadcaster or transitively. Thus, all
-correct processes eventually deliver all messages exactly once. R-broadcast
-ensures validity, uniform agreement, and uniform integrity.
-
-% At this point, processes receive and deliver each message exactly once. However,
-% R-broadcast delivers messages in any order.  In addition to reliably conveying
-% messages to all correct processes. 
+order to deliver them at most once.  Since processes may not have full
+membership knowledge, processes must forward broadcast messages. Since the
+network does not have partitions, processes either receive the message directly
+from the broadcaster or transitively. Thus, all correct processes eventually
+deliver all messages exactly once. R-broadcast ensures validity, uniform
+agreement, and uniform integrity.
 
 Broadcast protocols can also ensure a specific ordering among message
-deliveries.
-%that messages are delivered in a specific order.
-To define a delivery order among messages, we define time in a logical sense
-using Lamport's definition~\cite{lamport1978time}.
+deliveries.  To define a delivery order among messages, we define time in a
+logical sense using Lamport's definition~\cite{lamport1978time}.
 
 \begin{definition}[Happen before~\cite{lamport1978time}]
   Happen before is a transitive, irreflexive, and antisymmetric relation that
@@ -262,8 +242,6 @@ only safe links to disseminate messages.
 \end{figure*}
 
 
-
-
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
 the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
 yet, and there was no guaranty that Process~B would receive $a$ before receiving
@@ -318,8 +296,6 @@ sends to Process~B the messages it buffered during ping phase.
   Process~A makes an unsafe link to Process~B safe by completing a ping phase to
   Process~B then finalizing it by sending all delivered messages buffered during
   ping phase using the new link.
-  %% \TODO{$\forall i,\, m_i \rightarrow m_{i+1},\, ack(m_i) \rightarrow \forall
-  %% j>i,\, s_{AB}(m_j) \rightarrow s_{AB}(m_{j+1}) \implies safe(AB)$}
 \end{lemma}
 
 \begin{proof}
@@ -363,13 +339,11 @@ Figure~\ref{fig:preventivesolve} shows on an example how \CBROADCAST (see
 Algorithm~\ref{algo:bufferbroadcast}) solves causal order violations. In
 Figure~\ref{fig:preventivesolveA}, Process~A broadcasts $a$.  In
 Figure~\ref{fig:preventivesolveB}, it wants to add a link to Process~D. It sends
-a ping message $\pi$ to process~D (see Line~\ref{line:sendlocked}) and awaits
+a ping message $\pi$ to Process~D (see Line~\ref{line:sendlocked}) and awaits
 for the latter's reply.  We leave aside the implementation of this send function
-(e.g. broadcast or routing). % Although, using already safe links constitutes a
-%cheap way to achieve it.
-While awaiting, Process~A keeps its normal functioning and maintain a buffer of
-messages associated with the unsafe link (see
-Line~\ref{line:bufferbroadcast},~\ref{line:bufferforward}). In
+(e.g. broadcast or routing).  While awaiting, Process~A keeps its normal
+functioning and maintain a buffer of messages associated with the unsafe link
+(see Line~\ref{line:bufferbroadcast},~\ref{line:bufferforward}). In
 Figure~\ref{fig:preventivesolveC}, Process~A broadcasts another message $a'$. It
 sends it normally to Process~B but does not send it to Process~D
 directly. Instead, it buffers it. In Figure~\ref{fig:preventivesolveD},

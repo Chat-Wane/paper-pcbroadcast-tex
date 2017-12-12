@@ -21,7 +21,8 @@
     \subfloat[Part E][\label{fig:generalsolveE}Process~C cannot receive $b$
     without having received $a$ beforehand.]
     {\input{input/figgeneralsolveE.tex}}
-    \caption{\label{fig:generalsolve}Preventive broadcast ensures causal order.}
+    \caption{\label{fig:generalsolve}Causal broadcast~\cite{friedman2004causal}
+      ensures causal order.}
   \end{center}
 \end{figure*}
 
@@ -29,15 +30,17 @@
 \begin{figure*}
   \begin{center}
     \input{./input/figdisseminationtree.tex}
-    \caption{\label{fig:disseminationtree}The principle of preventive causal
-      broadcast works in large systems where processes have partial knowledge
-      of the membership.}
+    \caption{\label{fig:disseminationtree}The principle of
+      \cite{friedman2004causal} works in large systems where processes have
+      partial knowledge of the membership.}
   \end{center}
 \end{figure*}
 
 Causal broadcast ensures that all connected processes deliver each broadcast
 message exactly once~\cite{hadzilacos1994modular} following the happen before
-relationship~\cite{lamport1978time}.
+relationship~\cite{lamport1978time}. If the sending of a message $m$ precedes
+the sending of a message $m'$ then all processes that deliver these two messages
+need to deliver $m$ before $m'$. Otherwise they can deliver them in any order.
 
 Instead of encoding the logical time at broadcast regarding all other broadcasts
 and piggyback this control information in each broadcast message to ensure
@@ -72,8 +75,8 @@ pay the price of gossiping. They must create and send copies of the original
 broadcast message. Since gossiping already encompasses forwarding of messages,
 it does not constitute an additional overhead of~\cite{friedman2004causal}.
 
-Figure~\ref{fig:disseminationtree} shows that such broadcast ensures causal
-order in larger systems where processes have limited knowledge of the
+Figure~\ref{fig:disseminationtree} shows that such causal broadcast ensures
+causal order in larger systems where processes have limited knowledge of the
 membership.  Process~A only knows about Process~C and Process~D.  Yet,
 Process~A's broadcast messages $a$ and $a'$ arrive to all other processes either
 directly or transitively. In addition, $a$ and $a'$ always arrive in causal
