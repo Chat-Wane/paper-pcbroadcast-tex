@@ -17,7 +17,7 @@
 
 \Dissemination{}{
   
-  \Function{\textup{R-broadcast}($m$)} { %\tcp*[f]{$b_p(m)$}} { 
+  \Function{$\textup{R-broadcast}(m)$} { %\tcp*[f]{$b_p(m)$}} { 
     $received \leftarrow received \cup m$ \;
     \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$)}
     \textup{R-deliver}($m$) \; % \tcp*{$d_p(m)$}
@@ -25,7 +25,7 @@
 
   \BlankLine
   
-  \Upon{\textup{receive}($m$)}{
+  \Upon{$\textup{receive}(m)$}{
     \If {$m \not \in received$} {
       $received \leftarrow received \cup m$ \;
       \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$) \tcp*[f]{forward}}

@@ -20,7 +20,7 @@
 \BlankLine
 
 \Safety {} {
-  \Upon{\textup{open}($q$)} {
+  \Upon{$\textup{open}(q)$} {
     \If{$|Q|>1$} {
       $counter \leftarrow counter+1$ \;
       $Q \leftarrow Q \setminus q$ \tcp*{is unsafe}
@@ -31,13 +31,13 @@
   
   \BlankLine
   
-  \Upon{\textup{receivePing}($from,\, to,\, id$) \tcp*[f]{$to=p$}} {
+  \Upon{$\textup{receivePing}(from,\, to,\, id)$ \tcp*[f]{$to=p$}} {
     $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \tcp*{$\rho$}
   }
   
   \BlankLine
   
-  \Upon{\textup{receivePong}($from,\, to,\, id$) \tcp*[f]{$from=p$}} {
+  \Upon{$\textup{receivePong}(from,\, to,\, id)$ \tcp*[f]{$from=p$}} {
     \If {$to \in B$} {
       \lForEach {$m \in B[to]$} {$\textup{sendTo}(to,\, m)$
         \label{line:emptybuffer}}
@@ -48,7 +48,7 @@
   
   \BlankLine
   
-  \Upon{\textup{close}($q$)} {
+  \Upon{$\textup{close}(q)$} {
     $B \leftarrow B \setminus q$ \;
   }
 }
@@ -57,7 +57,7 @@
 
 \Dissemination {} {
 
-  \Function{\CBROADCAST($m$) } {% \tcp*[f]{$b_p(m)$}} {    
+  \Function{$\CBROADCAST(m)$ } {% \tcp*[f]{$b_p(m)$}} {    
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferbroadcast} \tcp*[f]{buffers}}
     $\textup{R-broadcast}(m)$ \label{line:rbroadcast}\;
@@ -65,7 +65,7 @@
   
   \BlankLine
   
-  \Upon{\textup{R-deliver}($m$) \label{line:rdeliver}} {
+  \Upon{$\textup{R-deliver}(m)$ \label{line:rdeliver}} {
     \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
       \label{line:bufferforward} \tcp*[f]{buffers}}
     $\textup{PC-deliver}(m)$  \; % \tcp*{$d_p(m)$}
