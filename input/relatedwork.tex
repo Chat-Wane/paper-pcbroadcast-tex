@@ -33,13 +33,13 @@ vector approaches and their following compaction approaches.
   track causality, processes cannot reclaim entries. Hence, even with
   \textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
   linearly in terms of number of processes that ever broadcast a message.
-  Paper~\cite{almeida2008interval} reduces this complexity to depend of the
+  Paper~\cite{almeida2008interval} reduces this complexity to depend on the
   actual number of processes in the network.  Still, these approaches do not
   scale, particularly in dynamic networks subject to churn and
   failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
   sacrifices on causality tracking accuracy: messages may be delivered out of
   order under a computable boundary. The size of control information in messages
-  depends of the desired boundary. \\
+  depends on the desired boundary. \\
   In comparison to these vector-based approaches, our broadcast cannot compare
   any pair of messages; our broadcast cannot state if two messages are
   concurrent or if one precedes the other. Nevertheless, accurate causal
