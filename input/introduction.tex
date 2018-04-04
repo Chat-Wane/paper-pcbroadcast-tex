@@ -23,24 +23,24 @@ Lamport's
 clocks~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}.
 The message overhead increases monotonically, for entries cannot be reclaimed
 without consensus. The message overhead increases linearly with the number of
-processes $N$ that ever joined the system.  In addition, checking if a message
-should be delivered takes linear time $O(N)$. Causal broadcast protocols based
-on vectors eventually become overcostly and inefficient.
+processes $N$ that ever broadcast a message in the system.  In addition,
+checking if a message should be delivered takes linear time $O(N)$. Causal
+broadcast protocols based on vectors eventually become overcostly and
+inefficient.
 
 
 To provide causal order, \cite{friedman2004causal} employs a different
 strategy. Instead of piggybacking a vector in each message, processes forward
-all messages exactly once using FIFO communication means. Since gossip already
-encompasses forwarding, this does not constitute an overhead of the
-approach. Since messages arrive ready, the causal broadcast protocol delivers
-them immediately. This approach is both lightweight and efficient. However, it
-does not support dynamicity. Adding communication means between processes may
-cause causal order violations.
+all messages exactly once using FIFO communication means. Gossip encompasses
+forwarding so this does not constitute an overhead of the approach.  Messages
+arrive ready so they are delivered immediately. This approach is both
+lightweight and efficient. However, its scope is restricted to static systems.
+In dynamic systems where processes can join, leave, add or remove communication
+means, using this approach may lead to causal order violations.
 
 
-In this paper, we break the scalability barriers of causal broadcast for large
-and dynamic systems by proposing a protocol that extends the approach proposed
-in~\cite{friedman2004causal}.  Our contribution is threefold:
+In this paper, we break the scalability barrier of causal broadcast for large
+and dynamic systems.  Our contribution is threefold:
 \begin{itemize}[leftmargin=*]
 \item We extend the approach proposed in~\cite{friedman2004causal} to dynamic
   settings. Compared to the original protocol, it only makes use of temporary
@@ -64,10 +64,11 @@ systems.
 \begin{table}
   \caption{\label{table:comparison} Space and time complexity of causal
     broadcast protocols. 
-    $N$ is the number of processes. 
-    $W$ is the number of received messages awaiting for delivery.
-    $P$ is the number of messages that are still unsafe to be purged.
-    $B$ is the size of a set of temporary buffers.}
+    $N$ is the number of processes that ever broadcast a message.
+    $W$ is the number of received messages awaiting delivery.
+    $P$ is the number of delivered messages that are temporarily kept before 
+    being safely purged to forbid double delivery.
+    $B$ is the number of delivered messages that are temporarily kept to check the safety of new communication means.}
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 
