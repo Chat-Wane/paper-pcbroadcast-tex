@@ -14,48 +14,47 @@ and dynamic systems without loss of efficiency.
 
 \subsection{Model}
 
-A distributed system comprise processes. Processes can communicate using
-messages. They may not have full knowledge of the membership, for maintenance is
-too costly in large and dynamic systems. Instead, processes build overlay
-networks with local partial view the size of which is generally much smaller
-than the actual size of the
-system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}.
+A distributed system comprise processes. Processes can communicate with each
+other using messages. They may not have full knowledge of the membership, for
+maintenance is too costly in large and dynamic systems. Instead, processes build
+overlay networks with local partial view the size of which is generally much
+smaller than the actual size of the
+system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}. Overlay networks
+can be built on top of other overlay networks.  For the rest of this paper, we
+will speak of distributed systems, overlay networks, or networks indifferently.
 
 \begin{definition}[Overlay network]
-  An overlay network $N$ comprises a set of processes $P$. Each process runs a
-  set of instructions sequentially. \\
-  An overlay network $N$ also comprises a set of links $E: P \times P$. $p$'s
-  neighborhood $Q$ is the set of links departing from $p$. Processes can
-  communicate with their neighbors using messages. \\
-  Processes are faulty if they crash, otherwise they are correct. % The set of
-  % correct processes is $C$. 
-  There are no byzantine processes.
+  An overlay network $G$ is a pair $\langle P,\, E\rangle$ where $P$ is a set of
+  processes, and $E$ is a set of links $E: P\times P$. An overlay network is
+  static when $P$ and $E$ are immutable, otherwise it
+  is dynamic.
 \end{definition}
 
-For the rest of this paper, we will speak of distributed systems, overlay
-networks, or networks indifferently.
-
-\begin{definition}[Static and dynamic networks]
-  A network is static if both its set of processes and its set of links are
-  immutable. Otherwise, the network is dynamic.
+\begin{definition}[Process]
+  A process runs a set of instructions sequentially and communicates
+  with other processes using message passing. \\
+  A process' neighborhood is the set of links departing from it. \\
+  A process~A can send messages to another process~B in its
+  neighborhood: $s_{AB}(m)$; receive a message from another process~C:
+  $r_{AC}(m)$. \\
+  A process is faulty if it crashes, otherwise it is correct. We do not consider
+  byzantine processes.
 \end{definition}
 
-For the rest of the paper, we only consider networks without partitions.
+% For the rest of the paper, we only consider networks without partitions.
 
-\begin{definition}[Network partition]
-  A network has partitions if there exist two correct processes without any path
-  between them, i.e., without a link or a sequence of links comprising correct
-  processes only.
+\begin{definition}[Unpartitioned network]
+  A network is unpartitioned if and only if for any pair of correct processes,
+  there exist a path -- a link or a sequence of links -- of correct processes
+  between them. We only consider unpartitioned overlay networks.
 \end{definition}
 
-Processes communicate by sending messages to other processes.  A process A can
-send messages to another process B $s_{AB}(m)$; receive a message from another
-process B $r_{AB}(m)$; broadcast a message to all processes $b_A(m)$; receive a
-broadcast message $r_A(m)$; deliver a broadcast message $d_A(m)$.
+Broadcasting constitutes a communication primitive that allows processes to send
+messages to all other processes in their systems.
 
 \begin{definition}[Uniform reliable broadcast]
-  When a process broadcasts a message to all processes of the network, correct
-  processes eventually receive it.
+  When a process~A broadcasts a message $b_A(m)$, each correct process~B in the
+  network eventually receives it $r_B(m)$ and delivers it $d_B(m)$.
   Uniform reliable broadcast guarantees 3 properties: \\
   \textbf{Validity:} If a correct process broadcasts a message, then it
   eventually delivers it. \\
@@ -128,7 +127,7 @@ From Theorem~\ref{theo:flooding}, reliable broadcast from
 Algorithm~\ref{algo:reliablebroadcast} is causal if communication links employed
 to communicate with neighbors in $Q$ are FIFO. This holds only for static
 networks where $Q$ is immutable. In practice, processes add and remove links to
-neighbors from $Q$ at any time. Next section describes \CBROADCAST, a causal
+neighbors from $Q$ at any time. The next section describes \CBROADCAST, a causal
 broadcast that handles such dynamicity.
 
 
@@ -169,28 +168,37 @@ broadcast that handles such dynamicity.
   \end{center}
 \end{figure*}
 
-Algorithm~\ref{algo:bufferbroadcast} shows the instructions of \CBROADCAST. Its
-two operations broadcast and deliver rely on reliable broadcast (see
-Algorithm~\ref{algo:reliablebroadcast}). In fact, without additions nor removals
-of links, our protocol only executes instructions of reliable broadcast (see
-Line~\ref{line:rbroadcast},~\ref{line:rdeliver}).
+\CBROADCAST constitutes a powerful yet simple extension
+of~\cite{friedman2004causal}. Table~\ref{table:comparison} shows that it
+preserves both constant message overhead and constant delivery execution time in
+dynamic settings while Algorithm~\ref{algo:bufferbroadcast} shows the small set
+of instructions necessary to keep such complexity.
 
-\begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
-  \CBROADCAST is a causal broadcast in static networks.
-\end{theorem}
+Both functions broadcast (see Line~\ref{line:rbroadcast}) and deliver (see
+Line~\ref{line:rdeliver}) rely on reliable broadcast (see
+Algorithm~\ref{algo:reliablebroadcast}). In fact, in static systems without
+additions nor removals of links, our protocol only executes instructions of
+reliable broadcast. Hence, \CBROADCAST ensures causal order on message delivery
+in static networks~\cite{friedman2004causal}. However, most of systems are
+dynamic. Processes can join, leave, add or remove communication means at any
+time.
 
-\begin{proof}
-  In static networks, \CBROADCAST only executes the instructions of reliable
-  broadcast. Reliable broadcast along with FIFO links ensures causal broadcast.
-  The proof can be found in~\cite{friedman2004causal}.
-\end{proof}
+% \begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
+%   \CBROADCAST is a causal broadcast in static networks.
+% \end{theorem}
 
-The removal of links and the departure of processes are not an issue, for it
-does not reorder messages traveling through the links\footnote{It may create
-  partitions infringing the uniform agreement property. Network partitioning
-  constitutes an orthogonal problem that we do not address in this
-  paper.}. Algorithm~\ref{algo:bufferbroadcast} does not provide specific
-instructions for such cases.
+% \begin{proof}
+%   In static networks, \CBROADCAST only executes the instructions of reliable
+%   broadcast. Reliable broadcast along with FIFO links ensures causal broadcast.
+%   The proof can be found in~\cite{friedman2004causal}.
+% \end{proof}
+
+% The removal of links and the departure of processes are not an issue, for it
+%does not reorder messages traveling through the links
+
+
+%%Algorithm~\ref{algo:bufferbroadcast} does not provide specific
+%% instructions for such cases.
 % However, it may create partitions. It is an orthogonal problem
 
 \begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
@@ -201,29 +209,29 @@ instructions for such cases.
 
 \begin{proof}
   Removing a process from the network and removing all the incoming and outgoing
-  links of this process is equivalent. We assume that removals do not create
-  network partitions.  Removing a link does not change the delivery order of
-  causally related messages. Identically to the proof of
-  Theorem~\ref{theo:static}, our causal broadcast only executes instructions of
-  reliable broadcast in such cases. The proof can be found
-  in~\cite{friedman2004causal}.
+  links of this process is equivalent. Since we assume that removals do not
+  create network partitions\footnote{It may create partitions infringing the
+    uniform agreement property. Network partitioning constitutes an orthogonal
+    problem that we do not address in this paper.}, all correct processes
+  eventually receive all broadcast messages. In addition, removing a link or a
+  process does not reorder causally related messages. Hence, each process
+  receives and delivers each broadcast message in causal order as in static
+  systems.
 \end{proof}
 
-Unfortunately, adding links may infringe the causal order property of causal
-broadcast.  Figure~\ref{fig:preventiveproblem} shows the issue with link
-additions.  New links may act as shortcut for messages. First messages that
-travel through new links may arrive before preceding messages that took longer
-paths.
-
-To solve this issue, we define the safety of a link. \CBROADCAST uses all and
-only safe links to disseminate messages.
+Unfortunately, Figure~\ref{fig:preventiveproblem} shows that adding links may
+infringe the causal order property of causal broadcast.  New links may act as
+shortcut for new messages: new messages that travel through new links may arrive
+before preceding messages that took longer paths. To prevent this behavior, we
+define the safety of a link. \CBROADCAST uses all and only safe links to
+disseminate messages.
 
 \begin{definition}[Safe link]
   A link from Process~A to Process~B is safe if and only if Process~B received
   or will receive all messages delivered by Process~A before receiving any
   message that Process~A will deliver:
-  $safe(AB) \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
-  r_B(m) \rightarrow r_{AB}(m')$
+  $safe_{AB} \equiv \forall m,\, m',\, d_A(m) \rightarrow s_{AB}(m') \implies
+  r_B(m) \rightarrow r_{BA}(m')$
 \end{definition}
 
 \begin{figure*}
@@ -290,6 +298,13 @@ received all its delivered messages preceding the ping phase. This is not
 sufficient, for ping phases take time. Messages delivered during ping phase by
 Process~A may not be received by Process~B yet. To fill this gap, Process~A
 sends to Process~B the messages it buffered during ping phase.
+
+\begin{definition}[Buffering]
+  Process~A records in a buffer $\mathcal{B}$ all its delivered messages during
+  a ping phase to Process~B.
+  $\forall m,\, s_A(\pi_{AB}) \rightarrow d_A(m) \wedge d_A(m)\rightarrow
+  r_A(\rho_{AB}) \Leftrightarrow m \in \mathcal{B} $
+\end{definition}
 
 
 \begin{lemma}[Ping phase and buffering makes safe links]
@@ -427,7 +442,7 @@ safe. Process~A uses the new link normally.
 \end{theorem}
 
 \begin{proof}
-  For static networks, it comes from Theorem~\ref{theo:static}. For dynamic
+  For static networks, it comes from~\cite{friedman2004causal}. For dynamic
   networks, it comes from Lemmas~\ref{lem:removals}~and~\ref{lem:additions}.
 \end{proof}
 
