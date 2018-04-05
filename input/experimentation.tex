@@ -14,15 +14,15 @@
   \end{center}
 \end{figure*}
 
-\CBROADCAST's most important feature is its constant size message
-overhead. 
-
-In this section, we evaluate the impact of \CBROADCAST on
-the message delivery in a specific overlay network that corresponds to random
-graphs. The experiments run on the \PEERSIM
-simulator~\cite{montresor2009peersim} that allows simulations to reach high
-scale in terms of number of processes. Our implementation is available on the
-Github platform at \url{http://github.com/chat-wane/peersim-pcbroadcast}.
+\CBROADCAST provides causal order with constant size message
+overhead. This feature comes at a cost: at first, new communication
+means are disable for causal broadcast. In this section, we evaluate
+the impact of \CBROADCAST on the message delivery in a specific
+overlay network that corresponds to random graphs. The experiments run
+on the \PEERSIM simulator~\cite{montresor2009peersim} that allows
+simulations to reach high scale in terms of number of processes. Our
+implementation is available on the Github platform at
+\url{http://github.com/chat-wane/peersim-pcbroadcast}.
 
 
 \noindent \textbf{Objective:} To observe the transmission delay introduced by
@@ -42,7 +42,12 @@ We measure the shortest path length from a random set of processes to all other
 processes. It represents the average number of hops taken by broadcast messages
 before being received and delivered by all processes. Multiplied by the
 transmission latency of links, it represents the transmission delay of broadcast
-messages before being received by all processes.
+messages before being received by all processes. \\
+We perform measurements on 2 broadcast protocols: \CBROADCAST and R-broadcast.
+R-broadcast uses all available links to broadcast messages in a gossip fashion.
+Transmission delays before delivery are similar to piggybacking approaches~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic} without accounting for the time taken to send large messages (e.g. each
+message convey a vector clock of 10k entries when the network comprises 10k
+processes).  Larger packets induces larger transmission time.
 
 \noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
 experiment. The y-axis depicts the delay set on message transmission for each
@@ -76,15 +81,6 @@ practice, we expect smaller network transmission delays, and overlay networks
 less subject to neighborhood changes (e.g. exploiting user preferences, or
 geolocalisation). In such settings, we expect \CBROADCAST to have a negligible
 negative impact on the overlay network properties.
-
-It is worth noting that \CBROADCAST and piggybacking
-approaches~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
-both introduce delays in message transmission. The former because it cannot use
-part of its links for a short time. This is the result highlighted by this
-experiment section.  The latter because it overloads messages with control
-information the size of which scale linearly with the network size (e.g. each
-message convey a vector clock of 10k entries when the network comprises 10k
-processes).  Larger packets induces larger transmission time.
 
 The next section reviews state-of-the-art techniques designed to maintain causal
 order among messages.
