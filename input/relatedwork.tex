@@ -2,8 +2,9 @@
 \section{Related work}
 \label{sec:relatedwork}
 
-This section reviews the related work going from piggybacking approaches to
-vector approaches and their following compaction approaches.
+This section reviews the related work of logical clocks. It goes from
+piggybacking approaches to vector approaches and their following compaction
+approaches. Then, it reviews semantic dependency tracking.
 
 \PAR{Piggybacking approaches~\cite{birman1987reliable,hadzilacos1993fault}.}{A
   trivial way to ensure causal ordering of messages is to piggyback all causally
@@ -48,6 +49,21 @@ vector approaches and their following compaction approaches.
   information~\cite{friedman2004causal}. Overall, our approach reduces the
   generated traffic of causal broadcast by a factor of $N$ in the most common
   context where processes have partial knowledge of the network membership.}
+
+
+\noindent Tracking \textbf{semantic dependencies} allows broadcast protocols to
+reduce the size of piggybacked control information (\REF). For instance, when
+Alice comments Bob's picture, everyone must receive the picture before the
+comment. The broadcast message only conveys one semantic dependency. When Alice
+comments multiple pictures at once, the broadcast message conveys all
+dependencies.  Message overhead increases linearly with the number of semantic
+dependencies. To track semantic dependencies, causal broadcast becomes
+application dependent. Instead our approach remains
+application-agnostic. Comments, pictures, etc. are events that relate to all
+preceding events. When Alice comments Bob's picture, everyone will receive this
+event before the former event and all other preceding events. Whatever the
+number of preceding events, broadcast messages only convey constant size control
+information.
 
 % \PAR{Topological approaches.}{A trivial way to ensure causal delivery of
 % messages without message overhead consists in building an overlay network shaped
