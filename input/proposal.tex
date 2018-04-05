@@ -414,6 +414,21 @@ safe. Process~A uses the new link normally.
 \end{lemma}
 
 \begin{proof}
+  \TODO{Need double check.}
+  \CBROADCAST ensures \textbf{validity}, \textbf{uniform agreement}, and \textbf{uniform integrity},
+  for it extends R-broadcast that ensures all 3 properties. \\
+  In addition, we must show that \CBROADCAST ensures \textbf{causal order},
+  i.e., $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m')
+  \implies d_C(m) \rightarrow d_C(m')$. It ensures FIFO order when $A=B$.
+  It ensures local order when $A \neq B$.\\
+  $\forall A,\,B,\, b_A(m) \rightarrow b_B(m') \Leftrightarrow d_B(m) \rightarrow d_B(m') \Leftrightarrow
+  d_B(m) \rightarrow s_B(m') \Leftrightarrow d_B(m) \rightarrow (\forall C\in Q, s_{BC}(m'))$. Since all links
+  in $Q$ are safe links, $r_c(m) \rightarrow r_{CB}(m')$. Since delivery order follows first receipt order,
+  $d_C(m) \rightarrow d_C(m')$. This transitively reach all correct processes as long as the network remains
+  unpartioned.
+\end{proof}
+
+\begin{proof}
   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
   validity, uniform agreement, uniform integrity, and causal order. \\
   \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST extends
