@@ -1,7 +1,4 @@
 
-\section{Background and motivations}
-\label{sec:motivations}
-
 \begin{figure*}
   \begin{center}
     \subfloat[Part A][\label{fig:generalsolveA}Process~A broadcasts $a$.]
@@ -27,14 +24,8 @@
 \end{figure*}
 
 
-\begin{figure}
-  \begin{center}
-    \input{./input/figdisseminationtree.tex}
-    \caption{\label{fig:disseminationtree}The principle of
-      \cite{friedman2004causal} works in large systems where processes have
-      partial knowledge of the membership.}
-  \end{center}
-\end{figure}
+\section{Background and motivations}
+\label{sec:motivations}
 
 Causal broadcast ensures that all connected processes deliver each broadcast
 message exactly once~\cite{hadzilacos1994modular} following the happen before
@@ -63,6 +54,16 @@ $b$. Process~A fulfills the causal order constraint between $a$ and $b$. In
 Figure~\ref{fig:generalsolveE}, we see that either directly via Process~B or
 indirectly via Process~A, Process~C cannot receive $b$ before $a$. Thus, it
 eventually receives, delivers, and forwards the messages following causal order.
+
+\begin{figure}
+  \begin{center}
+    \input{./input/figdisseminationtree.tex}
+    \caption{\label{fig:disseminationtree}The principle of
+      \cite{friedman2004causal} works in large systems where processes have
+      partial knowledge of the membership.}
+  \end{center}
+\end{figure}
+
 
 
 In large systems, processes cannot afford to maintain the full membership to
