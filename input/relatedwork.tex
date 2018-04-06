@@ -4,7 +4,8 @@
 
 This section reviews the related work of logical clocks. It goes from
 piggybacking approaches to vector approaches and their following compaction
-approaches. Then, it reviews semantic dependency tracking.
+approaches. Then, it reviews semantic dependency tracking and dissemination path
+approaches.
 
 \PAR{Piggybacking approaches~\cite{birman1987reliable,hadzilacos1993fault}.}{A
   trivial way to ensure causal ordering of messages is to piggyback all causally
@@ -51,19 +52,32 @@ approaches. Then, it reviews semantic dependency tracking.
   context where processes have partial knowledge of the network membership.}
 
 
-\noindent Tracking \textbf{semantic dependencies} allows broadcast protocols to
-reduce the size of piggybacked control information (\REF). For instance, when
-Alice comments Bob's picture, everyone must receive the picture before the
-comment. The broadcast message only conveys one semantic dependency. When Alice
-comments multiple pictures at once, the broadcast message conveys all
-dependencies.  Message overhead increases linearly with the number of semantic
-dependencies. To track semantic dependencies, causal broadcast becomes
-application dependent. Instead our approach remains
+\noindent Explicitly tracking \textbf{semantic dependencies} allows broadcast
+protocols to reduce the size of piggybacked control
+information~\cite{bailis2013bolton,lloyd2011cops,mukund2014optimized}. For
+instance, when Alice comments Bob's picture, everyone must receive the picture
+before the comment. The broadcast message only conveys one semantic
+dependency. When Alice comments multiple pictures at once, the broadcast message
+conveys all dependencies.  Message overhead increases linearly with the number
+of semantic dependencies. To track semantic dependencies, causal broadcast
+becomes application dependent. Instead our approach remains
 application-agnostic. Comments, pictures, etc. are events that relate to all
 preceding events. When Alice comments Bob's picture, everyone will receive this
 event before the former event and all other preceding events. Whatever the
 number of preceding events, broadcast messages only convey constant size control
 information.
+
+\noindent Preserving causal order using \textbf{dissemination paths} reduces
+generated traffic by keeping message overhead
+constant~\cite{friedman2004causal,bravo2017saturn}. State-of-the-art does not
+support dynamic systems~\cite{friedman2004causal}, or supports it using
+epochs~\cite{bravo2017saturn} that confines usability to small scale systems
+where failures are uncommon. In comparison, we designed \CBROADCAST to handle
+dynamic systems. Our approach provides a lightweight and efficient mean to
+reconfigure dissemination paths using local knowledge without impairing causal
+order.  Saturn~\cite{bravo2017saturn} along with \CBROADCAST could ease the
+former's online changes in configuration.
+
 
 % \PAR{Topological approaches.}{A trivial way to ensure causal delivery of
 % messages without message overhead consists in building an overlay network shaped
