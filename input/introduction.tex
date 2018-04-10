@@ -2,8 +2,9 @@
 \section{Introduction}
 
 Designing distributed applications~\cite{nakamoto2009bitcoin} such as
-distributed social networks (\REF), distributed collaborative
-tools~\cite{nedelec2016crate} (\REF), or distributed data
+distributed social networks~\cite{borthakur2013petabyte}, distributed
+collaborative tools~\cite{nedelec2016crate,heinrich2012exploiting}, or
+distributed data
 stores~\cite{demers1987epidemic,shapiro2011comprehensive,bailis2013bolton,lloyd2011cops,bravo2017saturn}
 over a message-passing system goes through the definition and the implementation
 of appropriate communication primitives~\cite{hadzilacos1994modular}.  In this
@@ -71,9 +72,10 @@ systems.
     $N$ is the number of processes that ever broadcast a message.
     $W$ is the number of received messages awaiting delivery.
     $P$ is the number of delivered messages that are temporarily kept before 
-    being safely purged to forbid double delivery.
-    $B$ is the number of delivered messages that are temporarily kept to
-    check the safety of new communication means.}
+    being safely purged to forbid double delivery.%
+%    $B$ is the number of delivered messages that are temporarily kept to
+%    check the safety of new communication means.
+  }
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 

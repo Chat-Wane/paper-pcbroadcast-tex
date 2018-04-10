@@ -7,9 +7,9 @@
 %  \toprule
   & \makecell{dynamic\\systems} & \makecell{message\\overhead} & \makecell{local space\\consumption} &  \makecell{delivery\\execution time} \\ \cmidrule{2-5}
   vector-based~\cite{schwarz1994detecting} & \cmark & $O(N)$ & $O(N+W.N)$ & $O(W.N)$ \\
-  FIFO+forward~\cite{friedman2004causal} & \xmark & $O(1)$ & $O(P+ W)$ & $O(1)$ \\ \hline\hline
+  FIFO+forward~\cite{friedman2004causal} & \xmark & $O(1)$ & $O(P)$ & $O(1)$ \\ \hline\hline
 %  objective & \cmark & $?<O(N)$ & $O(N)\leq \, ?$ & $? \leq O(W.N)$ \\ \hline\hline
-  \textbf{this paper} & \textbf{\cmark} & $\mathbf{O(1)}$ & $\mathbf{O(N+B+W)}$ & $\mathbf{O(1)}$ \\ 
+  \textbf{this paper} & \textbf{\cmark} & $\mathbf{O(1)}$ & $\mathbf{O(N)}$ & $\mathbf{O(1)}$ \\ 
 %  \bottomrule
 \end{tabularx}
 
