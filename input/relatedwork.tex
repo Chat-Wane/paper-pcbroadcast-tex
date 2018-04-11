@@ -31,25 +31,31 @@ approaches.
   \item each message must piggyback such vector;
   \item there is 1 counter for each process of the network.
   \end{inparaenum}
-  To accurately track causality, processes cannot share their entry. To safely
-  track causality, processes cannot reclaim entries. Hence, even with
-  \textbf{compaction approaches}~\cite{singhal1992efficient}, the vectors grow
-  linearly in terms of number of processes that ever broadcast a message.
+  To accurately track causality, processes cannot share their
+  entry. To safely track causality, processes cannot reclaim
+  entries. Hence, even with \textbf{compaction
+    approaches}~\cite{singhal1992efficient}, the vectors grow linearly
+  in terms of number of processes that ever broadcast a message.
   In~\cite{almeida2008interval}, the complexity is reduced to the
-  actual number of processes in the network.  Still, these approaches do not
-  scale, particularly in dynamic networks subject to churn and
-  failures. \textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}}
-  sacrifices on causality tracking accuracy: messages may be delivered out of
-  order under a computable boundary. The size of control information in messages
+  actual number of processes in the network.  Still, these approaches
+  do not scale, particularly in dynamic networks subject to churn and
+  failures. \textbf{Probabilistic
+    approaches~\cite{mostefaoui2017probabilistic}} sacrifices on
+  causality tracking accuracy: messages may be delivered out of order
+  under a computable boundary. The size of control information in
+  messages
   depends on the desired boundary. \\
-  In comparison to these vector-based approaches, our broadcast cannot compare
-  any pair of messages; our broadcast cannot state if two messages are
-  concurrent or if one precedes the other. Nevertheless, accurate causal
-  delivery is a feature provided by default by the propagation scheme. It
-  alleviates messages from the need to piggyback heavy control
-  information~\cite{friedman2004causal}. Overall, our approach reduces the
-  generated traffic of causal broadcast by a factor of $N$ in the most common
-  context where processes have partial knowledge of the network membership.}
+  In comparison to these vector-based approaches, our approach reduces
+  the generated traffic of causal broadcast by a factor of $N$ in the
+  most common context where processes have partial knowledge of the
+  network membership. 
+% It alleviates messages from the need to piggyback heavy
+  % control information~\cite{friedman2004causal}
+  Unlike vector-based approach, our broadcast cannot state if two
+  messages are concurrent, accurate causal delivery is a feature
+  provided by default by the propagation scheme. Once a safe FIFO link
+  is established, it delivers message in the causal order at the full
+  speed of the FIFO link without any causal reception procedure.
 
 
 \noindent Explicitly tracking \textbf{semantic dependencies} allows broadcast
