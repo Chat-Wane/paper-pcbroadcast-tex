@@ -14,7 +14,7 @@
   $Q$ \tcp*{$p$'s neighborhood, FIFO links}
   $B \leftarrow \varnothing$ \tcp*{link $\rightarrow$ buffered messages}
   \BlankLine
-  $counter \leftarrow 0$ \tcp*{Message identifier}
+  $counter \leftarrow 0$ \tcp*{Control message identifier}
 }
 
 \BlankLine
@@ -24,15 +24,15 @@
     \If{$|Q|>1$} {
       $counter \leftarrow counter+1$ \;
       $Q \leftarrow Q \setminus q$ \tcp*{is unsafe}
-      $B[q] \leftarrow \varnothing$ \;
-      $\textup{ping}(p,\, q,\, counter)$ \label{line:sendlocked} \tcp*{$\pi$} 
+      $B[q] \leftarrow \varnothing$ \tcp*{initialize buffer}
+      $\textup{ping}(p,\, q,\, counter)$ \label{line:sendlocked} \tcp*{send $\pi$} 
     }
   }
   
   \BlankLine
   
   \Upon{$\textup{receivePing}(from,\, to,\, id)$ \tcp*[f]{$to=p$}} {
-    $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \tcp*{$\rho$}
+    $\textup{pong}(from,\, to,\, id)$ \label{line:sendack} \tcp*{send $\rho$}
   }
   
   \BlankLine
@@ -41,7 +41,7 @@
     \If {$to \in B$} {
       \lForEach {$m \in B[to]$} {$\textup{sendTo}(to,\, m)$
         \label{line:emptybuffer}}
-      $B \leftarrow B \setminus to$ \;
+      $B \leftarrow B \setminus to$ \tcp*{remove buffer}
       $Q \leftarrow Q \cup to$ \tcp*{now safe}
     }
   }
@@ -58,8 +58,8 @@
 \Dissemination {} {
 
   \Function{$\CBROADCAST(m)$ } {% \tcp*[f]{$b_p(m)$}} {    
-    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
-      \label{line:bufferbroadcast} \tcp*[f]{buffers}}
+%    \lForEach {$q \in B$} {$B[q] \leftarrow B[q] \cup m$
+%      \label{line:bufferbroadcast} \tcp*[f]{buffers}}
     $\textup{R-broadcast}(m)$ \label{line:rbroadcast}\;
   }
   
