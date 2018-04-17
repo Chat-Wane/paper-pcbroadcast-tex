@@ -38,20 +38,20 @@ track causality, processes cannot reclaim entries. Hence, even with
 linearly in terms of number of processes that ever broadcast a message.
 In~\cite{almeida2008interval}, the complexity is reduced to the actual number of
 processes in the network.  Still, these approaches do not scale, particularly in
-dynamic networks subject to churn and failures. \textbf{Probabilistic
-  approaches~\cite{mostefaoui2017probabilistic}} sacrifices on causality
-tracking accuracy: messages may be delivered out of order under a computable
-boundary. The size of control information in messages
-depends on the desired boundary. \\
+dynamic networks subject to churn and failures. \\
 In comparison to these vector-based approaches, our approach reduces the
 generated traffic of causal broadcast by a factor of $N$ in the most common
-context where processes have partial knowledge of the network membership.
+context where processes have partial knowledge of the network membership. \\
+\textbf{Probabilistic approaches~\cite{mostefaoui2017probabilistic}} sacrifices
+on causality tracking accuracy: messages may be delivered out of order under a
+computable boundary. The size of control information in messages
+depends on the desired boundary. \\
 % It alleviates messages from the need to piggyback heavy
   % control information~\cite{friedman2004causal}
 Unlike vector-based approach, our broadcast cannot state if two messages are
 concurrent, accurate causal delivery is a feature provided by default by the
-propagation scheme. Once a safe FIFO link is established, it delivers message in
-the causal order with no delay at the speed of the FIFO link.
+propagation scheme. Once safe, FIFO links deliver message in causal order
+without further delay. The speed of delivery is that of FIFO links.
 
 
 \noindent Explicitly tracking \textbf{semantic dependencies} allows broadcast
