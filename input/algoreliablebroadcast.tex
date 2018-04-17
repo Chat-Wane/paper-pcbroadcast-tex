@@ -19,7 +19,7 @@
   
   \Function{$\textup{R-broadcast}(m)$} { %\tcp*[f]{$b_p(m)$}} { 
     $received \leftarrow received \cup m$ \;
-    \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$)}
+    \lForEach {$q \in Q$} {\textup{sendTo}($q,\, m$) \tcp*[f]{broadcast}}
     \textup{R-deliver}($m$) \; % \tcp*{$d_p(m)$}
   }
 

@@ -34,8 +34,9 @@ will speak of distributed systems, overlay networks, or networks indifferently.
   A process runs a set of instructions sequentially and communicates
   with other processes using message passing. \\
   A process' neighborhood is the set of links departing from it. \\
-  A process~A can send messages to another process~B in its
-  neighborhood: $s_{AB}(m)$; receive a message from another process~C:
+  A process~A can send messages to another process~B in its neighborhood:
+  $s_{AB}(m)$; receive a message from another process~C that has Process~A as
+  neighbor:
   $r_{AC}(m)$. \\
   A process is faulty if it crashes, otherwise it is correct. We do not consider
   byzantine processes.
@@ -49,8 +50,11 @@ will speak of distributed systems, overlay networks, or networks indifferently.
   between them. We only consider unpartitioned overlay networks.
 \end{definition}
 
-Broadcasting constitutes a communication primitive that allows processes to send
-messages to all other processes in their system.
+Causal broadcast is a communication primitive that relies on reliable broadcast
+to send messages to all processes in the system.
+
+% Broadcasting constitutes a communication primitive that allows processes to send
+% messages to all other processes in their system.
 
 \begin{definition}[Uniform reliable broadcast]
   When a process~A broadcasts a message $b_A(m)$, each correct process~B in the
@@ -78,14 +82,14 @@ from the broadcaster or transitively. Thus, all correct processes eventually
 deliver all messages exactly once. R-broadcast ensures validity, uniform
 agreement, and uniform integrity.
 
-Broadcast protocols can also ensure a specific ordering among message
-deliveries.  To define a delivery order among messages, we define time in a
-logical sense using Lamport's definition~\cite{lamport1978time}.
+Causal broadcast is a reliable broadcast that also ensures a specific ordering
+among message deliveries.  To define a delivery order among messages, we define
+time in a logical sense using Lamport's definition~\cite{lamport1978time}.
 
 \begin{definition}[Happen before~\cite{lamport1978time}]
-  Happen before is a transitive, irreflexive, and antisymmetric relation $\rightarrow$ that
-  defines a strict partial orders of events.  The sending of a message always
-  precedes its receipt.
+  Happen before is a transitive, irreflexive, and antisymmetric relation
+  $\rightarrow$ that defines a strict partial orders of events.  The sending of
+  a message always precedes its receipt.
 \end{definition}
 
 %% To order messages broadcast from one process, we define FIFO order.
@@ -132,7 +136,7 @@ remove links to neighbors from $Q$ at any time. The next section describes
 \CBROADCAST, a causal broadcast that handles such dynamicity.
 
 
-\subsection{Operation}
+\subsection{Causal order in dynamic systems}
 
 \begin{algorithm}[h]
   \input{./input/algobufferbroadcast.tex}
@@ -461,6 +465,8 @@ safe. Process~A uses the new link normally.
   For static networks, it comes from~\cite{friedman2004causal}. For dynamic
   networks, it comes from Lemmas~\ref{lem:removals}~and~\ref{lem:additions}.
 \end{proof}
+
+\subsection{Bounding space consumption}
 
 Algorithm~\ref{algo:bufferbroadcast} ensures causal delivery of messages even in
 dynamic network settings. Compared to the original causal broadcast for static
