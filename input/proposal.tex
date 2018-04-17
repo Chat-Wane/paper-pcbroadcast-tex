@@ -340,7 +340,7 @@ sends to Process~B the messages it buffered during ping phase.
   \CBROADCAST ensures \textbf{validity}, \textbf{uniform agreement}, and
   \textbf{uniform integrity},
   for it extends R-broadcast that ensures all 3 properties. \\
-  In addition, we must show that \CBROADCAST ensures \textbf{causal order}:
+  We must show that \CBROADCAST ensures \textbf{causal order}:
   $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m')
   \implies d_C(m) \rightarrow d_C(m')$. \\
   $\forall A,\,B,\, b_A(m) \rightarrow b_B(m') \Leftrightarrow d_B(m)
