@@ -132,16 +132,32 @@ From Theorem~\ref{theo:flooding}, reliable broadcast from
 Algorithm~\ref{algo:reliablebroadcast} is causal if communication links employed
 to communicate with neighbors in $Q$ are FIFO. This holds only for static
 networks where $Q$ is immutable. In practice, processes can join, leave, add or
-remove links to neighbors from $Q$ at any time. The next section describes
-\CBROADCAST, a causal broadcast that handles such dynamicity.
+remove links to neighbors from $Q$ at any time.
 
+\begin{lemma}[R-broadcast is causal in dynamic systems subject to
+  removals\label{lem:removals}]
+  R-broadcast using FIFO links is a causal broadcast in dynamic systems where
+  processes can leave the system or links can be removed.
+\end{lemma}
+
+\begin{proof}
+  Removing a process from the network and removing all the incoming and outgoing
+  links of this process is equivalent. Since we assume that removals do not
+  create network partitions\footnote{It may create partitions infringing the
+    uniform agreement property. Network partitioning constitutes an orthogonal
+    problem that we do not address in this paper.}, all correct processes
+  eventually receive all broadcast messages. In addition, removing a link or a
+  process does not reorder causally related messages. Hence, each process
+  receives and delivers each broadcast message in causal order as in static
+  systems.
+\end{proof}
+
+Link removals and process departures do not endanger broadcast properties.
+However, Figure~\ref{fig:preventiveproblem} shows that adding links may lead to
+causal order violations. The next section describes \CBROADCAST, a causal
+broadcast that handles all dynamicity.
 
 \subsection{Causal order in dynamic systems}
-
-\begin{algorithm}[h]
-  \input{./input/algobufferbroadcast.tex}
-  \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
-\end{algorithm}
 
 \begin{figure*}
   \begin{center}
@@ -173,63 +189,20 @@ remove links to neighbors from $Q$ at any time. The next section describes
   \end{center}
 \end{figure*}
 
-\CBROADCAST constitutes a powerful yet simple extension
+
+\CBROADCAST stands for Preventive Causal broadcast. It prevents causal order
+violations by forbidding the usage of new links until proven safe. It
+constitutes a powerful yet simple extension
 of~\cite{friedman2004causal}. Table~\ref{table:comparison} shows that it
 preserves both constant message overhead and constant delivery execution time in
-dynamic settings while Algorithm~\ref{algo:bufferbroadcast} shows the small set
-of instructions necessary to keep such complexity.
+dynamic settings.
 
-Both functions broadcast (see Line~\ref{line:rbroadcast}) and deliver (see
-Line~\ref{line:rdeliver}) rely on reliable broadcast (see
-Algorithm~\ref{algo:reliablebroadcast}). In fact, in static systems without
-additions nor removals of links, our protocol only executes instructions of
-reliable broadcast. Hence, \CBROADCAST ensures causal order on message delivery
-in static networks~\cite{friedman2004causal}. However, most of systems are
-dynamic. Processes can join, leave, add or remove communication means at any
-time.
-
-% \begin{theorem}[\CBROADCAST is causal in static networks\label{theo:static}]
-%   \CBROADCAST is a causal broadcast in static networks.
-% \end{theorem}
-
-% \begin{proof}
-%   In static networks, \CBROADCAST only executes the instructions of reliable
-%   broadcast. Reliable broadcast along with FIFO links ensures causal broadcast.
-%   The proof can be found in~\cite{friedman2004causal}.
-% \end{proof}
-
-% The removal of links and the departure of processes are not an issue, for it
-%does not reorder messages traveling through the links
-
-
-%%Algorithm~\ref{algo:bufferbroadcast} does not provide specific
-%% instructions for such cases.
-% However, it may create partitions. It is an orthogonal problem
-
-\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
-  removals\label{lem:removals}]
-  \CBROADCAST is a causal broadcast in dynamic networks where processes can
-  leave the network or links can be removed.
-\end{lemma}
-
-\begin{proof}
-  Removing a process from the network and removing all the incoming and outgoing
-  links of this process is equivalent. Since we assume that removals do not
-  create network partitions\footnote{It may create partitions infringing the
-    uniform agreement property. Network partitioning constitutes an orthogonal
-    problem that we do not address in this paper.}, all correct processes
-  eventually receive all broadcast messages. In addition, removing a link or a
-  process does not reorder causally related messages. Hence, each process
-  receives and delivers each broadcast message in causal order as in static
-  systems.
-\end{proof}
-
-Unfortunately, Figure~\ref{fig:preventiveproblem} shows that adding links may
-infringe the causal order property of causal broadcast.  New links may act as
-shortcut for new messages: new messages that travel through new links may arrive
-before preceding messages that took longer paths. To prevent this behavior, we
-define the safety of a link. \CBROADCAST uses all and only safe links to
-disseminate messages.
+Figure~\ref{fig:preventiveproblem} shows that adding links may infringe the
+causal order property of causal broadcast.  New links may act as shortcut for
+new messages: new messages that travel through new links may arrive before
+preceding messages that took longer paths. To prevent this behavior, we define
+the safety of a link. \CBROADCAST uses all and only safe links to disseminate
+messages.
 
 \begin{definition}[\label{def:safe}Safe link]
   A link from Process~A to Process~B is safe if and only if Process~B received
@@ -356,15 +329,46 @@ sends to Process~B the messages it buffered during ping phase.
 % structure associating each new unsafe link with a buffer of
 % messages.
 
-Figure~\ref{fig:preventivesolve} shows on an example how \CBROADCAST (see
-Algorithm~\ref{algo:bufferbroadcast}) solves causal order violations. In
-Figure~\ref{fig:preventivesolveA}, Process~A broadcasts $a$.  In
-Figure~\ref{fig:preventivesolveB}, it wants to add a link to Process~D. It sends
-a ping message $\pi$ to Process~D (see Line~\ref{line:sendlocked}) and awaits
-for the latter's reply.  We leave aside the implementation of this send function
-(e.g. broadcast or routing).  While awaiting, Process~A keeps its normal
-functioning and maintain a buffer of messages associated with the unsafe link
-(see Line~\ref{line:bufferbroadcast},~\ref{line:bufferforward}). In
+\begin{lemma}[\CBROADCAST is causal in dynamic systems subject to
+  additions\label{lem:additions}]
+  In dynamic systems where processes can join or add links, broadcasting using
+  all and only safe FIFO links ensures causal order. Without partition, the
+  broadcast is causal.
+\end{lemma}
+
+\begin{proof}
+  \CBROADCAST ensures \textbf{validity}, \textbf{uniform agreement}, and
+  \textbf{uniform integrity},
+  for it extends R-broadcast that ensures all 3 properties. \\
+  In addition, we must show that \CBROADCAST ensures \textbf{causal order}:
+  $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m')
+  \implies d_C(m) \rightarrow d_C(m')$. \\
+  $\forall A,\,B,\, b_A(m) \rightarrow b_B(m') \Leftrightarrow d_B(m)
+  \rightarrow d_B(m') \Leftrightarrow d_B(m) \rightarrow s_B(m') \Leftrightarrow
+  d_B(m) \rightarrow (\forall C\in Q, s_{BC}(m'))$.
+  Since all links in $Q$ are safe links, $r_c(m) \rightarrow r_{CB}(m')$ (see
+  Definition~\ref{def:safe}).  Since delivery order follows first receipt order,
+  $d_C(m) \rightarrow d_C(m')$. This order on message delivery transitively
+  reach all correct processes as long as the network remains unpartitioned.
+\end{proof}
+
+
+
+\begin{algorithm}[h]
+  \input{./input/algobufferbroadcast.tex}
+  \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
+\end{algorithm}
+
+
+Algorithm~\ref{algo:bufferbroadcast} shows the small set of instructions that
+implement safe links.  Figure~\ref{fig:preventivesolve} shows on an example how
+it solves causal order violations. In Figure~\ref{fig:preventivesolveA},
+Process~A broadcasts $a$.  In Figure~\ref{fig:preventivesolveB}, Process~A wants
+to add a link to Process~D. It sends a ping message $\pi$ to Process~D (see
+Line~\ref{line:sendlocked}) and awaits for the latter's reply.  We leave aside
+the implementation of this send function (e.g. broadcast or routing).  While
+awaiting, Process~A keeps its normal functioning and maintain a buffer of
+messages associated with the unsafe link (see Line~\ref{line:bufferforward}). In
 Figure~\ref{fig:preventivesolveC}, Process~A broadcasts another message $a'$. It
 sends it normally to Process~B but does not send it to Process~D
 directly. Instead, it buffers it. In Figure~\ref{fig:preventivesolveD},
@@ -412,26 +416,6 @@ safe. Process~A uses the new link normally.
   \end{center}
 \end{figure*}
 
-
-\begin{lemma}[\CBROADCAST is causal in dynamic networks subject to
-  additions\label{lem:additions}]
-  \CBROADCAST is a causal broadcast in dynamic networks where processes can join
-  the network or links can be added.
-\end{lemma}
-
-\begin{proof}
-  \CBROADCAST ensures \textbf{validity}, \textbf{uniform agreement}, and \textbf{uniform integrity},
-  for it extends R-broadcast that ensures all 3 properties. \\
-  In addition, we must show that \CBROADCAST ensures \textbf{causal order},
-  i.e., $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m')
-  \implies d_C(m) \rightarrow d_C(m')$. \\
-  $\forall A,\,B,\, b_A(m) \rightarrow b_B(m') \Leftrightarrow d_B(m) \rightarrow d_B(m') \Leftrightarrow
-  d_B(m) \rightarrow s_B(m') \Leftrightarrow d_B(m) \rightarrow (\forall C\in Q, s_{BC}(m'))$. Since all links
-  in $Q$ are safe links, $r_c(m) \rightarrow r_{CB}(m')$ (see Definition~\ref{def:safe}).
-  Since delivery order follows first receipt order,
-  $d_C(m) \rightarrow d_C(m')$. This order on message delivery transitively reach all correct processes
-  as long as the network remains unpartitioned.
-\end{proof}
 
 %% \begin{proof}
 %%   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
