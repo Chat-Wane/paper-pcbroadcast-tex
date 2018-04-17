@@ -15,9 +15,10 @@ reliable broadcast. Section~\ref{subsec:complexity} reviews structures with
 linearly increasing space consumption. We can reduce this complexity in static
 systems. We can prune the structure from already received messages, for we know
 that the number of duplicates is equal to the number of incoming
-links. Unfortunately, this does not hold in dynamic systems. We would like to
-investigate on a way to prune the structure in such settings. This would make
-causal broadcast scalable as well on generated traffic as on space consumption.
+links~\cite{raynal2013distributed}. Unfortunately, this does not hold in dynamic
+systems. We would like to investigate on a way to prune the structure in such
+settings. This would make causal broadcast scalable as well on generated traffic
+as on space consumption.
 
 We also plan to investigate on retrieving partial order of
 events. Section~\ref{sec:relatedwork} states that vector-based approaches allows
