@@ -25,14 +25,16 @@ time~\cite{charronbost1991concerning}. While gossiping constitutes an efficient
 mean to disseminate messages to millions of
 processes~\cite{demers1987epidemic},~\cite{birman1999bimodal}, ensuring causal
 delivery of these messages remains overcostly.  Using state-of-the-art
-protocols, each message piggybacks a -- possibly compressed~-- vector of
+protocols, each message piggybacks a -- possibly compressed -- vector of
 Lamport's
 clocks~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}.
 The message overhead increases monotonically, for entries cannot be reclaimed
 without consensus. The message overhead increases linearly with the number of
-processes $N$ that ever broadcast a message in the system.  The delivery
-execution time takes linear time $O(N)$ as well. Causal broadcast protocols
-based on vectors eventually become overcostly and inefficient.
+processes $N$ that ever broadcast a message in the system. Several messages $W$
+may differ their delivery, for preceding messages did not arrive
+yet~\cite{mehdi2017slowdown}.  The delivery execution time takes linear time
+$O(W.N)$ as well.  Causal broadcast protocols based on vectors eventually become
+overcostly and inefficient.
 
 
 To provide causal order, \cite{friedman2004causal} employs a different
@@ -69,7 +71,7 @@ middleware for distributed protocols and applications in large and dynamic
 systems.
 
 \begin{table}
-  \caption{\label{table:comparison} Space and time complexity of causal
+  \caption{\label{table:comparison} Complexity of causal
     broadcast protocols. 
     $N$ is the number of processes that ever broadcast a message.
     $W$ is the number of received messages awaiting delivery.

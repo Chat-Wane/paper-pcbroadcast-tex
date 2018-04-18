@@ -9,8 +9,7 @@
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.99\columnwidth]{./img/delay.eps}
-    \caption{\label{fig:delay}Impact of \CBROADCAST on the underlying overlay
-      network.}
+    \caption{\label{fig:delay}Impact of \CBROADCAST on the overlay network.}
   \end{center}
 \end{figure}
 
@@ -40,14 +39,17 @@ Consequently, the duration of ping phases increases during the experiment.
 Links become safe slower. \\
 We measure the shortest path length from a random set of processes to all other
 processes. It represents the average number of hops taken by broadcast messages
-before being received and delivered by all processes. Multiplied by the
-transmission latency of links, it represents the transmission delay of broadcast
+before being received and delivered by all. % processes.
+Multiplied by the transmission latency of links, it represents the transmission
+delay of broadcast
 messages before being received by all processes. \\
 We perform measurements on 2 broadcast protocols: \CBROADCAST and R-broadcast.
 R-broadcast uses all available links to broadcast messages in a gossip fashion.
-Transmission delays before delivery are similar to piggybacking approaches~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic} without accounting for the time taken to send large messages (e.g. each
-message convey a vector clock of 10k entries when the network comprises 10k
-processes).  Larger packets induces larger transmission time.
+Transmission delays before delivery are similar to piggybacking
+approaches~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1992efficient}~\cite{birman1987reliable,hadzilacos1993fault,mostefaoui2017probabilistic}
+without accounting for the time taken to send large messages (e.g. each message
+convey a vector clock of 10k entries when the network comprises 10k processes).
+Larger packets induces larger transmission time.
 
 \noindent \textbf{Results:} Figure~\ref{fig:delay} shows the result of the
 experiment. The y-axis depicts the delay set on message transmission for each

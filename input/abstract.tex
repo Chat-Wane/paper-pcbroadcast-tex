@@ -1,42 +1,15 @@
 
-\begin{abstract}
-  % Designing applications over a message-passing system goes through the
-  % definition and the implementation of appropriate communication primitives such
-  % as reliable broadcast , causal broadcast and atomic broadcast. 
-  
-  % This paper presents a new uniform reliable causal broadcast protocol.
-  
-  % This is not one more protocol as the searching for an effective protocol is
-  % still an open problem especially in large and dynamic networks.
-  
-  % The proposed protocol outperforms state-of-the-art approaches in size of
-  % messages, execution time complexity, and local space complexity. Most
-  % importantly, the control information piggybacked on messages is of constant
-  % size. We prove that for both static and dynamic networks. Consequently, large
-  % and dynamic systems can finally afford causal broadcast.
-  
-  % ----------------
-  
+\begin{abstract}  
   Many distributed protocols and applications rely on causal broadcast to ensure
-  consistency criteria.
-  However, none of causality tracking state-of-the-art approaches scale in large
-  and dynamic systems.
-  This paper presents a new causal broadcast protocol.  The proposed protocol
-  outperforms state-of-the-art in size of messages, execution time complexity,
-  and local space complexity. Most importantly, messages piggyback control
-  information the size of which is constant.  We prove that for both static and
-  dynamic systems.  Consequently, large and dynamic systems can finally afford
-  causal broadcast.
+  consistency criteria.  However, none of causality tracking state-of-the-art
+  approaches scale in large and dynamic systems.  This paper presents a new
+  non-blocking causal broadcast protocol suited for dynamic systems.  The
+  proposed protocol outperforms state-of-the-art in size of messages, execution
+  time complexity, and local space complexity. Most importantly, messages
+  piggyback control information the size of which is constant.  We prove that
+  for both static and dynamic systems.  Consequently, large and dynamic systems
+  can finally afford causal broadcast.
 \end{abstract}
-
-
-
-
-%\keywords{Uniform, reliable, causal, broadcast.}
-
-% \begin{IEEEkeywords}
-% Uniform, reliable, causal, broadcast.
-% \end{IEEEkeywords}
 
 %%% Local Variables:
 %%% mode: latex
