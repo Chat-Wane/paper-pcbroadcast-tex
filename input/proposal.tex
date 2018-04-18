@@ -68,7 +68,7 @@ to send messages to all processes in the system.
   only if it was previously broadcast.
 \end{definition}
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \input{./input/algoreliablebroadcast.tex}
   \caption{\label{algo:reliablebroadcast}R-broadcast at Process $p$.}
 \end{algorithm}
@@ -212,22 +212,6 @@ messages.
   r_B(m) \rightarrow r_{BA}(m')$
 \end{definition}
 
-\begin{figure*}
-  \begin{center}
-    \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
-    {\input{input/figbufferproblemA.tex}}
-    \hspace{20pt}
-    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
-    {\input{input/figbufferproblemB.tex}}
-    \hspace{20pt}
-    \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
-    {\input{input/figbufferproblemC.tex}}
-    \caption{\label{fig:bufferproblem}Buffers may grow unbounded due to network
-      conditions.}
-  \end{center}
-\end{figure*}
-
-
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
 the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
 yet, and there was no guaranty that Process~B would receive $a$ before receiving
@@ -354,7 +338,24 @@ sends to Process~B the messages it buffered during ping phase.
 
 
 
-\begin{algorithm}[h]
+\begin{figure*}
+  \begin{center}
+    \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
+    {\input{input/figbufferproblemA.tex}}
+    \hspace{20pt}
+    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
+    {\input{input/figbufferproblemB.tex}}
+    \hspace{20pt}
+    \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
+    {\input{input/figbufferproblemC.tex}}
+    \caption{\label{fig:bufferproblem}Buffers may grow unbounded due to network
+      conditions.}
+  \end{center}
+\end{figure*}
+
+
+
+\begin{algorithm}
   \input{./input/algobufferbroadcast.tex}
   \caption{\label{algo:bufferbroadcast}\CBROADCAST at Process $p$.}
 \end{algorithm}
@@ -380,6 +381,8 @@ $\rho$. Consequently, Process~A knows that Process~D received and delivered at
 least $a$ and all preceding messages. It empties the buffer of messages to
 Process~D (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
 safe. Process~A uses the new link normally.
+
+
 
 \begin{figure*}
   \begin{center}
@@ -415,7 +418,6 @@ safe. Process~A uses the new link normally.
       elements in each buffer.}
   \end{center}
 \end{figure*}
-
 
 %% \begin{proof}
 %%   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
