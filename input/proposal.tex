@@ -548,7 +548,7 @@ partial view.
 
 \noindent \textbf{Reliable broadcast.} Gossiping constitutes an efficient mean
 to disseminate messages to all
-processes~\cite{demers1987epidemic},~\cite{birman1999bimodal}.
+processes~\cite{demers1987epidemic,birman1999bimodal}.
 Algorithm~\ref{algo:reliablebroadcast} shows that it relies on a local structure
 to guarantee that messages are delivered exactly once. This structure grows
 linearly with the number of processes in the network: $O(N)$. In addition, each
@@ -574,7 +574,7 @@ and for each broadcast only depends on the size of messages and the overlay
 network chosen to broadcast messages. The size of messages is an irreducible
 variable; and many protocols designed to build overlay networks achieve high
 scalability in terms of network size and
-dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman},~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
+dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman,nedelec2017adaptive,voulgaris2005cyclon}.
 Consequently, \CBROADCAST achieve high scalability in both these terms
 too. \CBROADCAST is efficient, for the upper bound on the complexity of delivery
 execution time does not depend on any factor.

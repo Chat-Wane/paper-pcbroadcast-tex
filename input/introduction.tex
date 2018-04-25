@@ -23,7 +23,7 @@ Unfortunately, causal broadcast has proven expensive in dynamic environments
 where any process can broadcast a message at any
 time~\cite{charronbost1991concerning}. While gossiping constitutes an efficient
 mean to disseminate messages to millions of
-processes~\cite{demers1987epidemic},~\cite{birman1999bimodal}, ensuring causal
+processes~\cite{demers1987epidemic,birman1999bimodal}, ensuring causal
 delivery of these messages remains overcostly.  Using state-of-the-art
 protocols, each message piggybacks a -- possibly compressed -- vector of
 Lamport's
@@ -70,7 +70,8 @@ Consequently, causal broadcast finally becomes an affordable and efficient
 middleware for distributed protocols and applications in large and dynamic
 systems.
 
-\begin{table}
+\begin{table*}
+  \begin{center}
   \caption{\label{table:comparison} Complexity of causal
     broadcast protocols. 
     $N$ is the number of processes that ever broadcast a message.
@@ -81,7 +82,8 @@ systems.
 %    check the safety of new communication means.
   }
   \input{input/tableoverlayvstimestamp.tex}
-\end{table}
+  \end{center}
+\end{table*}
 
 The rest of this paper is organized as follows: Section~\ref{sec:motivations}
 shows the background and motivations of our work. Section~\ref{sec:proposal}
