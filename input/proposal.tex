@@ -21,7 +21,8 @@ overlay networks with local partial view the size of which is generally much
 smaller than the actual size of the
 system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}. Overlay networks
 can be built on top of other overlay networks.  For the rest of this paper, we
-will speak of distributed systems, overlay networks, or networks indifferently.
+will use the terms of distributed systems, overlay networks, or networks
+indifferently.
 
 \begin{definition}[Overlay network]
   An overlay network $G$ is a pair $\langle P,\, E\rangle$ where $P$ is a set of
@@ -214,7 +215,7 @@ messages.
 
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
 the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
-yet, and there was no guaranty that Process~B would receive $a$ before receiving
+yet, and there was no guarantee that Process~B would receive $a$ before receiving
 $a'$ from the new link. In this example, the worst happens and Process~B
 receives then delivers $a'$ before $a$ which violates causal order.
 
@@ -256,7 +257,7 @@ to Process~B. %% while recording all its upcoming message deliveries in an array
   phase.
 \end{proof}
 
-Upon receipt of Process~B's reply, Process~A has the guaranty that Process~B
+Upon receipt of Process~B's reply, Process~A has the guarantee that Process~B
 received all its delivered messages preceding the ping phase. This is not
 sufficient, for ping phases take time. Messages delivered during ping phase by
 Process~A may not be received by Process~B yet. To fill this gap, Process~A
@@ -457,7 +458,7 @@ safe. Process~A uses the new link normally.
 Algorithm~\ref{algo:bufferbroadcast} ensures causal delivery of messages even in
 dynamic network settings. Compared to the original causal broadcast for static
 networks~\cite{friedman2004causal}, it uses an additional local structure:
-buffers of messages. It associates a buffer to each new unsafe links. We assumed
+buffers of messages. It associates a buffer to each new unsafe link. We assumed
 that the size of these buffer stays small in general, for it depends on the time
 taken by the ping phase which is assumed short. However, network conditions may
 invalidate this assumption. Figure~\ref{fig:bufferproblem} depicts scenarios

@@ -4,7 +4,7 @@
 Causal broadcast~\cite{hadzilacos1994modular} is a fundamental building block of
 many distributed applications~\cite{nakamoto2009bitcoin} such as distributed
 social networks~\cite{borthakur2013petabyte}, distributed collaborative
-software~\cite{nedelec2016crate,heinrich2012exploiting}, or distributed data
+softwares~\cite{nedelec2016crate,heinrich2012exploiting}, or distributed data
 stores~\cite{demers1987epidemic,shapiro2011comprehensive,bailis2013bolton,lloyd2011cops,bravo2017saturn}.
 % over a message-passing system goes through the definition and the
 % implementation of appropriate communication
@@ -13,7 +13,7 @@ stores~\cite{demers1987epidemic,shapiro2011comprehensive,bailis2013bolton,lloyd2
 Causal broadcast is a reliable broadcast where all connected processes
 deliver each broadcast message exactly once following the happen
 before relationship~\cite{lamport1978time,schwarz1994detecting}: when
-Alice comments Bob's picture, everyone receives the comment after the
+Alice comments on Bob's picture, everyone receives the comment after the
 picture; unrelated events are delivered in any order.
 % If the sending of a message $m$ precedes the sending of a message $m'$ then all
 % processes that deliver these two messages need to deliver $m$ before
@@ -31,7 +31,7 @@ clocks~\cite{almeida2008interval,fidge1988timestamps,mattern1989virtual,singhal1
 The message overhead increases monotonically, for entries cannot be reclaimed
 without consensus. The message overhead increases linearly with the number of
 processes $N$ that ever broadcast a message in the system. Several messages $W$
-may differ their delivery, for preceding messages did not arrive
+may deffer their delivery, for preceding messages did not arrive
 yet~\cite{mehdi2017slowdown}.  The delivery execution time takes linear time
 $O(W.N)$ as well.  Causal broadcast protocols based on vectors eventually become
 overcostly and inefficient.
