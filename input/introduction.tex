@@ -6,18 +6,11 @@ many distributed applications~\cite{nakamoto2009bitcoin} such as distributed
 social networks~\cite{borthakur2013petabyte}, distributed collaborative
 softwares~\cite{nedelec2016crate,heinrich2012exploiting}, or distributed data
 stores~\cite{demers1987epidemic,shapiro2011comprehensive,bailis2013bolton,lloyd2011cops,bravo2017saturn}.
-% over a message-passing system goes through the definition and the
-% implementation of appropriate communication
-% primitives.  In this paper, we focus on
-% causal broadcast.
 Causal broadcast is a reliable broadcast where all connected processes
 deliver each broadcast message exactly once following the happen
 before relationship~\cite{lamport1978time,schwarz1994detecting}: when
 Alice comments on Bob's picture, everyone receives the comment after the
 picture; unrelated events are delivered in any order.
-% If the sending of a message $m$ precedes the sending of a message $m'$ then all
-% processes that deliver these two messages need to deliver $m$ before
-% $m'$. Otherwise they can deliver them in any order.
 
 Unfortunately, causal broadcast has proven expensive in dynamic environments
 where any process can broadcast a message at any
@@ -54,8 +47,6 @@ and dynamic systems.  Our contribution is threefold:
   its scope to dynamic systems. We prove that adding new communication means
   between processes constitutes the sole factor in causal order violation. Our
   approach solves this using bounded buffers and few control messages.
-  % Then, we provide the formal proof that our broadcast protocol ensures causal
-  % order in dynamic systems.
 \item We provide the complexity analysis of our broadcast
   protocol. Table~\ref{table:comparison} compares our protocol to two
   representative solutions. Our approach handles dynamic systems while providing
@@ -76,10 +67,7 @@ systems.
     $N$ is the number of processes that ever broadcast a message.
     $W$ is the number of received messages awaiting delivery.
     $P$ is the number of delivered messages that are temporarily kept before 
-    being safely purged to forbid double delivery.%
-%    $B$ is the number of delivered messages that are temporarily kept to
-%    check the safety of new communication means.
-  }
+    being safely purged to forbid double delivery.}
   \input{input/tableoverlayvstimestamp.tex}
 \end{table}
 

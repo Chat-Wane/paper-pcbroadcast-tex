@@ -43,7 +43,6 @@ indifferently.
   byzantine processes.
 \end{definition}
 
-% For the rest of the paper, we only consider networks without partitions.
 
 \begin{definition}[Unpartitioned network]
   A network is unpartitioned if and only if for any pair of correct processes,
@@ -54,8 +53,6 @@ indifferently.
 Causal broadcast is a communication primitive that relies on reliable broadcast
 to send messages to all processes in the system.
 
-% Broadcasting constitutes a communication primitive that allows processes to send
-% messages to all other processes in their system.
 
 \begin{definition}[Uniform reliable broadcast]
   When a process~A broadcasts a message $b_A(m)$, each correct process~B in the
@@ -93,20 +90,6 @@ time in a logical sense using Lamport's definition~\cite{lamport1978time}.
   a message always precedes its receipt.
 \end{definition}
 
-%% To order messages broadcast from one process, we define FIFO order.
-
-%% \begin{definition}[FIFO order]
-%%   If a process broadcasts a first message then broadcasts a second message,
-%%   processes deliver the first message before the second message.
-%% \end{definition}
-
-%% To order messages broadcast by different processes, we define local order.
-
-%% \begin{definition}[Local order]
-%%   If a process broadcasts a message after having delivered another message
-%%   broadcast by another process, processes deliver the latter before the former.
-%% \end{definition}
-
 To order messages broadcast by every processes, we define causal order.
 
 \begin{definition}[Causal order]
@@ -114,10 +97,6 @@ To order messages broadcast by every processes, we define causal order.
   corresponding broadcasts. $\forall A,\,B,\,C,\,
   b_A(m) \rightarrow b_B(m') \implies d_C(m) \rightarrow d_C(m')$
 \end{definition}
-
-%% \begin{theorem}[\label{theo:causal}Causal order equivalence~\cite{hadzilacos1994modular}]
-%%   The conjunction of FIFO order and local order is equivalent to causal order.
-%% \end{theorem}
 
 \begin{definition}[Causal broadcast]
   Causal broadcast is a uniform reliable broadcast ensuring causal order.
@@ -228,7 +207,7 @@ space and generated traffic. Performing an anti-entropy round to extract missing
 messages would also be overcostly in terms of generated traffic for it would
 require sending the vector of received messages~\cite{demers1987epidemic}.
 Instead, Process~A avoid sending most of messages by initiating a ping phase
-to Process~B. %% while recording all its upcoming message deliveries in an array.
+to Process~B. 
 
 \begin{definition}[Ping phase]
   Ping phase starts when Process~A pings Process~B. Ping messages $\pi$ travel
@@ -290,29 +269,8 @@ sends to Process~B the messages it buffered during ping phase.
   Since links are FIFO, sending messages of this buffer using the new link
   guarantees that Process~B will receive them before receiving any $m_k$
   delivered after $m_j$. The link from Process~A to Process~B became safe.
-  % Suppose a network of safe links without partitions. Suppose an unsafe link
-  % from a process A to a process B. \\
-  % We must show that if Process~B receives a message $m'$ from the new link,
-  % there exist no messages $m$ delivered by Process~A that it did not receive. \\
-  % Process~B starts receiving messages from the new link when Process~A sends its
-  % buffer. Either $m'$ comes from this buffer or it is a message delivered by
-  % Process~A afterward. \\
-  % Process~A starts sending buffered messages once it received the reply to its
-  % ping, hence, after Process~B received this ping. Since this ping travels via
-  % safe FIFO links, and since the network does not have partitions, Process~B
-  % eventually receives this ping after all messages delivered by Process~A when
-  % it sent this ping. Consequently, there exist no messages $m$ that Process~B
-  % did not receive before receiving the messages from the buffer. \\
-  % Since Process~A buffered all delivered messages between the sending of the
-  % ping and the receipt of the reply, there exist no messages $m$ that Process~B
-  % did not receive before Process~A starts using the new link for
-  % broadcast. \\
-  % Afterward, Process~A sends all its delivered messages using this link.
 \end{proof}
 
-% Compared to reliable broadcast, Algorithm~\ref{algo:bufferbroadcast} adds a
-% structure associating each new unsafe link with a buffer of
-% messages.
 
 \begin{lemma}[\CBROADCAST is causal in dynamic systems subject to
   additions\label{lem:additions}]
@@ -420,29 +378,6 @@ safe. Process~A uses the new link normally.
   \end{center}
 \end{figure*}
 
-%% \begin{proof}
-%%   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
-%%   validity, uniform agreement, uniform integrity, and causal order. \\
-%%   \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST extends
-%%   R-broadcast. Since R-broadcast ensures validity, uniform agreement, and
-%%   uniform
-%%   integrity, \CBROADCAST ensures all 3 properties. \\
-%%   \textbf{Causal order:} From Theorem~\ref{theo:causal}, we must show
-%%   that \CBROADCAST ensures both FIFO order and local order. \\
-%%   \textbf{FIFO order:} Suppose a process A broadcasts $m$ before $m'$. Consider
-%%   that a correct process B delivers $m'$. We must show that Process~B
-%%   delivers $m$ before $m'$. \\
-%%   Processes use added links only when they are safe. Thus, when Process~A
-%%   broadcasts $m'$, direct neighbors already received or are guaranteed to
-%%   receive $m$ beforehand. Since delivery order follows the receipt order, direct
-%%   neighbors deliver $m$ before $m'$. They forward $m$ and $m'$ in this
-%%   order. The rest of processes receive in this order. Process~B receives $m$
-%%   before $m'$ either directly or transitively. Consequently, Process~B delivers
-%%   $m$ before $m'$. \\
-%%   \textbf{Local order:} Since broadcast and forward have identical instructions,
-%%   the origin of broadcast messages does not matter. The proof is identical to
-%%   that of FIFO order. \\
-%% \end{proof}
 
 \begin{theorem}[\CBROADCAST is a causal broadcast]
   \CBROADCAST is a causal broadcast in both static and dynamic network settings.
@@ -474,8 +409,7 @@ buffer will grow forever. In Figure~\ref{fig:bufferproblemC}, the reply $\rho$
 itself fails to reach Process~A. For the recall, this message can travel to
 Process~A by any communication mean, including unreliable ones. If this fails,
 Process~A's buffer to Process~D will grow
-forever. %as long as Process~A receives or broadcasts
-%messages.
+forever. 
 
 \begin{algorithm}
   \input{input/algoboundingbuffer.tex}

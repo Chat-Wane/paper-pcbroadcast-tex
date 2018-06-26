@@ -36,9 +36,6 @@ need to deliver $m$ before $m'$. Otherwise they can deliver them in any order.
 Encoding the logical time at broadcast regarding all other broadcasts and
 piggyback this control information in each broadcast message allow processes to
 ensure causal order on message delivery. Instead, \cite{friedman2004causal}
-%  checking repeatedly if messages are ready to be delivered, a
-% preventive approach~\cite{friedman2004causal} makes sure that messages arrive
-%ready in the first place. % It
 uses FIFO links and systematically forwards delivered messages.  Intuitively,
 the dissemination pattern automatically makes sure that no paths from a process
 to another process carry messages out of causal order.
