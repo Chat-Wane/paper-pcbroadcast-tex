@@ -166,23 +166,23 @@ broadcast that handles all dynamicity.
     {\input{./input/figpreventivesolveA.tex}}
     \hspace{20pt}
     \subfloat[Part B][\label{fig:preventivesolveB}Process~A wants
-    to add a link to Process~D. 
-    It sends a ping message $\pi$ to Process~D using one of its FIFO links.]
+    to add a link to Process~C. 
+    It sends a ping message $\pi$ to Process~C using one of its FIFO links.]
     {\input{./input/figpreventivesolveB.tex}}
     \hspace{20pt}
     \subfloat[Part C][\label{fig:preventivesolveC}Process~A broadcasts $a'$.
     It does not send it through the new link but buffers it.]
     {\input{./input/figpreventivesolveC.tex}}
     \hspace{20pt}
-    \subfloat[Part D][\label{fig:preventivesolveD}Process~D receives
+    \subfloat[Part D][\label{fig:preventivesolveD}Process~C receives
     $\pi$ and replies to $A$.
     The reply $\rho$ can travel by any communication
     mean.]
     {\input{./input/figpreventivesolveD.tex}}
     \hspace{20pt}
     \subfloat[Part E][\label{fig:preventivesolveE}Process~A receives
-    Process~D's reply. 
-    The former safely empties its buffer to Process~D. 
+    Process~C's reply. 
+    The former safely empties its buffer to Process~C. 
     Using the new link cannot cause causal order violation anymore.]
     {\input{./input/figpreventivesolveE.tex}}
     \caption{\label{fig:preventivesolve}\CBROADCAST does not violate causal
@@ -344,7 +344,7 @@ sends to Process~B the messages it buffered during ping phase.
     \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
     {\input{input/figbufferproblemA.tex}}
     \hspace{20pt}
-    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
+    \subfloat[part B][\label{fig:bufferproblemB}Process~C crashes.]
     {\input{input/figbufferproblemB.tex}}
     \hspace{20pt}
     \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
@@ -366,21 +366,21 @@ Algorithm~\ref{algo:bufferbroadcast} shows the small set of instructions that
 implement safe links.  Figure~\ref{fig:preventivesolve} shows on an example how
 it solves causal order violations. In Figure~\ref{fig:preventivesolveA},
 Process~A broadcasts $a$.  In Figure~\ref{fig:preventivesolveB}, Process~A wants
-to add a link to Process~D. It sends a ping message $\pi$ to Process~D (see
+to add a link to Process~C. It sends a ping message $\pi$ to Process~C (see
 Line~\ref{line:sendlocked}) and awaits for the latter's reply.  We leave aside
 the implementation of this send function (e.g. broadcast or routing).  While
 awaiting, Process~A keeps its normal functioning and maintain a buffer of
 messages associated with the unsafe link (see Line~\ref{line:bufferforward}). In
 Figure~\ref{fig:preventivesolveC}, Process~A broadcasts another message $a'$. It
-sends it normally to Process~B but does not send it to Process~D
+sends it normally to Process~B but does not send it to Process~C
 directly. Instead, it buffers it. In Figure~\ref{fig:preventivesolveD},
-Process~D receives Process~A's ping message $\pi$. Since links are FIFO, it
-implicitly means that Process~D also received $a$. Process~D sends a reply
+Process~C receives Process~A's ping message $\pi$. Since links are FIFO, it
+implicitly means that Process~C also received $a$. Process~C sends a reply
 $\rho$ to Process~A (see Line~\ref{line:sendack}). $\rho$ can travel through any
 communication mean. In Figure~\ref{fig:preventivesolveE}, Process~A receives
-$\rho$. Consequently, Process~A knows that Process~D received and delivered at
+$\rho$. Consequently, Process~A knows that Process~C received and delivered at
 least $a$ and all preceding messages. It empties the buffer of messages to
-Process~D (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
+Process~C (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
 safe. Process~A uses the new link normally.
 
 
@@ -388,14 +388,14 @@ safe. Process~A uses the new link normally.
 \begin{figure*}
   \begin{center}
     \subfloat[Part A][\label{fig:buffersolveA}
-    Process~A wanted to add a link to Process~D after having
+    Process~A wanted to add a link to Process~C after having
     broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
     {\input{input/figbuffersolveA.tex}}
     \hspace{20pt}
     \subfloat[Part B][\label{fig:buffersolveB}
     Process~A receives, delivers, and forwards $x$. Since the buffer size would 
     exceed the maximal boundary, it resets the buffer with a new counter and
-    sends a ping message with this counter. In the meantime, Process~D
+    sends a ping message with this counter. In the meantime, Process~C
     receives $\pi_1$ and sends the corresponding reply $\rho_1$.]
     {\input{input/figbuffersolveB.tex}}
     \hspace{20pt}
@@ -406,14 +406,14 @@ safe. Process~A uses the new link normally.
     {\input{input/figbuffersolveC.tex}}
     \hspace{20pt}
     \subfloat[Part D][\label{fig:buffersolveD}
-    Process~D receives $\pi_2$ and sends the corresponding
+    Process~C receives $\pi_2$ and sends the corresponding
     reply $\rho_2$.]
     {\input{input/figbuffersolveD.tex}}
     \hspace{20pt}
     \subfloat[Part E][\label{fig:buffersolveE}
     Process~A receives $\rho_2$. It empties the
     buffer with the corresponding counter. Now,  the direct link
-    to Process~D is safe. Process~A uses it normally.]
+    to Process~C is safe. Process~A uses it normally.]
     {\input{input/figbuffersolveE.tex}}
     \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
       elements in each buffer.}
@@ -464,16 +464,16 @@ taken by the ping phase which is assumed short. However, network conditions may
 invalidate this assumption. Figure~\ref{fig:bufferproblem} depicts scenarios
 where buffers grow out of acceptable boundaries. In
 Figure~\ref{fig:bufferproblemA}, the issue comes from high transmission delays
-from Process~A to Process~B, and from Process~B to Process~D compared to the
+from Process~A to Process~B, and from Process~B to Process~C compared to the
 number of messages to broadcast and forward. The ping message $\pi$ did not
-reach Process~D yet that the buffer contains a lot of messages. In
+reach Process~C yet that the buffer contains a lot of messages. In
 Figure~\ref{fig:bufferproblemB}, the issue comes from the departure of
-Process~D. Depending on network settings, Process~A may not be able to detect
-Process~D's departure. The former will never receive the awaited reply and the
+Process~C. Depending on network settings, Process~A may not be able to detect
+Process~C's departure. The former will never receive the awaited reply and the
 buffer will grow forever. In Figure~\ref{fig:bufferproblemC}, the reply $\rho$
 itself fails to reach Process~A. For the recall, this message can travel to
 Process~A by any communication mean, including unreliable ones. If this fails,
-Process~A's buffer to Process~D will grow
+Process~A's buffer to Process~C will grow
 forever. %as long as Process~A receives or broadcasts
 %messages.
 
@@ -487,7 +487,7 @@ Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
 buffers. It solves the issue from the buffer owner's
 perspective. Figure~\ref{fig:buffersolve} shows how this algorithm bounds the
 size of buffers. In Figure~\ref{fig:buffersolveA}, Process~A broadcast $a$; then
-wanted to add a link to Process~D so it sent a ping message; then broadcast $a'$
+wanted to add a link to Process~C so it sent a ping message; then broadcast $a'$
 and $a''$ so it buffered them. We see that the ping message $\pi_1$ carries a
 counter. The new buffer is identified by the same counter. In
 Figure~\ref{fig:buffersolveB}, Process~A receives, delivers, and forwards the
@@ -497,12 +497,12 @@ Line~\ref{line:maxsize}). Adding $x$ to the buffer would exceed the bound of $2$
 elements. This is the first ping phase failure. Process~A simply restarts the
 ping phase: it resets the buffer and sends another ping message $\pi_2$ (see
 Line~\ref{line:reset}). The counter of the reset buffer is the one of the new
-ping message. In the meantime, Process~D receives $\pi_1$ and sends the
+ping message. In the meantime, Process~C receives $\pi_1$ and sends the
 corresponding reply $\rho_1$. In Figure~\ref{fig:buffersolveC}, Process~A
 receives a broadcast message $y$. It delivers it, checks if the buffer can admit
 it, adds the message to the buffer, and forwards it. Process~A also receives the
 first reply $\rho_1$ but discards it, for no buffers have such counter. In
-Figure~\ref{fig:buffersolveD}, Process~D receives $\pi_2$ and sends the
+Figure~\ref{fig:buffersolveD}, Process~C receives $\pi_2$ and sends the
 corresponding reply $\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE},
 Process~A receives $\rho_2$. Since the corresponding buffer exists, it empties
 it. The new link is now safe to use for causal broadcast.

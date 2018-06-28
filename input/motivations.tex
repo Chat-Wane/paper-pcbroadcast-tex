@@ -78,7 +78,7 @@ it does not constitute an additional overhead of~\cite{friedman2004causal}.
 
 Figure~\ref{fig:disseminationtree} shows that such causal broadcast ensures
 causal order in larger systems where processes have limited knowledge of the
-membership.  Process~A only knows about Process~B and Process~C.  Yet,
+membership.  Process~A only knows about Process~B and Process~D.  Yet,
 Process~A's broadcast messages $a$ and $a'$ arrive to all other processes either
 directly or transitively. In addition, $a$ and $a'$ always arrive in causal
 order at all processes despite concurrency and whatever the dissemination path.
@@ -89,17 +89,17 @@ order at all processes despite concurrency and whatever the dissemination path.
     {\input{input/figpreventiveproblemA.tex}}
     \hspace{20pt}
     \subfloat[Part 2][\label{fig:preventiveproblemA2}Process~A adds a link 
-    to Process~D.]
+    to Process~C.]
     {\input{input/figpreventiveproblemA2.tex}}
     \hspace{20pt}
     \subfloat[Part 3][\label{fig:preventiveproblemB}Process~A broadcasts $a'$.]
     {\input{input/figpreventiveproblemB.tex}}
     \hspace{20pt}
-    \subfloat[Part 4][\label{fig:preventiveproblemC}Process~D receives and
+    \subfloat[Part 4][\label{fig:preventiveproblemC}Process~C receives and
     delivers $a'$ before $a$. This violates causal order.]
     {\input{input/figpreventiveproblemC.tex}}
     \hspace{20pt}
-    \subfloat[Part 4][\label{fig:preventiveproblemD}Process~D propagates
+    \subfloat[Part 4][\label{fig:preventiveproblemD}Process~C propagates
     the causal order violation.]
     {\input{input/figpreventiveproblemD.tex}}
     \caption{\label{fig:preventiveproblem}Causal
@@ -119,11 +119,11 @@ dynamic settings where causal delivery is violated. In
 Figure~\ref{fig:preventiveproblemA}, Process~A broadcasts $a$. It sends $a$ to
 all its neighbors. Here, it sends $a$ to Process~B only.  Afterwards, in
 Figure~\ref{fig:preventiveproblemA2}, Process~A adds a link to
-Process~D. Message $a$ is still traveling. In particular, it did not reach
-Process~D yet. In Figure~\ref{fig:preventiveproblemB}, Process~A broadcasts
-$a'$. In this example, messages travel faster using the direct link from A to D
+Process~C. Message $a$ is still traveling. In particular, it did not reach
+Process~C yet. In Figure~\ref{fig:preventiveproblemB}, Process~A broadcasts
+$a'$. In this example, messages travel faster using the direct link from A to C
 than using B as intermediate.  We see in Figure~\ref{fig:preventiveproblemC}
-that $a'$ arrives at Process~D before $a$. Figure~\ref{fig:preventiveproblemD}
+that $a'$ arrives at Process~C before $a$. Figure~\ref{fig:preventiveproblemD}
 shows that not only it violates causal delivery but also propagates the
 violation to all processes downstream.
 
