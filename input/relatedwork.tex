@@ -56,14 +56,14 @@ without further delay. The speed of delivery is that of FIFO links.
 \noindent Explicitly tracking \textbf{semantic dependencies} allows broadcast
 protocols to reduce the size of piggybacked control
 information~\cite{bailis2013bolton,lloyd2011cops,mukund2014optimized}. For
-instance, when Alice comments Bob's picture, everyone must receive the picture
+instance, when Alice comments on Bob's picture, everyone must receive the picture
 before the comment. The broadcast message only conveys one semantic
-dependency. When Alice comments multiple pictures at once, the broadcast message
+dependency. When Alice comments on multiple pictures at once, the broadcast message
 conveys all dependencies.  Message overhead increases linearly with the number
 of semantic dependencies. To track semantic dependencies, causal broadcast
 becomes application dependent. Instead our approach remains
 application-agnostic. Comments, pictures, etc. are events that relate to all
-preceding events. When Alice comments Bob's picture, everyone will receive this
+preceding events. When Alice comments on Bob's picture, everyone will receive this
 event before the former event and all other preceding events. Whatever the
 number of preceding events, broadcast messages only convey constant size control
 information.

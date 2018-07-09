@@ -14,7 +14,7 @@ and dynamic systems without loss of efficiency.
 
 \subsection{Model}
 
-A distributed system comprise processes. Processes can communicate with each
+A distributed system comprises processes. Processes can communicate with each
 other using messages. They may not have full knowledge of the membership, for
 maintenance is too costly in large and dynamic systems. Instead, processes build
 overlay networks with local partial view the size of which is generally much
@@ -86,16 +86,17 @@ time in a logical sense using Lamport's definition~\cite{lamport1978time}.
 
 \begin{definition}[Happen before~\cite{lamport1978time}]
   Happen before is a transitive, irreflexive, and antisymmetric relation
-  $\rightarrow$ that defines a strict partial orders of events.  The sending of
-  a message always precedes its receipt.
+  $\rightarrow$ that defines a strict partial order of events.  The sending of a
+  message always precedes its receipt.
 \end{definition}
 
-To order messages broadcast by every processes, we define causal order.
+To order messages broadcast by every process, we define causal order.
 
 \begin{definition}[Causal order]
-  The delivery order of messages follows the happen before relationships of the
-  corresponding broadcasts. $\forall A,\,B,\,C,\,
-  b_A(m) \rightarrow b_B(m') \implies d_C(m) \rightarrow d_C(m')$
+  The delivery order of messages follows the happen before relationships of
+  corresponding broadcasts:
+  $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m') \implies d_C(m) \rightarrow
+  d_C(m')$
 \end{definition}
 
 \begin{definition}[Causal broadcast]
@@ -178,7 +179,7 @@ preserves both constant message overhead and constant delivery execution time in
 dynamic settings.
 
 Figure~\ref{fig:preventiveproblem} shows that adding links may infringe the
-causal order property of causal broadcast.  New links may act as shortcut for
+causal order property of causal broadcast.  New links may act as shortcuts for
 new messages: new messages that travel through new links may arrive before
 preceding messages that took longer paths. To prevent this behavior, we define
 the safety of a link. \CBROADCAST uses all and only safe links to disseminate
@@ -224,23 +225,23 @@ to Process~B.
 \end{lemma}
 
 \begin{proof}
-  Suppose a process~A initiates a ping phase to a process B. Suppose series of
-  messages delivered by Process~A. Process~A sent these messages exactly once
-  using all its outgoing safe links. Processes that will receive these message
-  either already forwarded them or will forward them in their receipt
-  order. Since Process~A's ping travels using safe links after these messages,
-  when Process~B receives the ping, it already received all messages delivered
-  by Process~A. Process~A receives Process~B's reply after Process~B received
-  the ping. Consequently, when Process~A receives Process~B's reply, Process~B
-  received all messages delivered by Process~A before the start of this ping
-  phase.
+  Suppose a process~A initiates a ping phase to a process B. Suppose a series of
+  messages delivered by Process~A. Process~A sent every of these messages
+  exactly once using all its outgoing safe links. Processes that will receive
+  these messages either already forwarded them or will forward them in their
+  receipt order. Since Process~A's ping travels using safe links after these
+  messages, when Process~B receives the ping, it already received all messages
+  delivered by Process~A. Process~A receives Process~B's reply after Process~B
+  received the ping. Consequently, when Process~A receives Process~B's reply,
+  Process~B received all messages delivered by Process~A before the start of
+  this ping phase.
 \end{proof}
 
 Upon receipt of Process~B's reply, Process~A has the guarantee that Process~B
 received all its delivered messages preceding the ping phase. This is not
 sufficient, for ping phases take time. Messages delivered during ping phase by
 Process~A may not be received by Process~B yet. To fill this gap, Process~A
-sends to Process~B the messages it buffered during ping phase.
+sends to Process~B the messages it buffered during the ping phase.
 
 \begin{definition}[Buffering]
   Process~A records in a buffer $\mathcal{B}$ all its delivered messages during
@@ -257,8 +258,8 @@ sends to Process~B the messages it buffered during ping phase.
 \end{lemma}
 
 \begin{proof}
-  Suppose series of messages $m_1 \ldots m_i \ldots m_j$ delivered by a
-  process~A. Suppose Process~A initiated a ping phase to a process B after
+  Suppose a series of messages $m_1 \ldots m_i \ldots m_j$ delivered by a
+  process A. Suppose Process~A initiated a ping phase to a process~B after
   delivering $m_i$. Suppose Process~A receives Process~B's reply after $m_j$.
   We must show that when Process~A delivers a message after $m_k$, Process~B
   received or will receive $m_1 \ldots m_j$ before. \\
@@ -320,7 +321,7 @@ sends to Process~B the messages it buffered during ping phase.
 \end{algorithm}
 
 
-Algorithm~\ref{algo:bufferbroadcast} shows the small set of instructions that
+Algorithm~\ref{algo:bufferbroadcast} shows a small set of instructions that
 implement safe links.  Figure~\ref{fig:preventivesolve} shows on an example how
 it solves causal order violations. In Figure~\ref{fig:preventivesolveA},
 Process~A broadcasts $a$.  In Figure~\ref{fig:preventivesolveB}, Process~A wants
@@ -466,7 +467,7 @@ complexity brought by
 \begin{inparaenum}[(i)]
 \item the overlay network,
 \item reliable broadcast,
-\item and causal ordering.
+\item and causal order.
 \end{inparaenum}
 
 \noindent \textbf{Overlay network.} Processes cannot afford the upkeep of full
@@ -520,7 +521,7 @@ network chosen to broadcast messages. The size of messages is an irreducible
 variable; and many protocols designed to build overlay networks achieve high
 scalability in terms of network size and
 dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman},~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
-Consequently, \CBROADCAST achieve high scalability in both these terms
+Consequently, \CBROADCAST achieves high scalability in both these terms
 too. \CBROADCAST is efficient, for the upper bound on the complexity of delivery
 execution time does not depend on any factor.
 
