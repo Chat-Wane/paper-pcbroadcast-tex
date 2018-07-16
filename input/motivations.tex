@@ -3,18 +3,18 @@
   \begin{center}
     \subfloat[Part A][\label{fig:generalsolveA}Process~A broadcasts $a$.]
     {\input{input/figgeneralsolveA.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part B][\label{fig:generalsolveB}Process~B receives and 
     delivers $a$. Process~B forwards $a$ using its FIFO links.]
     {\input{input/figgeneralsolveB.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part C][\label{fig:generalsolveC}Process~B broadcasts $b$.]
     {\input{input/figgeneralsolveC.tex}}
     \\
     \subfloat[Part D][\label{fig:generalsolveD}Process~A receives and 
     delivers $b$. Process~A forwards $b$ using its FIFO links.]
     {\input{input/figgeneralsolveD.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part E][\label{fig:generalsolveE}Process~C cannot receive $b$
     without having received $a$ beforehand.]
     {\input{input/figgeneralsolveE.tex}}
@@ -38,8 +38,8 @@ Encoding the logical time at broadcast regarding all other broadcasts then
 piggybacking this control information in each broadcast message allows processes
 to ensure causal order on message delivery. Instead, \cite{friedman2004causal}
 uses FIFO links and systematically forwards delivered messages.  Intuitively,
-the dissemination pattern automatically makes sure that no paths from a process
-to another process carry messages out of causal order.
+the dissemination pattern asserts that no paths from a process to another
+process carry messages out of causal order.
 
 Figure~\ref{fig:generalsolve} depicts this principle. The system comprises 3
 processes connected to each other with FIFO links.  In

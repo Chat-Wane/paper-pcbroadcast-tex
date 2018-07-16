@@ -51,24 +51,27 @@ experiment. The x-axis depicts the delay set on message transmission for each
 link. The top part of the figure shows the average shortest path length. The
 bottom part of the figure shows the average number of unsafe links per process
 that cannot be used for causal broadcast yet.
-\begin{itemize}[leftmargin=*]
-\item Figure~\ref{fig:delay} shows that both R-broadcast and \CBROADCAST deliver
+%\begin{itemize}%[leftmargin=*]
+
+\noindent Figure~\ref{fig:delay} shows that both R-broadcast and \CBROADCAST deliver
   message quickly to all processes. The overlay network guarantees that paths
   stay short and logarithmically scaling with the number of random neighbors in
   partial views.
-\item The top part of Figure~\ref{fig:delay} shows that measurements made on
+
+\noindent The top part of Figure~\ref{fig:delay} shows that measurements made on
   \CBROADCAST increase while measurements made on R-broadcast stay
   constant. R-broadcast uses all neighbors provided by \SPRAY while \CBROADCAST
   excludes links still in buffering phase. The more latency on transmission, the
   longer the buffering phase. The bottom part of Figure~\ref{fig:delay} shows
   that the number of elements in the buffers increases accordingly.
-\item Figure~\ref{fig:delay} shows that the growth of path length stays small
+
+\noindent Figure~\ref{fig:delay} shows that the growth of path length stays small
   even when transmission delays become high. The number of elements in buffers
   stays small because the buffering phase takes a constant number of hops to
   complete: at most 3 hops. The path length grows even slower, for removing 3
   among 17 links has restricted impact on overlay networks close to random
   graphs.
-\end{itemize}
+% \end{itemize}
 
 This experimentation shows that even under bad network conditions (high
 transmission delays) and using highly dynamic overlay networks (random
@@ -76,7 +79,7 @@ peer-sampling), the number of unsafe links remains small. The negative impact
 expected on transmission time before message delivery remains small. In
 practice, we expect smaller network transmission delays, and overlay networks
 less subject to neighborhood changes (e.g. exploiting user preferences, or
-geolocalisation). In such settings, we expect \CBROADCAST to have a negligible
+geolocalization). In such settings, we expect \CBROADCAST to have a negligible
 negative impact on the overlay network properties.
 
 The next section reviews state-of-the-art techniques designed to maintain causal

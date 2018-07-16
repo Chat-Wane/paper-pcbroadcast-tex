@@ -4,7 +4,7 @@
 Causal broadcast~\cite{hadzilacos1994modular} is a fundamental building block of
 many distributed applications~\cite{nakamoto2009bitcoin} such as distributed
 social networks~\cite{borthakur2013petabyte}, distributed collaborative
-softwares~\cite{nedelec2016crate,heinrich2012exploiting}, or distributed data
+software~\cite{nedelec2016crate,heinrich2012exploiting}, or distributed data
 stores~\cite{demers1987epidemic,shapiro2011comprehensive,bailis2013bolton,lloyd2011cops,bravo2017saturn}.
 Causal broadcast is a reliable broadcast where every connected process
 delivers each broadcast message exactly once following the happen
@@ -26,8 +26,10 @@ without consensus. The message overhead increases linearly with the number of
 processes $N$ that ever broadcast a message in the system. Several messages $W$
 may deffer their delivery, for preceding messages did not arrive
 yet~\cite{mehdi2017slowdown}.  The delivery execution time takes linear time
-$O(W.N)$ as well.  Causal broadcast protocols based on vectors eventually become
-overcostly and inefficient.
+$O(W.N)$ as well.
+%  Causal broadcast protocols based on vectors eventually become
+%overcostly and inefficient.
+Vector-based protocols eventually become overcostly and inefficient.
 
 
 To provide causal order, \cite{friedman2004causal} employs a different
@@ -42,7 +44,7 @@ means, using this approach may lead to causal order violations.
 
 In this paper, we break the scalability barrier of causal broadcast for large
 and dynamic systems.  Our contribution is threefold:
-\begin{itemize}[leftmargin=*]
+\begin{itemize}%[leftmargin=*]
 \item We provide a powerful extension of~\cite{friedman2004causal} that extends
   its scope to dynamic systems. We prove that adding new communication means
   between processes constitutes the sole factor in causal order violation. Our
@@ -72,11 +74,11 @@ systems.
 \end{table}
 
 The rest of this paper is organized as follows: Section~\ref{sec:motivations}
-shows the background and motivations of our work. Section~\ref{sec:proposal}
-defines our model, describes our proposal, provides the corresponding proofs,
-and details its complexity. Section~\ref{sec:experimentation} explains the
-results of experimentation.  Section~\ref{sec:relatedwork} reviews the related
-work. We conclude in Section~\ref{sec:conclusion}.
+shows the background and motivations. Section~\ref{sec:proposal} details the
+model, our proposal, the proofs, and the
+complexity. Section~\ref{sec:experimentation} explains the results of
+experimentation.  Section~\ref{sec:relatedwork} reviews the related work. We
+conclude in Section~\ref{sec:conclusion}.
 
 %%% Local Variables:
 %%% mode: latex
