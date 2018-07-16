@@ -269,7 +269,7 @@ sends to Process~B the messages it buffered during the ping phase.
   ping phase, the buffer contains $m_{i+1} \ldots m_j$ when the ping phase ends.
   Since links are FIFO, sending messages of this buffer using the new link
   guarantees that Process~B will receive them before receiving any $m_k$
-  delivered after $m_j$. The link from Process~A to Process~B became safe.
+  delivered after $m_j$. The link from Process~A to Process~B is safe.
 \end{proof}
 
 
