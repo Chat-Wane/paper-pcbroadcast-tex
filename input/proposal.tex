@@ -14,14 +14,15 @@ and dynamic systems without loss of efficiency.
 
 \subsection{Model}
 
-A distributed system comprise processes. Processes can communicate with each
+A distributed system comprises processes. Processes can communicate with each
 other using messages. They may not have full knowledge of the membership, for
 maintenance is too costly in large and dynamic systems. Instead, processes build
 overlay networks with local partial view the size of which is generally much
 smaller than the actual size of the
 system~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman}. Overlay networks
 can be built on top of other overlay networks.  For the rest of this paper, we
-will speak of distributed systems, overlay networks, or networks indifferently.
+will use the terms of distributed systems, overlay networks, or networks
+indifferently.
 
 \begin{definition}[Overlay network]
   An overlay network $G$ is a pair $\langle P,\, E\rangle$ where $P$ is a set of
@@ -42,7 +43,6 @@ will speak of distributed systems, overlay networks, or networks indifferently.
   byzantine processes.
 \end{definition}
 
-% For the rest of the paper, we only consider networks without partitions.
 
 \begin{definition}[Unpartitioned network]
   A network is unpartitioned if and only if for any pair of correct processes,
@@ -53,8 +53,6 @@ will speak of distributed systems, overlay networks, or networks indifferently.
 Causal broadcast is a communication primitive that relies on reliable broadcast
 to send messages to all processes in the system.
 
-% Broadcasting constitutes a communication primitive that allows processes to send
-% messages to all other processes in their system.
 
 \begin{definition}[Uniform reliable broadcast]
   When a process~A broadcasts a message $b_A(m)$, each correct process~B in the
@@ -88,35 +86,18 @@ time in a logical sense using Lamport's definition~\cite{lamport1978time}.
 
 \begin{definition}[Happen before~\cite{lamport1978time}]
   Happen before is a transitive, irreflexive, and antisymmetric relation
-  $\rightarrow$ that defines a strict partial orders of events.  The sending of
-  a message always precedes its receipt.
+  $\rightarrow$ that defines a strict partial order of events.  The sending of a
+  message always precedes its receipt.
 \end{definition}
 
-%% To order messages broadcast from one process, we define FIFO order.
-
-%% \begin{definition}[FIFO order]
-%%   If a process broadcasts a first message then broadcasts a second message,
-%%   processes deliver the first message before the second message.
-%% \end{definition}
-
-%% To order messages broadcast by different processes, we define local order.
-
-%% \begin{definition}[Local order]
-%%   If a process broadcasts a message after having delivered another message
-%%   broadcast by another process, processes deliver the latter before the former.
-%% \end{definition}
-
-To order messages broadcast by every processes, we define causal order.
+To order messages broadcast by every process, we define causal order.
 
 \begin{definition}[Causal order]
-  The delivery order of messages follows the happen before relationships of the
-  corresponding broadcasts. $\forall A,\,B,\,C,\,
-  b_A(m) \rightarrow b_B(m') \implies d_C(m) \rightarrow d_C(m')$
+  The delivery order of messages follows the happen before relationships of
+  corresponding broadcasts:
+  $\forall A,\,B,\,C,\, b_A(m) \rightarrow b_B(m') \implies d_C(m) \rightarrow
+  d_C(m')$
 \end{definition}
-
-%% \begin{theorem}[\label{theo:causal}Causal order equivalence~\cite{hadzilacos1994modular}]
-%%   The conjunction of FIFO order and local order is equivalent to causal order.
-%% \end{theorem}
 
 \begin{definition}[Causal broadcast]
   Causal broadcast is a uniform reliable broadcast ensuring causal order.
@@ -165,23 +146,23 @@ broadcast that handles all dynamicity.
     {\input{./input/figpreventivesolveA.tex}}
     \hspace{20pt}
     \subfloat[Part B][\label{fig:preventivesolveB}Process~A wants
-    to add a link to Process~D. 
-    It sends a ping message $\pi$ to Process~D using one of its FIFO links.]
+    to add a link to Process~C. 
+    It sends a ping message $\pi$ to Process~C using one of its FIFO links.]
     {\input{./input/figpreventivesolveB.tex}}
     \hspace{20pt}
     \subfloat[Part C][\label{fig:preventivesolveC}Process~A broadcasts $a'$.
     It does not send it through the new link but buffers it.]
     {\input{./input/figpreventivesolveC.tex}}
     \hspace{20pt}
-    \subfloat[Part D][\label{fig:preventivesolveD}Process~D receives
+    \subfloat[Part D][\label{fig:preventivesolveD}Process~C receives
     $\pi$ and replies to $A$.
     The reply $\rho$ can travel by any communication
     mean.]
     {\input{./input/figpreventivesolveD.tex}}
     \hspace{20pt}
     \subfloat[Part E][\label{fig:preventivesolveE}Process~A receives
-    Process~D's reply. 
-    The former safely empties its buffer to Process~D. 
+    Process~C's reply. 
+    The former safely empties its buffer to Process~C. 
     Using the new link cannot cause causal order violation anymore.]
     {\input{./input/figpreventivesolveE.tex}}
     \caption{\label{fig:preventivesolve}\CBROADCAST does not violate causal
@@ -198,7 +179,7 @@ preserves both constant message overhead and constant delivery execution time in
 dynamic settings.
 
 Figure~\ref{fig:preventiveproblem} shows that adding links may infringe the
-causal order property of causal broadcast.  New links may act as shortcut for
+causal order property of causal broadcast.  New links may act as shortcuts for
 new messages: new messages that travel through new links may arrive before
 preceding messages that took longer paths. To prevent this behavior, we define
 the safety of a link. \CBROADCAST uses all and only safe links to disseminate
@@ -214,7 +195,7 @@ messages.
 
 Added links start unsafe. In Figure~\ref{fig:preventiveproblem}, Process~A uses
 the link to broadcast $a'$ while it is unsafe: Process~B did not receive $a$
-yet, and there was no guaranty that Process~B would receive $a$ before receiving
+yet, and there was no guarantee that Process~B would receive $a$ before receiving
 $a'$ from the new link. In this example, the worst happens and Process~B
 receives then delivers $a'$ before $a$ which violates causal order.
 
@@ -227,7 +208,7 @@ space and generated traffic. Performing an anti-entropy round to extract missing
 messages would also be overcostly in terms of generated traffic for it would
 require sending the vector of received messages~\cite{demers1987epidemic}.
 Instead, Process~A avoid sending most of messages by initiating a ping phase
-to Process~B. %% while recording all its upcoming message deliveries in an array.
+to Process~B. 
 
 \begin{definition}[Ping phase]
   Ping phase starts when Process~A pings Process~B. Ping messages $\pi$ travel
@@ -244,23 +225,23 @@ to Process~B. %% while recording all its upcoming message deliveries in an array
 \end{lemma}
 
 \begin{proof}
-  Suppose a process~A initiates a ping phase to a process B. Suppose series of
-  messages delivered by Process~A. Process~A sent these messages exactly once
-  using all its outgoing safe links. Processes that will receive these message
-  either already forwarded them or will forward them in their receipt
-  order. Since Process~A's ping travels using safe links after these messages,
-  when Process~B receives the ping, it already received all messages delivered
-  by Process~A. Process~A receives Process~B's reply after Process~B received
-  the ping. Consequently, when Process~A receives Process~B's reply, Process~B
-  received all messages delivered by Process~A before the start of this ping
-  phase.
+  Suppose a process~A initiates a ping phase to a process B. Suppose a series of
+  messages delivered by Process~A. Process~A sent every of these messages
+  exactly once using all its outgoing safe links. Processes that will receive
+  these messages either already forwarded them or will forward them in their
+  receipt order. Since Process~A's ping travels using safe links after these
+  messages, when Process~B receives the ping, it already received all messages
+  delivered by Process~A. Process~A receives Process~B's reply after Process~B
+  received the ping. Consequently, when Process~A receives Process~B's reply,
+  Process~B received all messages delivered by Process~A before the start of
+  this ping phase.
 \end{proof}
 
-Upon receipt of Process~B's reply, Process~A has the guaranty that Process~B
+Upon receipt of Process~B's reply, Process~A has the guarantee that Process~B
 received all its delivered messages preceding the ping phase. This is not
 sufficient, for ping phases take time. Messages delivered during ping phase by
 Process~A may not be received by Process~B yet. To fill this gap, Process~A
-sends to Process~B the messages it buffered during ping phase.
+sends to Process~B the messages it buffered during the ping phase.
 
 \begin{definition}[Buffering]
   Process~A records in a buffer $\mathcal{B}$ all its delivered messages during
@@ -277,8 +258,8 @@ sends to Process~B the messages it buffered during ping phase.
 \end{lemma}
 
 \begin{proof}
-  Suppose series of messages $m_1 \ldots m_i \ldots m_j$ delivered by a
-  process~A. Suppose Process~A initiated a ping phase to a process B after
+  Suppose a series of messages $m_1 \ldots m_i \ldots m_j$ delivered by a
+  process A. Suppose Process~A initiated a ping phase to a process~B after
   delivering $m_i$. Suppose Process~A receives Process~B's reply after $m_j$.
   We must show that when Process~A delivers a message after $m_k$, Process~B
   received or will receive $m_1 \ldots m_j$ before. \\
@@ -288,30 +269,9 @@ sends to Process~B the messages it buffered during ping phase.
   ping phase, the buffer contains $m_{i+1} \ldots m_j$ when the ping phase ends.
   Since links are FIFO, sending messages of this buffer using the new link
   guarantees that Process~B will receive them before receiving any $m_k$
-  delivered after $m_j$. The link from Process~A to Process~B became safe.
-  % Suppose a network of safe links without partitions. Suppose an unsafe link
-  % from a process A to a process B. \\
-  % We must show that if Process~B receives a message $m'$ from the new link,
-  % there exist no messages $m$ delivered by Process~A that it did not receive. \\
-  % Process~B starts receiving messages from the new link when Process~A sends its
-  % buffer. Either $m'$ comes from this buffer or it is a message delivered by
-  % Process~A afterward. \\
-  % Process~A starts sending buffered messages once it received the reply to its
-  % ping, hence, after Process~B received this ping. Since this ping travels via
-  % safe FIFO links, and since the network does not have partitions, Process~B
-  % eventually receives this ping after all messages delivered by Process~A when
-  % it sent this ping. Consequently, there exist no messages $m$ that Process~B
-  % did not receive before receiving the messages from the buffer. \\
-  % Since Process~A buffered all delivered messages between the sending of the
-  % ping and the receipt of the reply, there exist no messages $m$ that Process~B
-  % did not receive before Process~A starts using the new link for
-  % broadcast. \\
-  % Afterward, Process~A sends all its delivered messages using this link.
+  delivered after $m_j$. The link from Process~A to Process~B is safe.
 \end{proof}
 
-% Compared to reliable broadcast, Algorithm~\ref{algo:bufferbroadcast} adds a
-% structure associating each new unsafe link with a buffer of
-% messages.
 
 \begin{lemma}[\CBROADCAST is causal in dynamic systems subject to
   additions\label{lem:additions}]
@@ -343,7 +303,7 @@ sends to Process~B the messages it buffered during ping phase.
     \subfloat[part A][\label{fig:bufferproblemA}Slow ping message $\pi$.]
     {\input{input/figbufferproblemA.tex}}
     \hspace{20pt}
-    \subfloat[part B][\label{fig:bufferproblemB}Process~D crashes.]
+    \subfloat[part B][\label{fig:bufferproblemB}Process~C crashes.]
     {\input{input/figbufferproblemB.tex}}
     \hspace{20pt}
     \subfloat[part C][\label{fig:bufferproblemC}Reply $\rho$ fails.]
@@ -361,25 +321,25 @@ sends to Process~B the messages it buffered during ping phase.
 \end{algorithm}
 
 
-Algorithm~\ref{algo:bufferbroadcast} shows the small set of instructions that
+Algorithm~\ref{algo:bufferbroadcast} shows a small set of instructions that
 implement safe links.  Figure~\ref{fig:preventivesolve} shows on an example how
 it solves causal order violations. In Figure~\ref{fig:preventivesolveA},
 Process~A broadcasts $a$.  In Figure~\ref{fig:preventivesolveB}, Process~A wants
-to add a link to Process~D. It sends a ping message $\pi$ to Process~D (see
+to add a link to Process~C. It sends a ping message $\pi$ to Process~C (see
 Line~\ref{line:sendlocked}) and awaits for the latter's reply.  We leave aside
 the implementation of this send function (e.g. broadcast or routing).  While
 awaiting, Process~A keeps its normal functioning and maintain a buffer of
 messages associated with the unsafe link (see Line~\ref{line:bufferforward}). In
 Figure~\ref{fig:preventivesolveC}, Process~A broadcasts another message $a'$. It
-sends it normally to Process~B but does not send it to Process~D
+sends it normally to Process~B but does not send it to Process~C
 directly. Instead, it buffers it. In Figure~\ref{fig:preventivesolveD},
-Process~D receives Process~A's ping message $\pi$. Since links are FIFO, it
-implicitly means that Process~D also received $a$. Process~D sends a reply
+Process~C receives Process~A's ping message $\pi$. Since links are FIFO, it
+implicitly means that Process~C also received $a$. Process~C sends a reply
 $\rho$ to Process~A (see Line~\ref{line:sendack}). $\rho$ can travel through any
 communication mean. In Figure~\ref{fig:preventivesolveE}, Process~A receives
-$\rho$. Consequently, Process~A knows that Process~D received and delivered at
+$\rho$. Consequently, Process~A knows that Process~C received and delivered at
 least $a$ and all preceding messages. It empties the buffer of messages to
-Process~D (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
+Process~C (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
 safe. Process~A uses the new link normally.
 
 
@@ -387,61 +347,38 @@ safe. Process~A uses the new link normally.
 \begin{figure*}
   \begin{center}
     \subfloat[Part A][\label{fig:buffersolveA}
-    Process~A wanted to add a link to Process~D after having
+    Process~A wanted to add a link to Process~C after having
     broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
     {\input{input/figbuffersolveA.tex}}
-    \hspace{20pt}
+    \hspace{10pt}
     \subfloat[Part B][\label{fig:buffersolveB}
     Process~A receives, delivers, and forwards $x$. Since the buffer size would 
     exceed the maximal boundary, it resets the buffer with a new counter and
-    sends a ping message with this counter. In the meantime, Process~D
-    receives $\pi_1$ and sends the corresponding reply $\rho_1$.]
+    sends a ping message with this counter. In the meantime, Process~C
+    receives $\pi_1$ and sends $\rho_1$.]
     {\input{input/figbuffersolveB.tex}}
-    \hspace{20pt}
+    \hspace{10pt}
     \subfloat[Part C][\label{fig:buffersolveC}
     Process~A forwards $y$ and buffers it. It also
     receives $\rho_1$ but no buffers exist with this counter. Process~A 
     simply discards $\rho_1$.]
     {\input{input/figbuffersolveC.tex}}
-    \hspace{20pt}
+    \hspace{10pt}
     \subfloat[Part D][\label{fig:buffersolveD}
-    Process~D receives $\pi_2$ and sends the corresponding
+    Process~C receives $\pi_2$ and sends the corresponding
     reply $\rho_2$.]
     {\input{input/figbuffersolveD.tex}}
     \hspace{20pt}
     \subfloat[Part E][\label{fig:buffersolveE}
     Process~A receives $\rho_2$. It empties the
     buffer with the corresponding counter. Now,  the direct link
-    to Process~D is safe. Process~A uses it normally.]
+    to Process~C is safe.] % Process~A uses it normally.]
     {\input{input/figbuffersolveE.tex}}
     \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
       elements in each buffer.}
   \end{center}
 \end{figure*}
 
-%% \begin{proof}
-%%   To prove that \CBROADCAST is a causal broadcast, we must show that it ensures
-%%   validity, uniform agreement, uniform integrity, and causal order. \\
-%%   \textbf{Validity, uniform agreement, uniform integrity:} \CBROADCAST extends
-%%   R-broadcast. Since R-broadcast ensures validity, uniform agreement, and
-%%   uniform
-%%   integrity, \CBROADCAST ensures all 3 properties. \\
-%%   \textbf{Causal order:} From Theorem~\ref{theo:causal}, we must show
-%%   that \CBROADCAST ensures both FIFO order and local order. \\
-%%   \textbf{FIFO order:} Suppose a process A broadcasts $m$ before $m'$. Consider
-%%   that a correct process B delivers $m'$. We must show that Process~B
-%%   delivers $m$ before $m'$. \\
-%%   Processes use added links only when they are safe. Thus, when Process~A
-%%   broadcasts $m'$, direct neighbors already received or are guaranteed to
-%%   receive $m$ beforehand. Since delivery order follows the receipt order, direct
-%%   neighbors deliver $m$ before $m'$. They forward $m$ and $m'$ in this
-%%   order. The rest of processes receive in this order. Process~B receives $m$
-%%   before $m'$ either directly or transitively. Consequently, Process~B delivers
-%%   $m$ before $m'$. \\
-%%   \textbf{Local order:} Since broadcast and forward have identical instructions,
-%%   the origin of broadcast messages does not matter. The proof is identical to
-%%   that of FIFO order. \\
-%% \end{proof}
 
 \begin{theorem}[\CBROADCAST is a causal broadcast]
   \CBROADCAST is a causal broadcast in both static and dynamic network settings.
@@ -457,36 +394,34 @@ safe. Process~A uses the new link normally.
 Algorithm~\ref{algo:bufferbroadcast} ensures causal delivery of messages even in
 dynamic network settings. Compared to the original causal broadcast for static
 networks~\cite{friedman2004causal}, it uses an additional local structure:
-buffers of messages. It associates a buffer to each new unsafe links. We assumed
+buffers of messages. It associates a buffer to each new unsafe link. We assumed
 that the size of these buffer stays small in general, for it depends on the time
 taken by the ping phase which is assumed short. However, network conditions may
 invalidate this assumption. Figure~\ref{fig:bufferproblem} depicts scenarios
 where buffers grow out of acceptable boundaries. In
 Figure~\ref{fig:bufferproblemA}, the issue comes from high transmission delays
-from Process~A to Process~B, and from Process~B to Process~D compared to the
+from Process~A to Process~B, and from Process~B to Process~C compared to the
 number of messages to broadcast and forward. The ping message $\pi$ did not
-reach Process~D yet that the buffer contains a lot of messages. In
+reach Process~C yet that the buffer contains a lot of messages. In
 Figure~\ref{fig:bufferproblemB}, the issue comes from the departure of
-Process~D. Depending on network settings, Process~A may not be able to detect
-Process~D's departure. The former will never receive the awaited reply and the
+Process~C. Depending on network settings, Process~A may not be able to detect
+Process~C's departure. The former will never receive the awaited reply and the
 buffer will grow forever. In Figure~\ref{fig:bufferproblemC}, the reply $\rho$
 itself fails to reach Process~A. For the recall, this message can travel to
 Process~A by any communication mean, including unreliable ones. If this fails,
-Process~A's buffer to Process~D will grow
-forever. %as long as Process~A receives or broadcasts
-%messages.
+Process~A's buffer to Process~C will grow
+forever.
 
 \begin{algorithm}
   \input{input/algoboundingbuffer.tex}
-  \caption{\label{algo:boundingbuffer}Bounding the size of buffers and handling
-    network failures.}
+  \caption{\label{algo:boundingbuffer}Bounding the size of buffers.}
 \end{algorithm}
 
 Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
 buffers. It solves the issue from the buffer owner's
 perspective. Figure~\ref{fig:buffersolve} shows how this algorithm bounds the
 size of buffers. In Figure~\ref{fig:buffersolveA}, Process~A broadcast $a$; then
-wanted to add a link to Process~D so it sent a ping message; then broadcast $a'$
+wanted to add a link to Process~C so it sent a ping message; then broadcast $a'$
 and $a''$ so it buffered them. We see that the ping message $\pi_1$ carries a
 counter. The new buffer is identified by the same counter. In
 Figure~\ref{fig:buffersolveB}, Process~A receives, delivers, and forwards the
@@ -496,12 +431,12 @@ Line~\ref{line:maxsize}). Adding $x$ to the buffer would exceed the bound of $2$
 elements. This is the first ping phase failure. Process~A simply restarts the
 ping phase: it resets the buffer and sends another ping message $\pi_2$ (see
 Line~\ref{line:reset}). The counter of the reset buffer is the one of the new
-ping message. In the meantime, Process~D receives $\pi_1$ and sends the
+ping message. In the meantime, Process~C receives $\pi_1$ and sends the
 corresponding reply $\rho_1$. In Figure~\ref{fig:buffersolveC}, Process~A
 receives a broadcast message $y$. It delivers it, checks if the buffer can admit
 it, adds the message to the buffer, and forwards it. Process~A also receives the
 first reply $\rho_1$ but discards it, for no buffers have such counter. In
-Figure~\ref{fig:buffersolveD}, Process~D receives $\pi_2$ and sends the
+Figure~\ref{fig:buffersolveD}, Process~C receives $\pi_2$ and sends the
 corresponding reply $\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE},
 Process~A receives $\rho_2$. Since the corresponding buffer exists, it empties
 it. The new link is now safe to use for causal broadcast.
@@ -531,7 +466,7 @@ complexity brought by
 \begin{inparaenum}[(i)]
 \item the overlay network,
 \item reliable broadcast,
-\item and causal ordering.
+\item and causal order.
 \end{inparaenum}
 
 \noindent \textbf{Overlay network.} Processes cannot afford the upkeep of full
@@ -556,17 +491,27 @@ message piggybacks a pair $\langle process,\, counter \rangle$ that identifies
 it: $O(1)$. Checking if a message is a duplicate takes constant time: $O(1)$.
 
 \noindent \textbf{Causal ordering.} Causal ordering primarily uses FIFO links to
-broadcast messages which implies a constant size overhead on messages
-$O(1)$. Most space complexity is hidden by FIFO links including that of buffered
-messages ensuring safety.
-%Its local space complexity is $O(W + B)$ where $W$ is the number of messages
-%awaiting on FIFO links, and $B$ is the size of the structure required to ensure
-%link safety.
-\CBROADCAST maintains one buffer per unsafe link during its ping phase.  We
-assume that this time is short so the number of buffered messages stays
-small. As shown in Section~\ref{sec:proposal}, network conditions can make this
-assumption false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size
-of each buffer and handle network failures.
+broadcast messages which implies a constant size overhead on messages $O(1)$.
+
+\noindent \CBROADCAST constitutes an advantageous tradeoff when the system
+features light routing capabilities. For instance, protocols building systems
+using neighbor-to-neighbor
+interactions~\cite{jelasity2007gossip,jelasity2009tman,nedelec2017adaptive} only
+require 3 control messages per added link (see
+Section~\ref{sec:experimentation}); protocols featuring message routing such as
+DHT require $O(log(N))$ control messages per added link. However, in the worst
+case, \CBROADCAST requires $O(N^2)$ control messages per added links, for it
+falls back to broadcasting control messages.
+
+
+\noindent The space complexity of \CBROADCAST is that of FIFO links plus
+buffered messages ensuring safety. The size of buffers depends on the ping phase
+duration. Assuming a system featuring light routing capabilities, we assume that
+this time remains short so the number of buffered messages stays small. As shown
+in Section~\ref{sec:proposal}, network conditions can make this assumption
+false. Algorithm~\ref{algo:boundingbuffer} allows to bound the size of each
+buffer and handle network failures.
+
 
 \noindent \textbf{Overall.}  Generated traffic remains the most important
 criterion for scalability. The traffic generated by \CBROADCAST for each process
@@ -574,8 +519,8 @@ and for each broadcast only depends on the size of messages and the overlay
 network chosen to broadcast messages. The size of messages is an irreducible
 variable; and many protocols designed to build overlay networks achieve high
 scalability in terms of network size and
-dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman,nedelec2017adaptive,voulgaris2005cyclon}.
-Consequently, \CBROADCAST achieve high scalability in both these terms
+dynamicity~\cite{bertier-d2ht,jelasity2007gossip,jelasity2009tman},~\cite{nedelec2017adaptive,voulgaris2005cyclon}.
+Consequently, \CBROADCAST achieves high scalability in both these terms
 too. \CBROADCAST is efficient, for the upper bound on the complexity of delivery
 execution time does not depend on any factor.
 

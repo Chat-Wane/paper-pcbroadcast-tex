@@ -3,18 +3,18 @@
   \begin{center}
     \subfloat[Part A][\label{fig:generalsolveA}Process~A broadcasts $a$.]
     {\input{input/figgeneralsolveA.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part B][\label{fig:generalsolveB}Process~B receives and 
     delivers $a$. Process~B forwards $a$ using its FIFO links.]
     {\input{input/figgeneralsolveB.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part C][\label{fig:generalsolveC}Process~B broadcasts $b$.]
     {\input{input/figgeneralsolveC.tex}}
     \\
     \subfloat[Part D][\label{fig:generalsolveD}Process~A receives and 
     delivers $b$. Process~A forwards $b$ using its FIFO links.]
     {\input{input/figgeneralsolveD.tex}}
-    \hspace{40pt}
+    \hspace{30pt}
     \subfloat[Part E][\label{fig:generalsolveE}Process~C cannot receive $b$
     without having received $a$ beforehand.]
     {\input{input/figgeneralsolveE.tex}}
@@ -27,21 +27,19 @@
 \section{Background and motivations}
 \label{sec:motivations}
 
-Causal broadcast ensures that all connected processes deliver each broadcast
+Causal broadcast ensures that every connected process delivers each broadcast
 message exactly once~\cite{hadzilacos1994modular} following the happen before
 relationship~\cite{lamport1978time}. If the sending of a message $m$ precedes
-the sending of a message $m'$ then all processes that deliver these two messages
-need to deliver $m$ before $m'$. Otherwise they can deliver them in any order.
+the sending of a message $m'$ then every process that delivers these two
+messages needs to deliver $m$ before $m'$. Otherwise it can deliver them in any
+order.
 
-Encoding the logical time at broadcast regarding all other broadcasts and
-piggyback this control information in each broadcast message allow processes to
-ensure causal order on message delivery. Instead, \cite{friedman2004causal}
-%  checking repeatedly if messages are ready to be delivered, a
-% preventive approach~\cite{friedman2004causal} makes sure that messages arrive
-%ready in the first place. % It
+Encoding the logical time at broadcast regarding all other broadcasts then
+piggybacking this control information in each broadcast message allows processes
+to ensure causal order on message delivery. Instead, \cite{friedman2004causal}
 uses FIFO links and systematically forwards delivered messages.  Intuitively,
-the dissemination pattern automatically makes sure that no paths from a process
-to another process carry messages out of causal order.
+the dissemination pattern asserts that no paths from a process to another
+process carry messages out of causal order.
 
 Figure~\ref{fig:generalsolve} depicts this principle. The system comprises 3
 processes connected to each other with FIFO links.  In
@@ -78,7 +76,7 @@ it does not constitute an additional overhead of~\cite{friedman2004causal}.
 
 Figure~\ref{fig:disseminationtree} shows that such causal broadcast ensures
 causal order in larger systems where processes have limited knowledge of the
-membership.  Process~A only knows about Process~B and Process~C.  Yet,
+membership.  Process~A only knows about Process~B and Process~D.  Yet,
 Process~A's broadcast messages $a$ and $a'$ arrive to all other processes either
 directly or transitively. In addition, $a$ and $a'$ always arrive in causal
 order at all processes despite concurrency and whatever the dissemination path.
@@ -89,17 +87,17 @@ order at all processes despite concurrency and whatever the dissemination path.
     {\input{input/figpreventiveproblemA.tex}}
     \hspace{20pt}
     \subfloat[Part 2][\label{fig:preventiveproblemA2}Process~A adds a link 
-    to Process~D.]
+    to Process~C.]
     {\input{input/figpreventiveproblemA2.tex}}
     \hspace{20pt}
     \subfloat[Part 3][\label{fig:preventiveproblemB}Process~A broadcasts $a'$.]
     {\input{input/figpreventiveproblemB.tex}}
     \hspace{20pt}
-    \subfloat[Part 4][\label{fig:preventiveproblemC}Process~D receives and
+    \subfloat[Part 4][\label{fig:preventiveproblemC}Process~C receives and
     delivers $a'$ before $a$. This violates causal order.]
     {\input{input/figpreventiveproblemC.tex}}
     \hspace{20pt}
-    \subfloat[Part 4][\label{fig:preventiveproblemD}Process~D propagates
+    \subfloat[Part 4][\label{fig:preventiveproblemD}Process~C propagates
     the causal order violation.]
     {\input{input/figpreventiveproblemD.tex}}
     \caption{\label{fig:preventiveproblem}Causal
@@ -119,11 +117,11 @@ dynamic settings where causal delivery is violated. In
 Figure~\ref{fig:preventiveproblemA}, Process~A broadcasts $a$. It sends $a$ to
 all its neighbors. Here, it sends $a$ to Process~B only.  Afterwards, in
 Figure~\ref{fig:preventiveproblemA2}, Process~A adds a link to
-Process~D. Message $a$ is still traveling. In particular, it did not reach
-Process~D yet. In Figure~\ref{fig:preventiveproblemB}, Process~A broadcasts
-$a'$. In this example, messages travel faster using the direct link from A to D
+Process~C. Message $a$ is still traveling. In particular, it did not reach
+Process~C yet. In Figure~\ref{fig:preventiveproblemB}, Process~A broadcasts
+$a'$. In this example, messages travel faster using the direct link from A to C
 than using B as intermediate.  We see in Figure~\ref{fig:preventiveproblemC}
-that $a'$ arrives at Process~D before $a$. Figure~\ref{fig:preventiveproblemD}
+that $a'$ arrives at Process~C before $a$. Figure~\ref{fig:preventiveproblemD}
 shows that not only it violates causal delivery but also propagates the
 violation to all processes downstream.
 
