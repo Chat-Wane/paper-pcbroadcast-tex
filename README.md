@@ -1,4 +1,4 @@
-# Breaking the Scalability Barrier of Causal Broadcast in Large and Dynamic Systems [[pdf]](https://hal.inria.fr/hal-01778901/document)
+# Breaking the Scalability Barrier of Causal Broadcast in Large and Dynamic Systems [[pdf]](https://hal.inria.fr/hal-01778901v2/document)
 
 _Keywords: Causal order, broadcast, large and dynamic, distributed systems_
 
