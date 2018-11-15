@@ -343,43 +343,6 @@ Process~C (see Line~\ref{line:emptybuffer}). Afterwards, the new link is
 safe. Process~A uses the new link normally.
 
 
-
-\begin{figure*}
-  \begin{center}
-    \subfloat[Part A][\label{fig:buffersolveA}
-    Process~A wanted to add a link to Process~C after having
-    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
-    {\input{input/figbuffersolveA.tex}}
-    \hspace{10pt}
-    \subfloat[Part B][\label{fig:buffersolveB}
-    Process~A receives, delivers, and forwards $x$. Since the buffer size would 
-    exceed the maximal boundary, it resets the buffer with a new counter and
-    sends a ping message with this counter. In the meantime, Process~C
-    receives $\pi_1$ and sends $\rho_1$.]
-    {\input{input/figbuffersolveB.tex}}
-    \hspace{10pt}
-    \subfloat[Part C][\label{fig:buffersolveC}
-    Process~A forwards $y$ and buffers it. It also
-    receives $\rho_1$ but no buffers exist with this counter. Process~A 
-    simply discards $\rho_1$.]
-    {\input{input/figbuffersolveC.tex}}
-    \hspace{10pt}
-    \subfloat[Part D][\label{fig:buffersolveD}
-    Process~C receives $\pi_2$ and sends the corresponding
-    reply $\rho_2$.]
-    {\input{input/figbuffersolveD.tex}}
-    \hspace{20pt}
-    \subfloat[Part E][\label{fig:buffersolveE}
-    Process~A receives $\rho_2$. It empties the
-    buffer with the corresponding counter. Now,  the direct link
-    to Process~C is safe.] % Process~A uses it normally.]
-    {\input{input/figbuffersolveE.tex}}
-    \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
-      elements in each buffer.}
-  \end{center}
-\end{figure*}
-
-
 \begin{theorem}[\CBROADCAST is a causal broadcast]
   \CBROADCAST is a causal broadcast in both static and dynamic network settings.
 \end{theorem}
@@ -417,6 +380,42 @@ forever.
   \caption{\label{algo:boundingbuffer}Bounding the size of buffers.}
 \end{algorithm}
 
+\begin{figure*}
+  \begin{center}
+    \subfloat[Part A][\label{fig:buffersolveA}
+    Process~A wanted to add a link to Process~C after having
+    broadcast $a$. Afterwards, it broadcast $a'$ and $a''$.]
+    {\input{input/figbuffersolveA.tex}}
+    \hspace{10pt}
+    \subfloat[Part B][\label{fig:buffersolveB}
+    Process~A receives, delivers, and forwards $x$. Since the buffer size would 
+    exceed the maximal boundary, it resets the buffer with a new counter and
+    sends a ping message with this counter. In the meantime, Process~C
+    receives $\pi_1$ and sends $\rho_1$.]
+    {\input{input/figbuffersolveB.tex}}
+    \hspace{10pt}
+    \subfloat[Part C][\label{fig:buffersolveC}
+    Process~A forwards $y$ and buffers it. It also
+    receives $\rho_1$ but no buffers exist with this counter. Process~A 
+    simply discards $\rho_1$.]
+    {\input{input/figbuffersolveC.tex}}
+    \hspace{10pt}
+    \subfloat[Part D][\label{fig:buffersolveD}
+    Process~C receives $\pi_2$ and sends the corresponding
+    reply $\rho_2$.]
+    {\input{input/figbuffersolveD.tex}}
+    \hspace{20pt}
+    \subfloat[Part E][\label{fig:buffersolveE}
+    Process~A receives $\rho_2$. It empties the
+    buffer with the corresponding counter. Now,  the direct link
+    to Process~C is safe.] % Process~A uses it normally.]
+    {\input{input/figbuffersolveE.tex}}
+    \caption{\label{fig:buffersolve}Buffers become bounded. We allow only 2
+      elements in each buffer.}
+  \end{center}
+\end{figure*}
+
+
 Algorithm~\ref{algo:boundingbuffer} solves the unbounded growth issue of
 buffers. It solves the issue from the buffer owner's
 perspective. Figure~\ref{fig:buffersolve} shows how this algorithm bounds the
@@ -440,6 +439,7 @@ Figure~\ref{fig:buffersolveD}, Process~C receives $\pi_2$ and sends the
 corresponding reply $\rho_2$ to Process~A. In Figure~\ref{fig:buffersolveE},
 Process~A receives $\rho_2$. Since the corresponding buffer exists, it empties
 it. The new link is now safe to use for causal broadcast.
+
 
 While it solves the issue of unbounded buffers, it also brings another
 issue. For instance, if the maximal size of buffers is too small, it could stuck

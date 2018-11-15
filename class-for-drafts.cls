@@ -8,7 +8,7 @@
 \columnsep 2pc
 
 \RequirePackage{crimson}
-\RequirePackage[a4paper,total={6.7in, 9in},margin=2cm]{geometry}
+\RequirePackage[a4paper,total={6.7in, 9in}]{geometry}
 \RequirePackage[numbers]{natbib}
 \bibliographystyle{plain}
 \RequirePackage{xcolor}
@@ -47,7 +47,7 @@
 \SetFootnoteHook{\kern -3pt \hrule width \columnwidth height 0.5pt \kern 2pt}
 \DeclareNewFootnote[para]{A}[roman]
 \newcommand\@copyrightfootnote[1]{%
-  \let\thefootnoteA\relax\footnotetextA{#1}%
+  \let\thefootnoteA\relax\footnotetextA{\textcopyright #1}%
   \let\thefootnoteA\svthefootnote%
 }
 \renewcommand\copyright[1]{\def\@copyright{#1}}
